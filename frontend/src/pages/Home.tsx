@@ -29,6 +29,10 @@ export default function Home() {
         setActiveMenu((prev) => (prev === menu ? "none" : menu));
     };
 
+    const [expandedId, setExpandedId] = useState<number | null>(null);
+    const toggleExpand = (id: number) =>
+        setExpandedId((prev) => (prev === id ? null : id));
+
     const [region, setRegion] = useState("Canada");
     const regions = [
         "Canada",
@@ -48,64 +52,56 @@ export default function Home() {
     ];
 
     const [search, setSearch] = useState("");
-    const mockResults: SearchResult[] = useMemo(() => [
+
+    const mockResults: SearchResult[] = useMemo(
+        () => [
         {
-        id: 1,
-        title: "The Lord of the Rings: The Fellowship of the Ring",
-        year: 2001,
-        criticsScore: 91,
-        rating: "PG-13",
-        kind: "Movie",
-        runtime: "2h 58m",
-        posterUrl:
-            "https://m.media-amazon.com/images/I/51Qvs9i5a%2BL._AC_.jpg",
-        providers: [
-            { name: "Crave" },
-            { name: "Starz" },
-            { name: "Prime Video" },
-        ],
+            id: 1,
+            title: "The Lord of the Rings: The Fellowship of the Ring",
+            year: 2001,
+            criticsScore: 91,
+            rating: "PG-13",
+            kind: "Movie",
+            runtime: "2h 58m",
+            synopsis:
+            "A young hobbit named Frodo inherits a powerful ring and must leave the Shire to destroy it before evil forces reclaim it.",
+            posterUrl: "https://m.media-amazon.com/images/I/51Qvs9i5a%2BL._AC_.jpg",
+            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
         },
         {
-        id: 2,
-        title: "The Lord of the Rings: The Two Towers",
-        year: 2002,
-        criticsScore: 95,
-        rating: "PG-13",
-        kind: "Movie",
-        runtime: "2h 59m",
-        posterUrl:
-            "https://m.media-amazon.com/images/I/51gVJZQpY2L._AC_.jpg",
-        providers: [
-            { name: "Crave" },
-            { name: "Starz" },
-            { name: "Prime Video" },
-        ],
+            id: 2,
+            title: "The Lord of the Rings: The Two Towers",
+            year: 2002,
+            criticsScore: 95,
+            rating: "PG-13",
+            kind: "Movie",
+            runtime: "2h 59m",
+            synopsis:
+            "The Fellowship is split, and the quest continues as war grows across Middle-earth.",
+            posterUrl: "https://m.media-amazon.com/images/I/51gVJZQpY2L._AC_.jpg",
+            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
         },
         {
-        id: 3,
-        title: "The Lord of the Rings: The Return of the King",
-        year: 2003,
-        criticsScore: 94,
-        rating: "PG-13",
-        kind: "Movie",
-        runtime: "3h 21m",
-        posterUrl:
-            "https://m.media-amazon.com/images/I/51QYJbS4LhL._AC_.jpg",
-        providers: [
-            { name: "Crave" },
-            { name: "Starz" },
-            { name: "Prime Video" },
-        ],
+            id: 3,
+            title: "The Lord of the Rings: The Return of the King",
+            year: 2003,
+            criticsScore: 94,
+            rating: "PG-13",
+            kind: "Movie",
+            runtime: "3h 21m",
+            synopsis:
+            "The final battle begins as Frodo and Sam reach Mount Doom and the fate of Middle-earth is decided.",
+            posterUrl: "https://m.media-amazon.com/images/I/51QYJbS4LhL._AC_.jpg",
+            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
         },
-    ],
-    []
+        ],
+        []
     );
 
     const results = useMemo(() => {
-        if (!search.trim()) return [];
-        return mockResults.filter((r) =>
-        r.title.toLowerCase().includes(search.toLowerCase())
-        );
+        const q = search.trim().toLowerCase();
+        if (!q) return [];
+        return mockResults.filter((r) => r.title.toLowerCase().includes(q));
     }, [search, mockResults]);
 
     const joinDot = (parts: Array<string | null | undefined>) =>
@@ -113,96 +109,96 @@ export default function Home() {
 
     return (
         <div className="home-container">
-            <div className="top-bar">
-                <div className="region-wrapper">
-                    <div className="region-selector">
-                        <FaMapMarkerAlt color="#E0160C" />
-                        <span>Region: {region}</span>
-                        <button
+        <div className="top-bar">
+            <div className="region-wrapper">
+                <div className="region-selector">
+                    <FaMapMarkerAlt color="#E0160C" />
+                     <span className="region-label">Region: {region}</span>
+                    <button
                         type="button"
-                        className={`chevron ${activeMenu === "region" ? "rotate" : ""}`}
-                        onClick={() => toggleMenu("region")}
-                        aria-label="Open region menu"
-                        aria-expanded={activeMenu === "region"}
+                            className={`chevron ${activeMenu === "region" ? "rotate" : ""}`}
+                            onClick={() => toggleMenu("region")}
+                            aria-label="Open region menu"
+                            aria-expanded={activeMenu === "region"}
                         >
-                        <FaChevronDown />
-                        </button>
-                    </div>
-                    {activeMenu === "region" && (
-                        <div className="dropdown">
-                            {regions.map((r) => (
-                                <button
-                                    key={r}
-                                    type="button"
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                        setRegion(r);
-                                        setActiveMenu("none");
-                                }}
-                                >
-                                    {r}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                <div className="top-icons">
-                    <button type="button" className="list-btn" aria-label="Open list menu">
-                        <FaList />
+                            <FaChevronDown />
                     </button>
-                    <div className="account-wrapper">
-                        <button
-                        type="button"
-                        className="account-btn"
-                        onClick={() => toggleMenu("account")}
-                        aria-label="Open account menu"
-                        aria-expanded={activeMenu === "account"}
-                        >
-                        <FaUserCircle />
-                        </button>
-                        {activeMenu === "account" && (
-                        <div className="account-dropdown">
-                            <button type="button" className="account-item">
-                                <span className="account-left">
-                                    <span className="account-item-icon">
-                                        <MdOutlineManageAccounts />
-                                    </span>
-                                    <span className="account-label">Profile</span>
-                                   </span>
-                                <span className="account-item-chevron">
-                                    <MdChevronRight />
-                                </span>
-                            </button>
-                            <button type="button" className="account-item">
-                                <span className="account-left">
-                                    <span className="account-item-icon">
-                                        <MdOutlinePassword />
-                                    </span>
-                                    <span className="account-label">Change password</span>
-                                   </span>
-                                <span className="account-item-chevron">
-                                    <MdChevronRight />
-                                </span>
-                            </button>
-                            <button type="button" className="account-item">
-                                <span className="account-left">
-                                    <span className="account-item-icon">
-                                        <MdLogout />
-                                    </span>
-                                    <span className="account-label">Log out</span>
-                                   </span>
-                                <span className="account-item-chevron">
-                                    <MdChevronRight />
-                                </span>
-                            </button>
-                        </div>
-                        )}
-                    </div>
                 </div>
+            {activeMenu === "region" && (
+                <div className="dropdown">
+                {regions.map((r) => (
+                    <button
+                        key={r}
+                        type="button"
+                        className="dropdown-item"
+                        onClick={() => {
+                            setRegion(r);
+                            setActiveMenu("none");
+                        }}
+                    >
+                        {r}
+                    </button>
+                ))}
+                </div>
+            )}
+        </div>
+        <div className="top-icons">
+            <button type="button" className="list-btn" aria-label="Open list menu">
+                <FaList />
+            </button>
+            <div className="account-wrapper">
+                <button
+                    type="button"
+                    className="account-btn"
+                    onClick={() => toggleMenu("account")}
+                    aria-label="Open account menu"
+                    aria-expanded={activeMenu === "account"}
+                >
+                    <FaUserCircle />
+                </button>
+                {activeMenu === "account" && (
+                    <div className="account-dropdown">
+                        <button type="button" className="account-item">
+                            <span className="account-left">
+                                <span className="account-item-icon">
+                                    <MdOutlineManageAccounts />
+                                </span>
+                                <span className="account-label">Profile</span>
+                            </span>
+                            <span className="account-item-chevron">
+                                <MdChevronRight />
+                            </span>
+                        </button>
+                        <button type="button" className="account-item">
+                            <span className="account-left">
+                                <span className="account-item-icon">
+                                    <MdOutlinePassword />
+                                </span>
+                                <span className="account-label">Change password</span>
+                            </span>
+                            <span className="account-item-chevron">
+                                <MdChevronRight />
+                            </span>
+                        </button>
+                        <button type="button" className="account-item">
+                            <span className="account-left">
+                                <span className="account-item-icon">
+                                    <MdLogout />
+                                </span>
+                                <span className="account-label">Log out</span>
+                            </span>
+                            <span className="account-item-chevron">
+                                <MdChevronRight />
+                            </span>
+                        </button>
+                    </div>
+                )}
             </div>
-            <div className="logo-container">
-                <img src={logo} alt="WatchFinder Logo" />
-            </div>
+        </div>
+        </div>
+        <div className="logo-container">
+            <img src={logo} alt="WatchFinder Logo" />
+        </div>
         <div className="search-container">
             <input
                 type="text"
@@ -214,56 +210,83 @@ export default function Home() {
                 <FaSearch />
             </div>
         </div>
-        
         {results.length > 0 && (
             <div className="results-card">
             <div className="results-list">
-                {results.map((item) => {
+            {results.map((item) => {
+                const isOpen = expandedId === item.id;
+
                 const metadata = joinDot([
                     String(item.year),
                     item.criticsScore != null ? `${item.criticsScore}% critics` : null,
                     item.rating ?? null,
                 ]);
 
-                const runtime = joinDot([
+                const runtimeLine = joinDot([
                     item.kind,
-                    item.runtime && `(${item.runtime})`,
+                    item.runtime ? `(${item.runtime})` : null,
                 ]);
 
-                return (
-                    <button key={item.id} className="result-row">
-                    <img
-                        className="result-poster"
-                        src={item.posterUrl}
-                        alt={item.title}
-                    />
+            return (
+                <div key={item.id} className={`result-row ${isOpen ? "open" : ""}`}>
+                    <div className="result-row-top">
+                    <img className="result-poster" src={item.posterUrl} alt={item.title} />
+
                     <div className="result-main">
                         <div className="result-title">{item.title}</div>
                         <div className="result-metadata">{metadata}</div>
-                        <div className="result-runtime">{runtime}</div>
-                        <div className="result-synopsis">{item.synopsis}</div>
+                        <div className="result-runtime">{runtimeLine}</div>
+                        {isOpen && (
+                            <div className="result-details">
+                                <div className="synopsis-line">
+                                    <span className="synopsis-label">Synopsis: </span>
+                                    <span className="synopsis-text">
+                                        {item.synopsis ?? "No synopsis available yet."}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div className="result-right">
                         <div className="streaming-platforms">
                         {item.providers.map((p) => (
-                            <span key={p.name} className="streaming-platform-icon">
+                            <span key={p.name} className="streaming-platform-icon" title={p.name}>
                             {p.name[0]}
                             </span>
                         ))}
                         </div>
-                        <button className="add-to-watchlist-btn">
+                        <button
+                            type="button"
+                            className="add-to-watchlist-btn"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                console.log("Add:", item.id);
+                            }}
+                            aria-label="Add to watchlist"
+                        >
                             <MdFormatListBulletedAdd />
                         </button>
-                        <button className="expand-btn">
+                        <button
+                            type="button"
+                            className={`expand-btn ${isOpen ? "rotate" : ""}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleExpand(item.id);
+                            }}
+                            aria-expanded={isOpen}
+                            aria-label={isOpen ? "Collapse details" : "Expand details"}
+                        >
                             <FaChevronDown />
                         </button>
                     </div>
-                    </button>
+                    </div>
+                    
+                </div>
                 );
-                })}
-            </div>
-            </div>
-        )}
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
