@@ -22,8 +22,8 @@ npm -v
 2. Clone the repository and install dependencies
 
 ```bash
-git clone 
-cd watchfinder
+git clone https://github.com/Kevonosdiaz/watch-finder.git
+cd watch-finder
 npm install
 ```
 
@@ -39,7 +39,7 @@ npm run dev
 
 - Planning to allow either pip or uv in the future
 
-1. Ensure uv is installed
+1. Ensure `uv` is installed
 
 2. In the `backend` directory, execute `uv sync` to install dependencies
 
