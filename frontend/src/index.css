@@ -358,3 +358,134 @@ border: none;
     transform: translateY(-50%);
     color: gray;
 }
+
+/* Search results */
+.results-card {
+    width: 100%;
+    max-width: 860px;
+    margin: 18px auto 0;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
+    padding: 10px 12px;
+}
+
+.results-list {
+    display: flex;
+    flex-direction: column;
+    max-height: min(420px, 60vh);
+    overflow-y: auto;
+}
+
+.result-row {
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 12px;
+    text-align: left;
+}
+
+.result-row + .result-row {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Media poster */
+.result-poster {
+  width: 54px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #eee;
+  flex: 0 0 auto;
+}
+
+/* Search results - text block */
+.result-main {
+    min-width: 0;
+    flex: 1;
+}
+
+.result-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f1b2e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.result-metadata,
+.result-runtime {
+    font-size: 13px;
+    color: #6b6375;
+    margin-top: 3px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.dot {
+    opacity: 0.65;
+}
+
+/* Right side of the result row */
+.result-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+}
+
+.streaming-platforms {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.streaming-platform-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 10px;
+    padding: 0 8px;
+    background: #f3f4f7;
+    color: #2b2436;
+    font-size: 12px;
+}
+
+.streaming-platform-icon img {
+    height: 18px;
+    width: auto;
+    display: block;
+}
+
+.add-to-watchlist-btn,
+.expand-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    border: none;
+    background: #fff;
+    color: #3a3346;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.add-to-watchlist-btn:hover {
+  background: #f3f4f7;
+}
