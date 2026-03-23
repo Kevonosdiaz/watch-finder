@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle } from "react-icons/fa";
+import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight } from "react-icons/md";
 import logo from "../assets/watch-finder-logo.png";
 
 type ActiveMenu = "none" | "region" | "account";
@@ -83,13 +84,37 @@ export default function Home() {
                         {activeMenu === "account" && (
                         <div className="account-dropdown">
                             <button type="button" className="account-item">
-                            Profile
+                                <span className="account-left">
+                                    <span className="account-item-icon">
+                                        <MdOutlineManageAccounts />
+                                    </span>
+                                    <span className="account-label">Profile</span>
+                                   </span>
+                                <span className="account-item-chevron">
+                                    <MdChevronRight />
+                                </span>
                             </button>
                             <button type="button" className="account-item">
-                            Change password
+                                <span className="account-left">
+                                    <span className="account-item-icon">
+                                        <MdOutlinePassword />
+                                    </span>
+                                    <span className="account-label">Change password</span>
+                                   </span>
+                                <span className="account-item-chevron">
+                                    <MdChevronRight />
+                                </span>
                             </button>
                             <button type="button" className="account-item">
-                            Log out
+                                <span className="account-left">
+                                    <span className="account-item-icon">
+                                        <MdLogout />
+                                    </span>
+                                    <span className="account-label">Log out</span>
+                                   </span>
+                                <span className="account-item-chevron">
+                                    <MdChevronRight />
+                                </span>
                             </button>
                         </div>
                         )}
