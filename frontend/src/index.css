@@ -62,7 +62,6 @@
     text-align: left;
 }
 
-
 body {
   margin: 0;
 }
@@ -161,7 +160,6 @@ code {
     white-space: nowrap;
 }
 
-/* Chevron button */
 .chevron {
     border: none;
     background: transparent;
@@ -262,14 +260,15 @@ border: none;
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
-    width: 200px;
-    max-width: 70vw;
+    width: 240px;
+    max-width: 80vw;
     background: #fff;
-    border: 1px solid rgba(0,0,0,0.08);
     border-radius: 14px;
-    padding: 6px;
+    border: 1px solid rgba(0,0,0,0.08);
+    overflow: hidden;
     box-shadow: 0 16px 35px rgba(0,0,0,0.16);
     z-index: 1000;
+    padding: 10px 12px;
 }
 
 .account-item {
@@ -277,15 +276,49 @@ border: none;
     border: none;
     background: transparent;
     cursor: pointer;
-    text-align: left;
-    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 12px;
     border-radius: 10px;
+    text-align: left;
     font-size: 14px;
     color: #2b2436;
 }
 
+.account-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.account-item-icon {
+    display: inline-grid;
+    place-items: center;
+    font-size: 18px;
+    color: #3a3346;
+}
+
+.account-item-chevron {
+    display: inline-grid;
+    place-items: center;
+    font-size: 20px;
+    color: rgba(58, 51, 70, 0.55);
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
 .account-item:hover {
     background: #f3f4f7;
+}
+
+.account-item:hover .account-item-chevron {
+    transform: translateX(2px);
+    color: rgba(58, 51, 70, 0.8);
+}
+
+.account-item:focus-visible {
+  outline: 2px solid rgba(170, 59, 255, 0.45);
+  outline-offset: -2px;
 }
 
 /* Logo */
