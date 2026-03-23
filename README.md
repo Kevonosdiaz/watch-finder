@@ -18,7 +18,7 @@ npm -v
 2. Clone the repository and install dependencies
 
 ```bash
-git clone 
+git clone https://github.com/Kevonosdiaz/watch-finder.git
 cd watchfinder
 npm install
 ```
