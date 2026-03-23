@@ -71,6 +71,10 @@ body {
   box-sizing: border-box;
 }
 
+button {
+  font-family: inherit;
+}
+
 html, body {
   width: 100%;
   overflow-x: hidden;
@@ -141,13 +145,20 @@ code {
 
 /* Button layout */
 .region-selector {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: white;
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #fff;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.region-selector span {
+    font-size: 14px;
+    color: #5b5564;
+    white-space: nowrap;
 }
 
 /* Chevron button */
@@ -155,82 +166,162 @@ code {
     border: none;
     background: transparent;
     cursor: pointer;
-    padding: 2px;
+    padding: 4px;
+    display: grid;
+    place-items: center;
+    color: #3a3346;
     transition: transform 0.2s ease;
 }
 
 .chevron.rotate {
-    transform: rotate(180deg);
+    transform: rotate(180deg);  
 }
 
 /* Dropdown */
 .dropdown {
     position: absolute;
-    top: calc(100% + 6px);
+    top: calc(100% + 10px);
     left: 0;
-    background: white;
-    border-radius: 12px;
-    padding: 6px 0;
-    min-width: 170px;
-    max-height: 220px;
+    width: 240px;
+    max-width: 70vw;
+    max-height: min(280px, 40vh);
     overflow-y: auto;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 16px 35px rgba(0,0,0,0.16);
     z-index: 1000;
 }
 
-/* Items */
 .dropdown-item {
-  padding: 6px 14px;
-  font-size: 14px;
-  cursor: pointer;
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #2b2436;
 }
 
 .dropdown-item:hover {
-  background: #f0f1f3;
+    background: #f3f4f7;
+}
+
+.dropdown-item:active {
+    background: #eceef4;
+}
+
+.dropdown-item:focus-visible {
+    outline: 2px solid rgba(170, 59, 255, 0.45);
+    outline-offset: 2px;
 }
 
 /* Top icons on the right */
 .top-icons {
-  display: flex;
-  gap: 16px;
-  font-size: 20px;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.top-icons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Top right buttons */
+.list-btn,
+.account-btn {
+border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: #49454F;
+    font-size: 20px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+}
+
+.icon-btn:hover,
+.account-btn:hover {
+    background: #f5f6fa;
+}
+
+/* Account button */
+.account-wrapper {
+    position: relative;
+}
+
+.account-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 200px;
+    max-width: 70vw;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 16px 35px rgba(0,0,0,0.16);
+    z-index: 1000;
+}
+
+.account-item {
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #2b2436;
+}
+
+.account-item:hover {
+    background: #f3f4f7;
 }
 
 /* Logo */
 .logo-container {
-  display: flex;
-  justify-content: center;
-  margin: 60px 0 12px;
+    display: flex;
+    justify-content: center;
+    margin: 60px 0 12px;
 }
 
 .logo-container img {
-  width: clamp(200px, 18vw, 260px);
-  height: auto;
+    width: clamp(200px, 18vw, 260px);
+    height: auto;
 }
 
 /* Search Bar */
 .search-container {
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .search-container input {
-  width: 100%;
-  padding: 14px 45px 14px 20px;
-  border-radius: 30px;
-  border: none;
-  font-size: 16px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-  outline: none;
+    width: 100%;
+    padding: 14px 45px 14px 20px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    outline: none;
 }
 
 .search-icon {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: gray;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: gray;
 }
