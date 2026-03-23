@@ -160,7 +160,8 @@ code {
     white-space: nowrap;
 }
 
-.chevron {
+.chevron,
+.expand-btn {
     border: none;
     background: transparent;
     cursor: pointer;
@@ -171,7 +172,8 @@ code {
     transition: transform 0.2s ease;
 }
 
-.chevron.rotate {
+.chevron.rotate,
+.expand-btn.rotate {
     transform: rotate(180deg);  
 }
 
@@ -317,8 +319,8 @@ border: none;
 }
 
 .account-item:focus-visible {
-  outline: 2px solid rgba(170, 59, 255, 0.45);
-  outline-offset: -2px;
+    outline: 2px solid rgba(170, 59, 255, 0.45);
+    outline-offset: -2px;
 }
 
 /* Logo */
@@ -377,30 +379,39 @@ border: none;
     overflow-y: auto;
 }
 
-.result-row {
+.result-row-top {
+    display: grid;
+    grid-template-columns: 54px 1fr auto;
+    gap: 12px;  
+    align-items: start;
+    padding: 12px 14px;
+}
+
+.result-row-top:hover {
+    background: #f3f4f7;
+}
+
+.result-row { 
     width: 100%;
-    border: none;
     background: transparent;
-    cursor: pointer;
+    border: none;
+    text-align: left; 
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 12px;
-    text-align: left;
+    flex-direction: column;
 }
 
 .result-row + .result-row {
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* Media poster */
 .result-poster {
-  width: 54px;
-  height: 72px;
-  border-radius: 10px;
-  object-fit: cover;
-  background: #eee;
-  flex: 0 0 auto;
+    width: 54px;
+    height: 72px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #eee;
+    flex: 0 0 auto;
 }
 
 /* Search results - text block */
@@ -419,7 +430,8 @@ border: none;
 }
 
 .result-metadata,
-.result-runtime {
+.result-runtime,
+.result-details {
     font-size: 13px;
     color: #6b6375;
     margin-top: 3px;
@@ -433,6 +445,22 @@ border: none;
     opacity: 0.65;
 }
 
+/* Synopsis when result is expanded */
+.synopsis-line {
+    display: inline;
+}
+
+.synopsis-label {
+    font-weight: 600;
+    color: #6b6375;
+    margin-right: 6px;
+}
+
+.synopsis-text {
+    color: #6b6375;
+    line-height: 1.45;
+}
+
 /* Right side of the result row */
 .result-right {
     display: flex;
@@ -441,6 +469,7 @@ border: none;
     flex: 0 0 auto;
 }
 
+/* Streaming platforms icons */
 .streaming-platforms {
     display: flex;
     align-items: center;
@@ -471,8 +500,8 @@ border: none;
     display: block;
 }
 
-.add-to-watchlist-btn,
-.expand-btn {
+/* Add to watchlist button */
+.add-to-watchlist-btn {
     width: 28px;
     height: 28px;
     border-radius: 10px;
