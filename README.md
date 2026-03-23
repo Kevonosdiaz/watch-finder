@@ -3,11 +3,15 @@
 </div>
 
 # WATCH FINDER
-WATCH FINDER is a mobile-friendly web app that helps users find, track, and search movies, TV shows, and other media across streaming platforms in their region.
+
+WATCH FINDER is a mobile-friendly web app that helps users find, track, and
+search movies, TV shows, and other media across streaming platforms in their
+region.
 
 ## Getting Started: Running this project
 
-To run the frontend:
+### Running the frontend:
+
 1. Make sure you have Node and npm installed. You can check by running:
 
 ```bash
@@ -19,7 +23,7 @@ npm -v
 
 ```bash
 git clone https://github.com/Kevonosdiaz/watch-finder.git
-cd watchfinder
+cd watch-finder
 npm install
 ```
 
@@ -30,3 +34,13 @@ npm run dev
 ```
 
 4. Open the URL shown in your terminal (usually http://localhost:5173).
+
+### Running the backend:
+
+- Planning to allow either pip or uv in the future
+
+1. Ensure `uv` is installed
+
+2. In the `backend` directory, execute `uv sync` to install dependencies
+
+3. Start the backend server with `uv run main.py`
