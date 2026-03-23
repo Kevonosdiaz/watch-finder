@@ -239,8 +239,8 @@ export default function Home() {
                     />
                     <div className="result-main">
                         <div className="result-title">{item.title}</div>
-                        <div className="result-meta">{metadata}</div>
-                        <div className="result-sub">{runtime}</div>
+                        <div className="result-metadata">{metadata}</div>
+                        <div className="result-runtime">{runtime}</div>
                         <div className="result-synopsis">{item.synopsis}</div>
                     </div>
                     <div className="result-right">
