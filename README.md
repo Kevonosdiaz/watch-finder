@@ -23,7 +23,7 @@ npm -v
 
 ```bash
 git clone https://github.com/Kevonosdiaz/watch-finder.git
-cd watch-finder
+cd frontend
 npm install
 ```
 
