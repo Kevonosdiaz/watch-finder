@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
-import { MdOutlineEdit } from "react-icons/md";
+import { MdOutlineEdit, MdModeEdit } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
 
 interface WatchlistProps {
@@ -103,10 +103,12 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
                 onChange={e => setNewWatchlistName(e.target.value)}
                 className="edit-watchlist-title-input"
               />
-              <button onClick={saveEdit}>Save</button>
-              <button className="watchlist-trash-btn" onClick={() => deleteWatchlist(watchlist.id)}>
-                <FaTrashAlt size={22}/>
-              </button>
+              <div className="bottom-right-actions">
+                <button className="save-btn" onClick={saveEdit}>Save</button>
+                <button className="watchlist-trash-btn" onClick={() => deleteWatchlist(watchlist.id)}>
+                  <FaTrashAlt size={22}/>
+                </button>
+              </div>
             </>
           ) : (
             <>
