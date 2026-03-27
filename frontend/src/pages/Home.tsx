@@ -23,7 +23,11 @@ type SearchResult = {
   providers: StreamingPlatform[];
 };
 
-export default function Home() {
+interface HomeProps {
+    goToWatchlist: () => void;
+}
+
+export default function Home({ goToWatchlist }: HomeProps) {
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
         setActiveMenu((prev) => (prev === menu ? "none" : menu));
@@ -143,7 +147,7 @@ export default function Home() {
             )}
         </div>
         <div className="top-icons">
-            <button type="button" className="list-btn" aria-label="Open list menu">
+            <button type="button" className="list-btn" aria-label="Open list menu" onClick={goToWatchlist}>
                 <FaList />
             </button>
             <div className="account-wrapper">
