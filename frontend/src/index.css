@@ -123,8 +123,9 @@ code {
   background: var(--code-bg);
 }
 
-/* Homepage */
-.home-container {
+/* Homepage and Watchlist page */
+.home-container,
+.watchlist-container {
   background-color: white;
   min-height: 100vh;
   padding: 24px clamp(16px, 3vw, 32px);
@@ -516,5 +517,39 @@ border: none;
 }
 
 .add-to-watchlist-btn:hover {
-  background: #f3f4f7;
+    background: #f3f4f7;
+}
+
+/* Watchlist header (back button, header and subheader) */
+.watchlist-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.back-btn button {
+    background: none;
+    border: none;
+    color: #0077C1;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.watchlist-header-content {
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+    gap: 20px;
+}
+
+.header {
+    font-size: 26px;
+    font-weight: 700;
+    color: #49454F;
+    margin-bottom: 4px;
+}
+
+.subheader {
+    font-size: 16px;
+    color: #49454F;
 }
