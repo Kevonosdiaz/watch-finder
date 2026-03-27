@@ -554,6 +554,38 @@ border: none;
     color: #49454F;
 }
 
+/* Create a watchlist */
+.create-watchlist {
+  position: relative;
+  display: flex;
+  max-width: 600px;
+}
+
+.create-watchlist input {
+  flex: 1;
+  height: 44px;
+  padding: 0 55px 0 14px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  font-size: 15px;
+}
+
+.create-watchlist input:focus {
+  outline: none;
+}
+
+.create-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-45%);
+  border: none;
+  background: none;
+  font-size: 26px;
+  color: #16a34a;
+  cursor: pointer;
+}
+
 /* Watchlist sections */
 .watchlist-card-title-section {
     margin: 30px 0 14px;
