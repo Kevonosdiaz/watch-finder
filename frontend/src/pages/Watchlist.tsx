@@ -129,7 +129,7 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
               <div className="bottom-right-actions">
                 <button className="save-btn" onClick={saveEdit}>Save</button>
                 <button className="watchlist-trash-btn" onClick={() => deleteWatchlist(watchlist.id)}>
-                  <FaTrashAlt size={22}/>
+                  <FaTrashAlt size={18}/>
                 </button>
               </div>
             </>
@@ -153,7 +153,7 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
                 className="poster-trash-btn"
                 onClick={() => removeWatchlistItem(watchlist.id, item.id)}
               >
-                <FaTrashAlt size={22}/>
+                <FaTrashAlt size={18}/>
               </button>
             )}
           </div>
