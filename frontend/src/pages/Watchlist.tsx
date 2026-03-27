@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
 
@@ -16,12 +16,19 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
   const [watchlists, setWatchlists] = useState<Watchlist[]>([
     { id: 1, name: "Journey through the Rings"},
   ]);
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newWatchlistName, setNewWatchlistName] = useState("");
+  
   const startEdit = (id: number, currentName: string) => {
     setEditingId(id);
     setNewWatchlistName(currentName);
   }
+
+  const deleteWatchlist = (id: number) => {
+    setWatchlists(watchlists.filter(w => w.id !== id));
+  }
+
   const saveEdit = () => {
     setWatchlists(
       watchlists.map(w => 
@@ -72,6 +79,9 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
                 className="edit-watchlist-title-input"
               />
               <button onClick={saveEdit}>Save</button>
+              <button className="trash-btn" onClick={() => deleteWatchlist(watchlist.id)}>
+                <FaTrashAlt />
+              </button>
             </>
           ) : (
             <>
