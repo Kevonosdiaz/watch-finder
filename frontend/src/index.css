@@ -560,7 +560,8 @@ border: none;
   max-width: 600px;
 }
 
-.create-watchlist input {
+.create-watchlist input,
+.edit-watchlist-title-input {
   flex: 1;
   height: 44px;
   padding: 0 55px 0 14px;
@@ -569,7 +570,8 @@ border: none;
   font-size: 15px;
 }
 
-.create-watchlist input:focus {
+.create-watchlist input:focus,
+.edit-watchlist-title-input:focus {
   outline: none;
 }
 
@@ -620,7 +622,7 @@ border: none;
 
 /* Extra padding at the bottom in editing mode */
 .watchlist-card.edit-mode {
-    padding-bottom: 60px;
+    padding-bottom: px;
 }
 
 /* Card header */
@@ -666,6 +668,7 @@ border: none;
     overflow-x: auto;
     overflow-y: visible; 
     margin-top: 18px;
+    padding-bottom: 10px;
 }
 
 /* Media poster */
