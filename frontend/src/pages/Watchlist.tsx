@@ -21,24 +21,6 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
       </div>
     </div>
     <div className="watchlist-card-title-section">
-      <h2>Your Watchlists</h2>
-    </div>
-    <div className="watchlist-card">
-      <div className="watchlist-card-header">
-        <h3>Journey through the Rings</h3>
-        <button className="edit-btn">
-          <MdOutlineEdit />
-        </button>
-      </div>
-      <div className="watchlist-content">
-        <div className="poster-wrapper">
-          <button className="add-btn">
-            <IoAddCircleOutline />
-          </button>
-        </div>
-      </div>
-    </div>
-    <div className="watchlist-card-title-section">
       <h2>Create a Watchlist</h2>
     </div>
     <div className="create-watchlist">
@@ -49,6 +31,21 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
       <button className="create-btn">
         <IoAddCircleOutline />
       </button>
+    </div>
+    <div className="watchlist-card-title-section">
+      <h2>Your Watchlists</h2>
+    </div>
+    <div className="watchlist-card">
+      <div className="watchlist-card-header">
+        <h3>Journey through the Rings</h3>
+        <button className="edit-btn">
+          <MdOutlineEdit size={18}/>
+        </button>
+      </div>
+      <div className="watchlist-content">
+        <div className="poster-wrapper">
+        </div>
+      </div>
     </div>
     </div>    
   );
