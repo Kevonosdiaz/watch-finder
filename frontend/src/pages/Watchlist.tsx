@@ -9,14 +9,19 @@ interface WatchlistProps {
 export default function Watchlist({ goToHome }: WatchlistProps) {
   return (
     <div className="watchlist-container">
-    <div className="top-bar">
+    <div className="watchlist-header">
       <div className="back-btn">
         <button onClick={goToHome}>
-          <FaArrowLeft />
+          <FaArrowLeft size={24}/>
         </button>
       </div>
-      <div className="header">Watchlists</div>
-      <div className="subheader">Create and manage your watchlists.</div>
+      <div className="watchlist-header-content">
+        <div className="header">Watchlists</div>
+        <div className="subheader">Create and manage your watchlists.</div>
+      </div>
+    </div>
+    <div className="watchlist-card-title-section">
+      <h2>Your Watchlists</h2>
     </div>
     <div className="watchlist-card">
       <div className="watchlist-card-header">
@@ -33,7 +38,10 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
         </div>
       </div>
     </div>
-    <div className="create-wacthlist">
+    <div className="watchlist-card-title-section">
+      <h2>Create a Watchlist</h2>
+    </div>
+    <div className="create-watchlist">
       <input
         type="text"
         placeholder="Enter the name of your watchlist"
