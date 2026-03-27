@@ -725,7 +725,7 @@ border: none;
 
 /* Delete watchlist button */
 .watchlist-trash-btn {
-width: 36px;
+    width: 36px;
     height: 36px;
     border-radius: 999px;
     border: none;
@@ -735,4 +735,33 @@ width: 36px;
     place-items: center;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+
+.edit-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Cancel button when editing */
+.edit-watchlist-title-input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+}
+
+.cancel-edit-btn {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: none;
+    background: white;
+    color: #a31616;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
 }
