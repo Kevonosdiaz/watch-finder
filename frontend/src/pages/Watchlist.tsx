@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
-import { MdOutlineEdit } from "react-icons/md";
+import { MdOutlineEdit, MdOutlineCancel } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
 
 interface WatchlistProps {
@@ -71,6 +71,11 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
     setEditingId(null);
     setNewWatchlistName("");
   }
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setNewWatchlistName("");
+  };
   
   return (
     <div className="watchlist-container">
@@ -105,12 +110,22 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
         <div className="watchlist-card-header">
           {editingId === watchlist.id ? (
             <>
+            <div className="edit-title-row">
               <input
                 type="text"
                 value={newWatchlistName}
                 onChange={e => setNewWatchlistName(e.target.value)}
                 className="edit-watchlist-title-input"
               />
+              <button
+                type="button"
+                className="cancel-edit-btn"
+                aria-label="Cancel edit"
+                onClick={cancelEdit}
+              >
+                <MdOutlineCancel size={20} />
+              </button>
+              </div>
               <div className="bottom-right-actions">
                 <button className="save-btn" onClick={saveEdit}>Save</button>
                 <button className="watchlist-trash-btn" onClick={() => deleteWatchlist(watchlist.id)}>
