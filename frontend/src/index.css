@@ -622,7 +622,7 @@ border: none;
 
 /* Extra padding at the bottom in editing mode */
 .watchlist-card.edit-mode {
-    padding-bottom: px;
+    padding-bottom: 55px;
 }
 
 /* Card header */
