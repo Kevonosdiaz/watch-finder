@@ -19,6 +19,18 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                     <div className="header">Add your Watchdata</div>
                     <div className="subheader">Lord of the Rings: The Fellowship of the Ring</div>
                 </div>
+                <div className="poster-wrapper"></div>
+                <div className="form-box">
+                    <div className="form-label">Completion Status</div>
+                    <select
+                        className="form-field-select"
+                    >
+                        <option value="">Select completion status</option>
+                        <option value="not-started">Not started</option>
+                        <option value="in-progress">In progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
             </div>
         </div>
     );
