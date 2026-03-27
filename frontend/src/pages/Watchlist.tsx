@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { MdOutlineEdit } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
@@ -6,7 +7,31 @@ interface WatchlistProps {
   goToHome: () => void;
 }
 
+interface Watchlist {
+  id: number;
+  name: string;
+}
+
 export default function Watchlist({ goToHome }: WatchlistProps) {
+  const [watchlists, setWatchlists] = useState<Watchlist[]>([
+    { id: 1, name: "Journey through the Rings"},
+  ]);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [newWatchlistName, setNewWatchlistName] = useState("");
+  const startEdit = (id: number, currentName: string) => {
+    setEditingId(id);
+    setNewWatchlistName(currentName);
+  }
+  const saveEdit = () => {
+    setWatchlists(
+      watchlists.map(w => 
+        w.id === editingId ? { ...w, name: newWatchlistName } : w
+      )
+    );
+    setEditingId(null);
+    setNewWatchlistName("");
+  }
+  
   return (
     <div className="watchlist-container">
     <div className="watchlist-header">
@@ -35,18 +60,37 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
     <div className="watchlist-card-title-section">
       <h2>Your Watchlists</h2>
     </div>
-    <div className="watchlist-card">
-      <div className="watchlist-card-header">
-        <h3>Journey through the Rings</h3>
-        <button className="edit-btn">
-          <MdOutlineEdit size={18}/>
-        </button>
-      </div>
+    {watchlists.map(watchlist => (
+      <div key={watchlist.id} className="watchlist-card">
+        <div className="watchlist-card-header">
+          {editingId === watchlist.id ? (
+            <>
+              <input
+                type="text"
+                value={newWatchlistName}
+                onChange={e => setNewWatchlistName(e.target.value)}
+                className="edit-watchlist-title-input"
+              />
+              <button onClick={saveEdit}>Save</button>
+            </>
+          ) : (
+            <>
+              <h3>{watchlist.name}</h3>
+              <button 
+                className="edit-btn"
+                onClick={() => startEdit(watchlist.id, watchlist.name)}
+              >
+                <MdOutlineEdit size={18}/>
+              </button>
+            </>
+          )}
+        </div>
       <div className="watchlist-content">
         <div className="poster-wrapper">
         </div>
       </div>
     </div>
+    ))}
     </div>    
   );
 }
