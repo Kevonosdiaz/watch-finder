@@ -553,3 +553,72 @@ border: none;
     font-size: 16px;
     color: #49454F;
 }
+
+/* Watchlist sections */
+.watchlist-card-title-section {
+    margin: 30px 0 14px;
+}
+
+.watchlist-card-title-section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #49454F;
+}
+
+/* Watchlist cards */
+.watchlist-card {
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 20px 22px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Card header */
+.watchlist-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.watchlist-card-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    color: #374151;
+}
+
+/* Edit button for editing watchlists */
+.edit-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: none;
+    outline: none;
+    background-color: white;
+}
+
+.edit-btn:hover {
+    background: #f3f4f7;
+    transform: scale(1.05);
+}
+
+.edit-btn:active {
+    transform: scale(0.95);
+}
+
+.watchlist-content {
+    margin-top: 18px;
+}
+
+/* Media poster */
+.poster-wrapper {
+    position: relative;
+    width: 110px;
+    height: 165px;
+    background: #f9fafb;
+    border-radius: 12px;
+}
