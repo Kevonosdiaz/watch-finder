@@ -30,6 +30,18 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                         <option value="in-progress">In progress</option>
                         <option value="completed">Completed</option>
                     </select>
+                    <div className="form-label">Start date</div>
+                    <input
+                        type="date"
+                        className="form-field-input"
+                    />
+                    <div className="form-label">End date</div>
+                    <input
+                        type="date"
+                        className="form-field-input"
+                    />
+                    <div className="form-label">Personal rating</div>
+                    
                 </div>
             </div>
         </div>
