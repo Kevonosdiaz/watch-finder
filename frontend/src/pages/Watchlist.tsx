@@ -33,6 +33,15 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
         </div>
       </div>
     </div>
+    <div className="create-wacthlist">
+      <input
+        type="text"
+        placeholder="Enter the name of your watchlist"
+      />
+      <button className="create-btn">
+        <IoAddCircleOutline />
+      </button>
+    </div>
     </div>    
   );
 }
