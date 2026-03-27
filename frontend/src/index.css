@@ -655,3 +655,20 @@ border: none;
     background: #f9fafb;
     border-radius: 12px;
 }
+
+.poster-trash-btn {
+    position: absolute;
+    top: -14px;
+    left: 75%;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: none;
+    background: #f7eaea;
+    color: #a31616;
+    font-size: 30px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}

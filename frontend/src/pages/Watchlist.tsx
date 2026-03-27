@@ -104,7 +104,7 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
                 className="edit-watchlist-title-input"
               />
               <button onClick={saveEdit}>Save</button>
-              <button className="trash-btn" onClick={() => deleteWatchlist(watchlist.id)}>
+              <button className="watchlist-trash-btn" onClick={() => deleteWatchlist(watchlist.id)}>
                 <FaTrashAlt />
               </button>
             </>
@@ -125,10 +125,10 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
           <div key={item.id} className="poster-wrapper">
             {editingId === watchlist.id && (
               <button
-                className="trash-btn"
+                className="poster-trash-btn"
                 onClick={() => removeWatchlistItem(watchlist.id, item.id)}
               >
-                <FaTrashAlt />
+                <FaTrashAlt size={22}/>
               </button>
             )}
           </div>
