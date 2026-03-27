@@ -10,11 +10,24 @@ interface WatchlistProps {
 interface Watchlist {
   id: number;
   name: string;
+  items: WatchlistItem[];
+}
+
+interface WatchlistItem {
+  id: number;
+  name: string;
 }
 
 export default function Watchlist({ goToHome }: WatchlistProps) {
   const [watchlists, setWatchlists] = useState<Watchlist[]>([
-    { id: 1, name: "Journey through the Rings"},
+    { id: 1, 
+      name: "Journey through the Rings",
+      items: [
+        { id: 101, name: "The Fellowship of the Ring" },
+        { id: 102, name: "The Two Towers" },
+      ]
+    
+    },
   ]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -23,6 +36,18 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
   const startEdit = (id: number, currentName: string) => {
     setEditingId(id);
     setNewWatchlistName(currentName);
+  }
+
+  const removeWatchlistItem = (watchlistId: number, itemId: number) => {
+    setWatchlists(watchlists.map(w => {
+      if (w.id === watchlistId) {
+        return {
+          ...w,
+          items: w.items.filter(item => item.id !== itemId)
+        };
+      }
+      return w;
+    }));
   }
 
   const deleteWatchlist = (id: number) => {
@@ -96,8 +121,18 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
           )}
         </div>
       <div className="watchlist-content">
-        <div className="poster-wrapper">
-        </div>
+        {watchlist.items.map((item) => (
+          <div key={item.id} className="poster-wrapper">
+            {editingId === watchlist.id && (
+              <button
+                className="trash-btn"
+                onClick={() => removeWatchlistItem(watchlist.id, item.id)}
+              >
+                <FaTrashAlt />
+              </button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
     ))}
