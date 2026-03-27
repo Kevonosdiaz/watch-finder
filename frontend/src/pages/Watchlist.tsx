@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
-import { MdOutlineEdit, MdModeEdit } from "react-icons/md";
+import { MdOutlineEdit } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
 
 interface WatchlistProps {
@@ -24,6 +24,14 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
       name: "Journey through the Rings",
       items: [
         { id: 101, name: "The Fellowship of the Ring" },
+        { id: 102, name: "The Two Towers" },
+        { id: 102, name: "The Two Towers" },
+        { id: 102, name: "The Two Towers" },
+        { id: 102, name: "The Two Towers" },
+        { id: 102, name: "The Two Towers" },
+        { id: 102, name: "The Two Towers" },
+        { id: 102, name: "The Two Towers" },
+        { id: 102, name: "The Two Towers" },
         { id: 102, name: "The Two Towers" },
       ]
     
@@ -93,7 +101,7 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
       <h2>Your Watchlists</h2>
     </div>
     {watchlists.map(watchlist => (
-      <div key={watchlist.id} className="watchlist-card">
+      <div key={watchlist.id} className={`watchlist-card ${editingId === watchlist.id ? "edit-mode" : ""}`}>
         <div className="watchlist-card-header">
           {editingId === watchlist.id ? (
             <>
@@ -122,7 +130,7 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
             </>
           )}
         </div>
-      <div className="watchlist-content">
+      <div className="watchlist-content scroll">
         {watchlist.items.map((item) => (
           <div key={item.id} className="poster-wrapper">
             {editingId === watchlist.id && (
