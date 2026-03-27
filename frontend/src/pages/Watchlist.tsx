@@ -105,7 +105,7 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
               />
               <button onClick={saveEdit}>Save</button>
               <button className="watchlist-trash-btn" onClick={() => deleteWatchlist(watchlist.id)}>
-                <FaTrashAlt />
+                <FaTrashAlt size={22}/>
               </button>
             </>
           ) : (

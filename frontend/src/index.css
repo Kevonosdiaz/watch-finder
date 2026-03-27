@@ -672,3 +672,21 @@ border: none;
     cursor: pointer;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
+
+/* Delete watchlist button */
+.watchlist-trash-btn {
+    position: absolute;
+    bottom: 70px;
+    right: 40px;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: none;
+    background: #f7eaea;
+    color: #a31616;
+    font-size: 30px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
