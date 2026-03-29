@@ -55,6 +55,8 @@ export default function Home({ goToWatchlist }: HomeProps) {
         "South Africa",
     ];
 
+    const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+
     const [search, setSearch] = useState("");
 
     const mockResults: SearchResult[] = useMemo(
@@ -184,7 +186,7 @@ export default function Home({ goToWatchlist }: HomeProps) {
                                 <MdChevronRight />
                             </span>
                         </button>
-                        <button type="button" className="account-item">
+                        <button type="button" className="account-item" onClick={() => setShowLogoutPopup(true)}>
                             <span className="account-left">
                                 <span className="account-item-icon">
                                     <MdLogout />
@@ -290,7 +292,22 @@ export default function Home({ goToWatchlist }: HomeProps) {
             })}
           </div>
         </div>
-      )}
+    )}
+    {showLogoutPopup && (
+        <div className="logout-popup" onClick={() => setShowLogoutPopup(false)}>
+            <div className="logout-popup-card" onClick={(e) => e.stopPropagation()}>
+                <div className="logout-popup-title">Are you sure you want to log out?</div>
+                <div className="logout-actions">
+                    <button className="secondary-logout-btn" onClick={() => setShowLogoutPopup(false)}>
+                        Log out
+                    </button>
+                    <button className="primary-logout-btn" onClick={() => setShowLogoutPopup(false)}>
+                        Cancel
+                    </button>
+                </div>  
+            </div>
+        </div>
+    )}
     </div>
   );
 }
