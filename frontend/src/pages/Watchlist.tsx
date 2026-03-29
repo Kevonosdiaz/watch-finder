@@ -5,6 +5,7 @@ import { IoAddCircleOutline } from "react-icons/io5";
 
 interface WatchlistProps {
   goToHome: () => void;
+  goToWatchdata: (watchlistId: number, titleId: number) => void;
 }
 
 interface Watchlist {
@@ -18,7 +19,7 @@ interface WatchlistItem {
   name: string;
 }
 
-export default function Watchlist({ goToHome }: WatchlistProps) {
+export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
   const [watchlists, setWatchlists] = useState<Watchlist[]>([
     { id: 1, 
       name: "Journey through the Rings",
@@ -120,7 +121,6 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
               <button
                 type="button"
                 className="cancel-edit-btn"
-                aria-label="Cancel edit"
                 onClick={cancelEdit}
               >
                 <MdOutlineCancel size={20} />
@@ -148,6 +148,13 @@ export default function Watchlist({ goToHome }: WatchlistProps) {
       <div className="watchlist-content scroll">
         {watchlist.items.map((item) => (
           <div key={item.id} className="poster-wrapper">
+            <button
+              type="button"
+              className="poster-btn"
+              onClick={() => goToWatchdata(watchlist.id, item.id)}
+              disabled={editingId === watchlist.id}
+            >
+            </button>
             {editingId === watchlist.id && (
               <button
                 className="poster-trash-btn"

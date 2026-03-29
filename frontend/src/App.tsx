@@ -1,14 +1,38 @@
 import { useState } from "react";
 import Home from "./pages/Home";
 import Watchlist from "./pages/Watchlist";
+import Watchdata from "./pages/Watchdata";
+
+type Page = "home" | "watchlist" | "watchdata";
+
+type SelectedWatchlistItem = {
+  watchlistId: number;
+  titleId: number;
+} | null;
 
 function App() {
-  const [page, setPage] = useState<"home" | "watchlist">("home");
-
+  const [page, setPage] = useState<Page>("home");
+  const [selectedTitle, setSeletectedTitle] = useState<SelectedWatchlistItem>(null);
+  const goToWatchdata = (watchlistId: number, titleId: number) => {
+    setSeletectedTitle({ watchlistId, titleId });
+    setPage("watchdata");
+  }
   return (
     <>
       {page === "home" && <Home goToWatchlist={() => setPage("watchlist")} />}
-      {page === "watchlist" && <Watchlist goToHome={() => setPage("home")} />}
+      {page === "watchlist" && 
+        <Watchlist 
+          goToHome={() => setPage("home")}
+          goToWatchdata={goToWatchdata}
+        />
+      }
+      {page === "watchdata" && selectedTitle && (
+        <Watchdata
+          watchlistId={selectedTitle.watchlistId}
+          titleId={selectedTitle.titleId}
+          goBack={() => setPage("watchlist")}
+        />
+      )}
     </>
   );
 }
