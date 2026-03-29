@@ -13,16 +13,18 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
     return (
         <div className="watchdata-container">
             <div className="watchdata-header">
-                <div className="back-btn">
-                    <button onClick={goBack}>
-                        <FaArrowLeft size={24}/>
-                    </button>
+                <div className="watchdata-top">
+                    <div className="back-btn">
+                        <button onClick={goBack}>
+                            <FaArrowLeft size={24}/>
+                        </button>
+                    </div>
+                    <div className="watchdata-header-content">
+                        <div className="header">Add your Watchdata</div>
+                        <div className="subheader">Lord of the Rings: The Fellowship of the Ring</div>
+                    </div>
                 </div>
-                <div className="watchdata-header-content">
-                    <div className="header">Add your Watchdata</div>
-                    <div className="subheader">Lord of the Rings: The Fellowship of the Ring</div>
-                </div>
-                <div className="poster-wrapper"></div>
+                <div className="title-poster"></div>
                 <div className="form-box">
                     <div className="form-label">Completion Status</div>
                     <select
