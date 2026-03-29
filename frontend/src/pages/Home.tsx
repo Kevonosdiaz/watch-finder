@@ -295,15 +295,17 @@ export default function Home({ goToWatchlist }: HomeProps) {
     )}
     {showLogoutPopup && (
         <div className="logout-popup" onClick={() => setShowLogoutPopup(false)}>
-            <div className="logout-popup-title">Are you sure you want to log out?</div>
-            <div className="logout-actions">
-                <button className="secondary-logout-btn" onClick={() => setShowLogoutPopup(false)}>
-                    Log out
-                </button>
-                <button className="primary-logout-btn" onClick={() => setShowLogoutPopup(false)}>
-                    Cancel
-                </button>
-            </div>  
+            <div className="logout-popup-card" onClick={(e) => e.stopPropagation()}>
+                <div className="logout-popup-title">Are you sure you want to log out?</div>
+                <div className="logout-actions">
+                    <button className="secondary-logout-btn" onClick={() => setShowLogoutPopup(false)}>
+                        Log out
+                    </button>
+                    <button className="primary-logout-btn" onClick={() => setShowLogoutPopup(false)}>
+                        Cancel
+                    </button>
+                </div>  
+            </div>
         </div>
     )}
     </div>
