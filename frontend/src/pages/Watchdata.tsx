@@ -1,4 +1,5 @@
-import { FaArrowLeft } from "react-icons/fa";
+import { useState } from "react";
+import { FaArrowLeft, FaRegStar, FaStar } from "react-icons/fa";
 
 interface WatchdataProps {
     watchlistId: number;
@@ -7,6 +8,8 @@ interface WatchdataProps {
 }
 
 export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataProps) {
+    const [rating, setRating] = useState<number>(0);
+    let ratingData = [1,2,3,4,5]
     return (
         <div className="watchdata-container">
             <div className="watchdata-header">
@@ -40,8 +43,17 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                         type="date"
                         className="form-field-input"
                     />
-                    <div className="form-label">Personal rating</div>
-                    
+                    <div className="form-label">Personal rating</div>    
+                    <div className="star-rating">
+                       {ratingData.map((_, index) => {
+                        const starIndex = index + 1
+                        return (
+                            <button key={starIndex} onClick={() => setRating(starIndex)}>
+                                {starIndex <= rating ? <FaStar /> : <FaRegStar />}
+                            </button>
+                        )
+                       })}
+                    </div>
                 </div>
             </div>
         </div>
