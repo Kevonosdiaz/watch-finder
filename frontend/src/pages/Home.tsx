@@ -25,9 +25,10 @@ type SearchResult = {
 
 interface HomeProps {
     goToWatchlist: () => void;
+    goToProfile: () => void;
 }
 
-export default function Home({ goToWatchlist }: HomeProps) {
+export default function Home({ goToWatchlist, goToProfile }: HomeProps) {
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
         setActiveMenu((prev) => (prev === menu ? "none" : menu));
@@ -164,7 +165,7 @@ export default function Home({ goToWatchlist }: HomeProps) {
                 </button>
                 {activeMenu === "account" && (
                     <div className="account-dropdown">
-                        <button type="button" className="account-item">
+                        <button type="button" className="account-item" onClick={() => { setActiveMenu("none"); goToProfile(); }}>
                             <span className="account-left">
                                 <span className="account-item-icon">
                                     <MdOutlineManageAccounts />
