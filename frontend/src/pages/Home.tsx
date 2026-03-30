@@ -186,7 +186,14 @@ export default function Home({ goToWatchlist }: HomeProps) {
                                 <MdChevronRight />
                             </span>
                         </button>
-                        <button type="button" className="account-item" onClick={() => setShowLogoutPopup(true)}>
+                        <button 
+                            type="button" 
+                            className="account-item" 
+                            onClick={() => {
+                                setActiveMenu("none");
+                                setShowLogoutPopup(true);
+                            }}
+                        >
                             <span className="account-left">
                                 <span className="account-item-icon">
                                     <MdLogout />
