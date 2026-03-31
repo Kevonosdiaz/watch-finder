@@ -2,8 +2,9 @@ import { useState } from "react";
 import Home from "./pages/Home";
 import Watchlist from "./pages/Watchlist";
 import Watchdata from "./pages/Watchdata";
+import Password from "./pages/Password";
 
-type Page = "home" | "watchlist" | "watchdata";
+type Page = "home" | "watchlist" | "watchdata" | "password" | "profile";
 
 type SelectedWatchlistItem = {
   watchlistId: number;
@@ -19,13 +20,16 @@ function App() {
   }
   return (
     <>
-      {page === "home" && <Home goToWatchlist={() => setPage("watchlist")} />}
+      {page === "home" && <Home goToWatchlist={() => setPage("watchlist")} goToProfile={() => setPage("profile")} goToPassword={() => setPage("password")} />}
       {page === "watchlist" && 
         <Watchlist 
           goToHome={() => setPage("home")}
           goToWatchdata={goToWatchdata}
         />
       }
+      {page === "password" && (
+        <Password goBack={() => setPage("home")} />
+      )}
       {page === "watchdata" && selectedTitle && (
         <Watchdata
           watchlistId={selectedTitle.watchlistId}
