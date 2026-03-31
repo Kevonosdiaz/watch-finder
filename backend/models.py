@@ -4,7 +4,7 @@ from datetime import UTC, date
 from decimal import Decimal
 from enum import Enum
 
-from sqlalchemy import Date, ForeignKey, Integer, String, Text, DECIMAL, CheckConstraint
+from sqlalchemy import Date, ForeignKey, Integer, String, Text, DECIMAL, CheckConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.mysql import YEAR, BIGINT, SMALLINT, ENUM
 
@@ -28,7 +28,8 @@ class MediaTitles(Base):
                                           autoincrement=True)
     title_name: Mapped[str] = mapped_column("TitleName",
                                             String(255),
-                                            nullable=False)
+                                            nullable=False,
+                                            index=True)
     release_year: Mapped[int | None] = mapped_column("ReleaseYear", YEAR)
     creator: Mapped[str | None] = mapped_column("Creator", String(255))
     age_rating: Mapped[str | None] = mapped_column("AgeRating", String(10))
@@ -180,10 +181,6 @@ class WatchData(Base):
                                           ForeignKey("MEDIA_TITLES.MediaID",
                                                      ondelete="CASCADE"),
                                           primary_key=True)
-    watchdata_id: Mapped[int] = mapped_column("WatchdataID",
-                                              BIGINT(unsigned=True),
-                                              autoincrement=True,
-                                              primary_key=True)
     start_date: Mapped[date | None] = mapped_column("StartDate", Date)
     end_date: Mapped[date | None] = mapped_column("EndDate", Date)
     completion_status: Mapped[CompletionStatus] = mapped_column(
