@@ -213,17 +213,122 @@ code {
 .dropdown-item:active {
     background: #eceef4;
 }
-
-.dropdown-item:focus-visible {
-    outline: 2px solid rgba(170, 59, 255, 0.45);
-    outline-offset: 2px;
+/* Profile + Password shared layout */
+.profile-container {
+    background-color: white;
+    min-height: 100vh;
+    padding: 24px clamp(16px, 3vw, 32px);
+    border-radius: 20px;
 }
 
-/* Top icons on the right */
-.top-icons {
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.profile-header .back-btn button {
+    background: none;
+    border: none;
+    color: #0077C1;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.profile-header-content {
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+    gap: 20px;
+}
+
+.profile-card {
+    padding: 28px 28px;
+    margin-top: 18px;
+    width: 100%;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: calc(100vh - 240px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* keep label and field closer */
+    margin-top: 14px;
+    width: 100%;
+    max-width: 600px;
+    align-items: flex-start;
+}
+
+.form-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #49454F;
+    margin-bottom: 6px;
+}
+
+.form-field-row {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.edit-field-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 22px;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Password-specific tweaks */
+.password-card {
+    padding-bottom: 48px;
+}
+
+.password-card .form-row {
+    margin-bottom: 20px;
+}
+
+.password-card .profile-actions {
+    margin-top: 88px;
+}
+
+.password-card .form-field-input::placeholder {
+    color: #d6d7db;
+}
+
+.password-card .save-btn.primary {
+    background: #0077C1;
+    color: #fff;
+    padding: 15px;
+}
+
+.form-success {
+    color: #0b7a3f;
+    margin-top: 12px;
+    font-weight: 600;
+}
+
+.form-error {
+    color: #a31616;
+    margin-top: 12px;
+    font-weight: 600;
 }
 
 .top-icons {

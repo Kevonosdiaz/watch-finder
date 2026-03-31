@@ -3,8 +3,9 @@ import Home from "./pages/Home";
 import Watchlist from "./pages/Watchlist";
 import Watchdata from "./pages/Watchdata";
 import Profile from "./pages/Profile";
+import Password from "./pages/Password";
 
-type Page = "home" | "watchlist" | "watchdata" | "profile";
+type Page = "home" | "watchlist" | "watchdata" | "password" | "profile";
 
 type SelectedWatchlistItem = {
   watchlistId: number;
@@ -20,7 +21,7 @@ function App() {
   }
   return (
     <>
-      {page === "home" && <Home goToWatchlist={() => setPage("watchlist")} goToProfile={() => setPage("profile")} />}
+      {page === "home" && <Home goToWatchlist={() => setPage("watchlist")} goToProfile={() => setPage("profile")} goToPassword={() => setPage("password")} />}
       {page === "watchlist" && 
         <Watchlist 
           goToHome={() => setPage("home")}
@@ -29,6 +30,9 @@ function App() {
       }
       {page === "profile" && (
         <Profile goToHome={() => setPage("home")} />
+      )}
+      {page === "password" && (
+        <Password goBack={() => setPage("home")} />
       )}
       {page === "watchdata" && selectedTitle && (
         <Watchdata
