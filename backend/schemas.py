@@ -1,4 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
+from typing import List, Optional, Literal
+from datetime import date
 
 # Specify attributes & their types, so FastAPI can validate
 # responses given from API routes ('response_model' is passed)
@@ -51,9 +53,6 @@ class WatchlistBase(BaseModel):
 # What we need specifically to create a watchlist from frontend side
 class WatchlistCreate(WatchlistBase):
     pass
-   # email: str = Field(max_length=255)
-   # id: int
-
 
 # What to include when returning a watchlist to the frontend
 class WatchlistResponse(WatchlistBase):
@@ -62,19 +61,24 @@ class WatchlistResponse(WatchlistBase):
     date_created: str
 
 # Attributes for watchdata
-class WatchdataBase(BaseModel):
-    watchdata_id: int
-    completion_status: str      
-    start_date: str
-    end_date: str
-    personal_rating: int = Field(ge=1, le=5)
+class WatchdataBase(BaseModel):    
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    completion_status: Literal['P', 'W', 'C'] = 'P'
+    personal_rating: Optional[int] = Field(
+        default=None,
+        ge=0,
+        le=5
+    )
 
 # What a user provides when adding watchdata to a media title
 class WatchdataCreate(WatchdataBase):
-    media_id: int
+    pass
 
 # Response for watchdata
 class WatchdataResponse(WatchdataBase):
+    email: str
+    media_id: int
     model_config = ConfigDict(from_attributes=True)
     media_id: int
 
