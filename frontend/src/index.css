@@ -259,11 +259,12 @@ code {
 .form-row {
     display: flex;
     flex-direction: column;
-    gap: 6px; /* keep label and field closer */
+    gap: 6px;
     margin-top: 14px;
     width: 100%;
     max-width: 600px;
     align-items: flex-start;
+    margin-bottom: 20px;
 }
 
 .form-label {
@@ -306,7 +307,7 @@ code {
 }
 
 .password-card .profile-actions {
-    margin-top: 88px;
+    margin-top: 30px;
 }
 
 .password-card .form-field-input::placeholder {
@@ -316,7 +317,7 @@ code {
 .password-card .save-btn.primary {
     background: #0077C1;
     color: #fff;
-    padding: 15px;
+    padding: 20px;
 }
 
 .form-success {
@@ -884,8 +885,7 @@ border: none;
 .save-btn.primary {
     background: #0077C1;
     color: #fff;
-    margin-top: 20px;
-    padding: 10px 18px;
+    padding: 20px;
     border-radius: 12px;
     font-weight: 600;
     box-shadow: 0 8px 16px rgba(0,0,0,0.08);
