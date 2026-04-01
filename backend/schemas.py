@@ -22,7 +22,7 @@ class UserResponse(UserBase):
 
 # Attributes for a media title
 class MediaBase(BaseModel):
-    id: int
+    media_id: int
     title: str = Field(max_length=255)
     release_year: int
     creator: str
@@ -58,7 +58,7 @@ class WatchlistCreate(WatchlistBase):
 # What to include when returning a watchlist to the frontend
 class WatchlistResponse(WatchlistBase):
     model_config = ConfigDict(from_attributes=True)
-    id: int
+    watchlist_id: int
     date_created: str
 
 # Attributes for watchdata
@@ -77,3 +77,12 @@ class WatchdataCreate(WatchdataBase):
 class WatchdataResponse(WatchdataBase):
     model_config = ConfigDict(from_attributes=True)
     media_id: int
+
+# Attributes for a region
+class RegionBase(BaseModel):
+    country_name: str
+
+# Response for region
+class RegionResponse(RegionBase):
+    model_config = ConfigDict(from_attributes=True)
+    region_id: int
