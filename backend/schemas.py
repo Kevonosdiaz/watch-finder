@@ -57,7 +57,7 @@ class WatchlistCreate(WatchlistBase):
 # What to include when returning a watchlist to the frontend
 class WatchlistResponse(WatchlistBase):
     watchlist_id: int
-    date_created: str
+    date_created: date
     model_config = ConfigDict(from_attributes=True)
 
 # Attributes for watchdata
@@ -80,7 +80,6 @@ class WatchdataResponse(WatchdataBase):
     email: str
     media_id: int
     model_config = ConfigDict(from_attributes=True)
-    media_id: int
 
 # Attributes for a region
 class RegionBase(BaseModel):
