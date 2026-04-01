@@ -25,12 +25,12 @@ class UserResponse(UserBase):
 # Attributes for a media title
 class MediaBase(BaseModel):
     media_id: int
-    title: str = Field(max_length=255)
-    release_year: int
-    creator: str
-    age_rating: str = Field(max_length=255)
-    rating: float
-    description: str
+    title_name: str = Field(max_length=255)
+    release_year: Optional[int] = None
+    creator: Optional[str] = None
+    age_rating: Optional[str] = Field(None, max_length=10)
+    rating: Optional[float] = None
+    description: Optional[str] = None
 
 # Attributes for a show
 class Shows(MediaBase):
