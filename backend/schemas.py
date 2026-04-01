@@ -84,8 +84,27 @@ class WatchdataResponse(WatchdataBase):
 
 # Attributes for a region
 class RegionBase(BaseModel):
-    country_name: str
+    country_name: str = Field(max_length=80)
 
 # Response for region
 class RegionResponse(RegionBase):
+    model_config = ConfigDict(from_attributes=True)
+
+# Attributes for a streaming service
+class StreamingServiceBase(BaseModel):
+    streaming_service_name: str = Field(max_length=255)
+    website_url: str = Field(max_length=255)
+
+# Media titles available in a specific region
+class MediaInRegion(BaseModel):
+    region: RegionResponse
+    media_titles: List[MediaResponse]
+
+# Response for streaming service
+class StreamingServiceResponse(StreamingServiceBase):
+    streaming_service_id: int
+    # Shows which media titles are available in which regions
+    media_titles: Optional[List[MediaInRegion]] = []
+    # Shows the region where the streaming service operates in
+    regions: Optional[List[str]] = []
     model_config = ConfigDict(from_attributes=True)
