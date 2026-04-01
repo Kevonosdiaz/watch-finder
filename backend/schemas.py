@@ -5,7 +5,21 @@ from pydantic import BaseModel, ConfigDict, Field
 
 # TODO: Adjust type hints and Field constraints to match database's constraints
 
+# Attributes for a user
+class UserBase(BaseModel):
+    first_name: str
+    last_name: str
+    email: str = Field(max_length=255)
 
+# What a user provides when signing up
+class UserCreate(UserBase):
+    password: str
+
+# Response for a user
+class UserResponse(UserBase):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    
 # Attributes for a media title
 class MediaBase(BaseModel):
     id: int
@@ -36,11 +50,13 @@ class WatchlistBase(BaseModel):
 
 # What we need specifically to create a watchlist from frontend side
 class WatchlistCreate(WatchlistBase):
-    email: str = Field(max_length=255)
-    id: int
+    pass
+   # email: str = Field(max_length=255)
+   # id: int
 
 
 # What to include when returning a watchlist to the frontend
 class WatchlistResponse(WatchlistBase):
     model_config = ConfigDict(from_attributes=True)
+    id: int
     date_added: str
