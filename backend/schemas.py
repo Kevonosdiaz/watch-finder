@@ -11,6 +11,7 @@ from datetime import date
 class UserBase(BaseModel):
     first_name: str
     last_name: str
+    country_name: str
     email: str = Field(max_length=255)
 
 # What a user provides when signing up
@@ -20,7 +21,6 @@ class UserCreate(UserBase):
 # Response for a user
 class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
-    id: int
 
 # Attributes for a media title
 class MediaBase(BaseModel):
