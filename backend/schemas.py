@@ -89,4 +89,3 @@ class RegionBase(BaseModel):
 # Response for region
 class RegionResponse(RegionBase):
     model_config = ConfigDict(from_attributes=True)
-    region_id: int
