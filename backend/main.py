@@ -3,8 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from core.config import settings
+import models
+from database import Base, engine, get_db
 from schemas import MediaBase, WatchlistResponse, WatchlistCreate
+from core.config import settings
+
+# Initialize the DB, if not already done
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Watch Finder API", docs_url="/docs", redoc_url="/redoc")
 

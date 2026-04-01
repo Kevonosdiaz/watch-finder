@@ -189,7 +189,7 @@ class WatchData(Base):
         server_default=CompletionStatus.P.value)
     personal_rating: Mapped[PersonalRating] = mapped_column(
         "PersonalRating",
-        ENUM(PersonalRating),
+        ENUM(PersonalRating, values_callable=lambda x: [e.value for e in x]),
         server_default=PersonalRating.ZERO.value)
 
 
