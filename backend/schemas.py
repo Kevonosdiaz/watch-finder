@@ -16,6 +16,17 @@ class MediaBase(BaseModel):
     rating: float
     description: str
 
+# Attributes for a show
+class Shows(MediaBase):
+    number_of_seasons: int
+
+# Attributes for a movie
+class Movies(MediaBase):
+    duration: int
+
+# Response for a media title
+class MediaResponse(MediaBase):
+    model_config = ConfigDict(from_attributes=True)
 
 # TODO: Update constraints for date to different type
 # Shared attributes used when needing to create/return watchlist
