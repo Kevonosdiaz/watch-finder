@@ -19,7 +19,7 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
-    
+
 # Attributes for a media title
 class MediaBase(BaseModel):
     id: int
@@ -59,4 +59,21 @@ class WatchlistCreate(WatchlistBase):
 class WatchlistResponse(WatchlistBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
-    date_added: str
+    date_created: str
+
+# Attributes for watchdata
+class WatchdataBase(BaseModel):
+    watchdata_id: int
+    completion_status: str      
+    start_date: str
+    end_date: str
+    personal_rating: int = Field(ge=1, le=5)
+
+# What a user provides when adding watchdata to a media title
+class WatchdataCreate(WatchdataBase):
+    media_id: int
+
+# Response for watchdata
+class WatchdataResponse(WatchdataBase):
+    model_config = ConfigDict(from_attributes=True)
+    media_id: int
