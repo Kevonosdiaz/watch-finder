@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 import models
 from database import Base, engine, get_db
-from schemas import MediaResponse, WatchlistResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate, UserResponse, UserCreate
+from schemas import MediaResponse, WatchlistResponse, WatchlistWithMediaResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate, UserResponse, UserCreate
 from core.config import settings
 from datetime import datetime
 
@@ -43,8 +43,8 @@ def create_user(user:UserCreate, db: Annotated[Session, Depends(get_db)]):
     if existing:
         raise HTTPException(status_code=400, detail="User already exists")
     new_user = models.Users(
-        first_name=user.first_name,
-        last_name=user.last_name,
+        firstname=user.firstname,
+        lastname=user.lastname,
         country_name=user.country_name,
         email=user.email,
         password=user.password # TODO: Hash password in production
@@ -78,31 +78,87 @@ def create_watchlist(watchlist: WatchlistCreate, db: Annotated[Session, Depends(
     # Interact with DB to create new watchlist as specified
     new_watchlist = models.Watchlists(
         watchlist_name=watchlist.watchlist_name,
-        date_created=datetime.now()
+        email=watchlist.email, 
+        date_added=datetime.now()
     )
     db.add(new_watchlist)
     db.commit()
     db.refresh(new_watchlist)
     return new_watchlist
 
-# Get all watchlists of given user (for display purposes)
+# Get all watchlists in the db
 @app.get("/api/watchlists", response_model=list[WatchlistResponse])
 def get_watchlists(db: Annotated[Session, Depends(get_db)]):
-    # Get all watchlists for the current user
     watchlists = db.query(models.Watchlists).all()
     return watchlists
 
-# NOTE: Can use {} in route to specify path parameter
-@app.get("/api/watchlist/{list_id}", response_model=WatchlistResponse)
-def get_watchlist(list_id: int, db: Annotated[Session, Depends(get_db)]):
-    # Return contents of specified watchlist
+# Add media titles to a given watchlist for a given user
+@app.post(
+        "/api/watchlist/{list_id}/media/{media_id}",
+        status_code=status.HTTP_201_CREATED
+)
+def add_media_to_watchlist(list_id: int, media_id: int, db: Annotated[Session, Depends(get_db)]):
+    # Check if watchlist exists
     watchlist = db.query(models.Watchlists).filter(models.Watchlists.watchlist_id == list_id).first()
+    if not watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    # Check to see if media title exists
+    media_title = db.query(models.MediaTitles).filter(models.MediaTitles.media_id == media_id).first()
+    if not media_title:
+        raise HTTPException(status_code=404, detail="Media title not found")
+    # Prevent media titles from being added twice in the same watchlist
+    existing = db.query(models.WatchlistContains).filter(models.WatchlistContains.watchlist_id == list_id, models.WatchlistContains.media_id == media_id).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Media title already in watchlist")
+    # Add media title
+    media_title_in_watchlist = models.WatchlistContains(
+        watchlist_id=watchlist.watchlist_id,
+        media_id=media_id
+    )
+    db.add(media_title_in_watchlist)
+    db.commit()
+    db.refresh(media_title_in_watchlist)
+    return media_title_in_watchlist
+
+# Get all watchlists with media titles for a given user
+@app.get("/api/users/{email}/watchlists", response_model=list[WatchlistWithMediaResponse])
+def get_user_watchlist_with_media(email: str, db: Annotated[Session, Depends(get_db)]):
+    watchlists = db.query(models.Watchlists).filter(models.Watchlists.email == email).all()
+    # Return error JSON or HTTPException if not found
+    if not watchlists:
+        return []
+    result = []
+    for watchlist in watchlists:
+        # Get media titles for this watchlist
+        media = db.query(models.MediaTitles).join(models.WatchlistContains, models.MediaTitles.media_id == models.WatchlistContains.media_id).filter(models.WatchlistContains.watchlist_id == watchlist.watchlist_id).all()
+        result.append({
+            "watchlist_id": watchlist.watchlist_id,
+            "email": watchlist.email,
+            "watchlist_name": watchlist.watchlist_name,
+            "date_added": watchlist.date_added,
+            "media": media
+        })
+    return result
+
+# Get a specific watchlist with media titles for a given user
+@app.get("/api/users/{email}/watchlists/{list_id}", response_model=WatchlistWithMediaResponse)
+def get_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_db)]):
+    # Return contents of specified watchlist
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.email == email, models.Watchlists.watchlist_id == list_id).first()
     # Return error JSON or HTTPException if not found
     if not watchlist:
         raise HTTPException(status_code=404, detail="Watchlist not found")
-    return
+    # Get media titles in the watchlist (if any)
+    media = db.query(models.MediaTitles).join(models.WatchlistContains, models.MediaTitles.media_id == models.WatchlistContains.media_id).filter(models.WatchlistContains.watchlist_id == watchlist.watchlist_id).all()
+    return {
+        "watchlist_id": watchlist.watchlist_id,
+        "email": watchlist.email,
+        "watchlist_name": watchlist.watchlist_name,
+        "date_added": watchlist.date_added,
+        "media": media
+    }
 
-# Add watchdata to a media title
+# Add/update watchdata to a media title
 @app.post(
     "/api/watchlist/{list_id}/media/{media_id}/watchdata",
     response_model=WatchdataResponse,
@@ -117,6 +173,27 @@ def add_watchdata(list_id: int, media_id: int, watchdata: WatchdataCreate, db: A
     media_title = db.query(models.MediaTitles).filter(models.MediaTitles.media_id == media_id).first()
     if not media_title:
         raise HTTPException(status_code=404, detail="Media title not found")
+    # Convert personal rating to string for enum
+    rating = (str(watchdata.personal_rating) if watchdata.personal_rating is not None else None)
+    # Check if watchdata for this media title exists already
+    existing = db.query(models.WatchData).filter(models.WatchData.email == watchlist.email, models.WatchData.media_id == media_id).first()
+    if existing:
+        existing.start_date = watchdata.start_date
+        existing.end_date = watchdata.end_date
+        existing.completion_status = watchdata.completion_status
+        existing.personal_rating = rating
+
+        db.commit()
+        db.refresh(existing)
+        return {
+            "email": existing.email,
+            "media_id": existing.media_id,
+            "start_date": existing.start_date,
+            "end_date": existing.end_date,
+            "completion_status": (existing.completion_status.value if hasattr(existing.completion_status, "value") else existing.completion_status),
+            "personal_rating": int(existing.personal_rating.value) if hasattr(existing.personal_rating, "value") else int(existing.personal_rating) if existing.personal_rating is not None else None,
+        }
+
     # Add watchdata
     new_watchdata = models.WatchData(
         email=watchlist.email,
@@ -124,12 +201,20 @@ def add_watchdata(list_id: int, media_id: int, watchdata: WatchdataCreate, db: A
         start_date=watchdata.start_date,
         end_date=watchdata.end_date,
         completion_status=watchdata.completion_status,
-        personal_rating=watchdata.personal_rating
+        personal_rating=rating
     )
+
     db.add(new_watchdata)
     db.commit()
     db.refresh(new_watchdata)
-    return new_watchdata
+    return {
+        "email": new_watchdata.email,
+        "media_id": new_watchdata.media_id,
+        "start_date": new_watchdata.start_date,
+        "end_date": new_watchdata.end_date,
+        "completion_status": (new_watchdata.completion_status.value if hasattr(new_watchdata.completion_status, "value") else new_watchdata.completion_status),
+        "personal_rating": int(new_watchdata.personal_rating.value) if hasattr(new_watchdata.personal_rating, "value") else int(new_watchdata.personal_rating) if new_watchdata.personal_rating is not None else None,
+    }
 
 # Get all watchdata of given user (for display purposes)
 @app.get("/api/watchdata/{email}", response_model=list[WatchdataResponse])
@@ -146,7 +231,17 @@ def get_watchdata_for_media_in_watchlist(watchlist_id: int, media_id: int, db: A
         raise HTTPException(status_code=404, detail="Watchlist not found")
     # Get all WatchData fields for that media title
     watchdata = db.query(models.WatchData).filter(models.WatchData.media_id == media_id, models.WatchData.email == watchlist.email).all()
-    return watchdata
+    result = []
+    for wd in watchdata:
+        result.append({
+            "email": wd.email,
+            "media_id": wd.media_id,
+            "start_date": wd.start_date,
+            "end_date": wd.end_date,
+            "completion_status": (wd.completion_status.value if hasattr(wd.completion_status, "value") else wd.completion_status),
+            "personal_rating": (int(wd.personal_rating.value) if hasattr(wd.personal_rating, "value") else int(wd.personal_rating)) if wd.personal_rating is not None else None,
+        })
+    return result
 
 # TODO: May want to setup exception handler (may just need to tell frontend about error)
 

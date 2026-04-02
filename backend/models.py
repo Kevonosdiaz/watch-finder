@@ -4,7 +4,7 @@ from datetime import UTC, date
 from decimal import Decimal
 from enum import Enum
 
-from sqlalchemy import Date, ForeignKey, Integer, String, Text, DECIMAL, CheckConstraint, func
+from sqlalchemy import Date, ForeignKey, Integer, String, Text, DECIMAL, CheckConstraint, func, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.mysql import YEAR, BIGINT, SMALLINT, ENUM
 
@@ -133,7 +133,7 @@ class Watchlists(Base):
                                                 String(255),
                                                 nullable=False)
     date_added: Mapped[date] = mapped_column(
-        "DateAdded", Date, server_default=func.current_date())
+        "DateAdded", Date, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
 
 
 class WatchlistContains(Base):

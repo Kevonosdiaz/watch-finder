@@ -9,8 +9,8 @@ from datetime import date
 
 # Attributes for a user
 class UserBase(BaseModel):
-    first_name: str
-    last_name: str
+    firstname: str
+    lastname: str
     country_name: str
     email: str = Field(max_length=255)
 
@@ -47,8 +47,8 @@ class MediaResponse(MediaBase):
 # TODO: Update constraints for date to different type
 # Shared attributes used when needing to create/return watchlist
 class WatchlistBase(BaseModel):
+    email: str
     watchlist_name: str = Field(max_length=255)
-
 
 # What we need specifically to create a watchlist from frontend side
 class WatchlistCreate(WatchlistBase):
@@ -57,9 +57,16 @@ class WatchlistCreate(WatchlistBase):
 # What to include when returning a watchlist to the frontend
 class WatchlistResponse(WatchlistBase):
     watchlist_id: int
-    date_created: date
+    date_created: date = Field(alias="date_added")
     model_config = ConfigDict(from_attributes=True)
 
+# Response for watchlist + media titles
+class WatchlistWithMediaResponse(WatchlistBase):
+    watchlist_id: int
+    date_created: date = Field(alias="date_added")
+    media: List[MediaResponse]
+    model_config = ConfigDict(from_attributes=True)
+    
 # Attributes for watchdata
 class WatchdataBase(BaseModel):    
     start_date: Optional[date] = None

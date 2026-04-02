@@ -3,7 +3,7 @@ from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 # Using pymysql as the MySQL driver
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql:///watchfinder"
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://root@localhost:3306/WatchFinderDB"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
