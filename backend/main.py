@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 import models
 from database import Base, engine, get_db
-from schemas import MediaResponse, WatchlistResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate
+from schemas import MediaResponse, WatchlistResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate, UserResponse, UserCreate
 from core.config import settings
 from datetime import datetime
 
@@ -31,6 +31,36 @@ app.add_middleware(CORSMiddleware,
 @app.get("/")
 def home():
     return {"test": "Hello world!"}
+
+# Create a user
+@app.post(
+    "/api/user", 
+    response_model=UserResponse, 
+    status_code=status.HTTP_201_CREATED
+)
+def create_user(user:UserCreate, db: Annotated[Session, Depends(get_db)]):
+    existing = db.query(models.Users).filter(models.Users.email == user.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="User already exists")
+    new_user = models.Users(
+        first_name=user.first_name,
+        last_name=user.last_name,
+        country_name=user.country_name,
+        email=user.email,
+        password=user.password # TODO: Hash password in production
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+# Retrieve a user
+@app.get("/api/users/{email}", response_model=UserResponse)
+def get_user(email: str, db: Annotated[Session, Depends(get_db)]):
+    user = db.query(models.Users).filter(models.Users.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 # Get all media titles in the db
 @app.get("/api/media", response_model=list[MediaResponse])
@@ -66,7 +96,7 @@ def get_watchlists(db: Annotated[Session, Depends(get_db)]):
 @app.get("/api/watchlist/{list_id}", response_model=WatchlistResponse)
 def get_watchlist(list_id: int, db: Annotated[Session, Depends(get_db)]):
     # Return contents of specified watchlist
-    watchlist = db.query(models.Watchlists).filter(models.Watchlists.watchlist_id == list_id.first())
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.watchlist_id == list_id).first()
     # Return error JSON or HTTPException if not found
     if not watchlist:
         raise HTTPException(status_code=404, detail="Watchlist not found")
