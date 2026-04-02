@@ -92,18 +92,6 @@ def get_watchlists(db: Annotated[Session, Depends(get_db)]):
     watchlists = db.query(models.Watchlists).all()
     return watchlists
 
-# NOTE: Can use {} in route to specify path parameter
-@app.get("/api/watchlist/{list_id}", response_model=WatchlistResponse)
-def get_watchlist(list_id: int, db: Annotated[Session, Depends(get_db)]):
-    # Return contents of specified watchlist
-    watchlist = db.query(models.Watchlists).filter(models.Watchlists.watchlist_id == list_id).first()
-    # Return error JSON or HTTPException if not found
-    if not watchlist:
-        raise HTTPException(status_code=404, detail="Watchlist not found")
-    return watchlist
-
-# Get all watchlists for a given user
-
 # Add media titles to a given watchlist for a given user
 @app.post(
         "/api/watchlist/{list_id}/media/{media_id}",
@@ -151,6 +139,24 @@ def get_user_watchlist_with_media(email: str, db: Annotated[Session, Depends(get
             "media": media
         })
     return result
+
+# Get a specific watchlist with media titles for a given user
+@app.get("/api/users/{email}/watchlists/{list_id}", response_model=WatchlistWithMediaResponse)
+def get_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_db)]):
+    # Return contents of specified watchlist
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.email == email, models.Watchlists.watchlist_id == list_id).first()
+    # Return error JSON or HTTPException if not found
+    if not watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    # Get media titles in the watchlist (if any)
+    media = db.query(models.MediaTitles).join(models.WatchlistContains, models.MediaTitles.media_id == models.WatchlistContains.media_id).filter(models.WatchlistContains.watchlist_id == watchlist.watchlist_id).all()
+    return {
+        "watchlist_id": watchlist.watchlist_id,
+        "email": watchlist.email,
+        "watchlist_name": watchlist.watchlist_name,
+        "date_added": watchlist.date_added,
+        "media": media
+    }
 
 # Add watchdata to a media title
 @app.post(
