@@ -43,4 +43,14 @@ npm run dev
 
 2. In the `backend` directory, execute `uv sync` to install dependencies
 
+```bash
+uv sync
+```
+
 3. Start the backend server with `uv run main.py`
+
+```bash
+uv run main.py
+```
+
+4. Open the URL shown in your terminal (e.g. http://localhost:8000)
