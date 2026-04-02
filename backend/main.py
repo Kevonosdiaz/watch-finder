@@ -1,11 +1,15 @@
-from fastapi import FastAPI, HTTPException, Request, status
+from typing import Annotated
+
+from fastapi import FastAPI, HTTPException, Request, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 import models
 from database import Base, engine, get_db
-from schemas import MediaBase, WatchlistResponse, WatchlistCreate
+from schemas import MediaResponse, WatchlistResponse, WatchlistCreate
 from core.config import settings
 
 # Initialize the DB, if not already done
@@ -27,6 +31,11 @@ app.add_middleware(CORSMiddleware,
 def home():
     return {"test": "Hello world!"}
 
+# Get all media titles in the db
+@app.get("/api/media", response_model=list[MediaResponse])
+def get_media_titles(db: Annotated[Session, Depends(get_db)]):
+    media_list = db.query(models.MediaTitles).all()
+    return media_list
 
 @app.post(
     "/api/watchlists",
