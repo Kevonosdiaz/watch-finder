@@ -158,7 +158,7 @@ def get_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_d
         "media": media
     }
 
-# Add watchdata to a media title
+# Add/update watchdata to a media title
 @app.post(
     "/api/watchlist/{list_id}/media/{media_id}/watchdata",
     response_model=WatchdataResponse,
@@ -173,6 +173,27 @@ def add_watchdata(list_id: int, media_id: int, watchdata: WatchdataCreate, db: A
     media_title = db.query(models.MediaTitles).filter(models.MediaTitles.media_id == media_id).first()
     if not media_title:
         raise HTTPException(status_code=404, detail="Media title not found")
+    # Convert personal rating to string for enum
+    rating = (str(watchdata.personal_rating) if watchdata.personal_rating is not None else None)
+    # Check if watchdata for this media title exists already
+    existing = db.query(models.WatchData).filter(models.WatchData.email == watchlist.email, models.WatchData.media_id == media_id).first()
+    if existing:
+        existing.start_date = watchdata.start_date
+        existing.end_date = watchdata.end_date
+        existing.completion_status = watchdata.completion_status
+        existing.personal_rating = rating
+
+        db.commit()
+        db.refresh(existing)
+        return {
+            "email": existing.email,
+            "media_id": existing.media_id,
+            "start_date": existing.start_date,
+            "end_date": existing.end_date,
+            "completion_status": (existing.completion_status.value if hasattr(existing.completion_status, "value") else existing.completion_status),
+            "personal_rating": int(existing.personal_rating.value) if hasattr(existing.personal_rating, "value") else int(existing.personal_rating) if existing.personal_rating is not None else None,
+        }
+
     # Add watchdata
     new_watchdata = models.WatchData(
         email=watchlist.email,
@@ -180,12 +201,20 @@ def add_watchdata(list_id: int, media_id: int, watchdata: WatchdataCreate, db: A
         start_date=watchdata.start_date,
         end_date=watchdata.end_date,
         completion_status=watchdata.completion_status,
-        personal_rating=watchdata.personal_rating
+        personal_rating=rating
     )
+
     db.add(new_watchdata)
     db.commit()
     db.refresh(new_watchdata)
-    return new_watchdata
+    return {
+        "email": new_watchdata.email,
+        "media_id": new_watchdata.media_id,
+        "start_date": new_watchdata.start_date,
+        "end_date": new_watchdata.end_date,
+        "completion_status": (new_watchdata.completion_status.value if hasattr(new_watchdata.completion_status, "value") else new_watchdata.completion_status),
+        "personal_rating": int(new_watchdata.personal_rating.value) if hasattr(new_watchdata.personal_rating, "value") else int(new_watchdata.personal_rating) if new_watchdata.personal_rating is not None else None,
+    }
 
 # Get all watchdata of given user (for display purposes)
 @app.get("/api/watchdata/{email}", response_model=list[WatchdataResponse])
