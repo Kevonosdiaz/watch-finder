@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 import models
 from database import Base, engine, get_db
-from schemas import MediaResponse, WatchlistResponse, WatchlistCreate
+from schemas import MediaResponse, WatchlistResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate
 from core.config import settings
 from datetime import datetime
 
@@ -55,14 +55,12 @@ def create_watchlist(watchlist: WatchlistCreate, db: Annotated[Session, Depends(
     db.refresh(new_watchlist)
     return new_watchlist
 
-
 # Get all watchlists of given user (for display purposes)
 @app.get("/api/watchlists", response_model=list[WatchlistResponse])
 def get_watchlists(db: Annotated[Session, Depends(get_db)]):
     # Get all watchlists for the current user
     watchlists = db.query(models.Watchlists).all()
     return watchlists
-
 
 # NOTE: Can use {} in route to specify path parameter
 @app.get("/api/watchlist/{list_id}", response_model=WatchlistResponse)
@@ -74,6 +72,51 @@ def get_watchlist(list_id: int, db: Annotated[Session, Depends(get_db)]):
         raise HTTPException(status_code=404, detail="Watchlist not found")
     return
 
+# Add watchdata to a media title
+@app.post(
+    "/api/watchlist/{list_id}/media/{media_id}/watchdata",
+    response_model=WatchdataResponse,
+    status_code=status.HTTP_201_CREATED
+)
+def add_watchdata(list_id: int, media_id: int, watchdata: WatchdataCreate, db: Annotated[Session, Depends(get_db)]):
+    # Check to see if watchlist exists
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.watchlist_id == list_id).first()
+    if not watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    # Check to see if media title exists
+    media_title = db.query(models.MediaTitles).filter(models.MediaTitles.media_id == media_id).first()
+    if not media_title:
+        raise HTTPException(status_code=404, detail="Media title not found")
+    # Add watchdata
+    new_watchdata = models.WatchData(
+        email=watchlist.email,
+        media_id=media_id,
+        start_date=watchdata.start_date,
+        end_date=watchdata.end_date,
+        completion_status=watchdata.completion_status,
+        personal_rating=watchdata.personal_rating
+    )
+    db.add(new_watchdata)
+    db.commit()
+    db.refresh(new_watchdata)
+    return new_watchdata
+
+# Get all watchdata of given user (for display purposes)
+@app.get("/api/watchdata/{email}", response_model=list[WatchdataResponse])
+def get_watchdata(email: str, db: Annotated[Session, Depends(get_db)]):
+    watchdata = db.query(models.WatchData).filter(models.WatchData.email == email).all()
+    return watchdata
+
+# Get watchdata for a specific media title for a given user
+@app.get("/api/watchlist/{watchlist_id}/media/{media_id}/watchdata", response_model=list[WatchdataResponse])
+def get_watchdata_for_media_in_watchlist(watchlist_id: int, media_id: int, db: Annotated[Session, Depends(get_db)]):
+    # Check to see if watchlist exists
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.watchlist_id == watchlist_id).first()
+    if not watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    # Get all WatchData fields for that media title
+    watchdata = db.query(models.WatchData).filter(models.WatchData.media_id == media_id, models.WatchData.email == watchlist.email).all()
+    return watchdata
 
 # TODO: May want to setup exception handler (may just need to tell frontend about error)
 
