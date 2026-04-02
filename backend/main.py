@@ -86,10 +86,9 @@ def create_watchlist(watchlist: WatchlistCreate, db: Annotated[Session, Depends(
     db.refresh(new_watchlist)
     return new_watchlist
 
-# Get all watchlists of given user (for display purposes)
+# Get all watchlists in the db
 @app.get("/api/watchlists", response_model=list[WatchlistResponse])
 def get_watchlists(db: Annotated[Session, Depends(get_db)]):
-    # Get all watchlists for the current user
     watchlists = db.query(models.Watchlists).all()
     return watchlists
 
@@ -102,6 +101,36 @@ def get_watchlist(list_id: int, db: Annotated[Session, Depends(get_db)]):
     if not watchlist:
         raise HTTPException(status_code=404, detail="Watchlist not found")
     return watchlist
+
+# Get all watchlists for a given user
+
+# Add media titles to a given watchlist for a given user
+@app.post(
+        "/api/watchlist/{list_id}/media/{media_id}",
+        status_code=status.HTTP_201_CREATED
+)
+def add_media_to_watchlist(list_id: int, media_id: int, db: Annotated[Session, Depends(get_db)]):
+    # Check if watchlist exists
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.watchlist_id == list_id).first()
+    if not watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    # Check to see if media title exists
+    media_title = db.query(models.MediaTitles).filter(models.MediaTitles.media_id == media_id).first()
+    if not media_title:
+        raise HTTPException(status_code=404, detail="Media title not found")
+    # Prevent media titles from being added twice in the same watchlist
+    existing = db.query(models.WatchlistContains).filter(models.WatchlistContains.watchlist_id == list_id, models.WatchlistContains.media_id == media_id).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Media title already in watchlist")
+    # Add media title
+    media_title_in_watchlist = models.WatchlistContains(
+        watchlist_id=watchlist.watchlist_id,
+        media_id=media_id
+    )
+    db.add(media_title_in_watchlist)
+    db.commit()
+    db.refresh(media_title_in_watchlist)
+    return media_title_in_watchlist
 
 # Add watchdata to a media title
 @app.post(
