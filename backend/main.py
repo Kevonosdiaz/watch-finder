@@ -11,6 +11,7 @@ import models
 from database import Base, engine, get_db
 from schemas import MediaResponse, WatchlistResponse, WatchlistCreate
 from core.config import settings
+from datetime import datetime
 
 # Initialize the DB, if not already done
 Base.metadata.create_all(bind=engine)
@@ -37,29 +38,40 @@ def get_media_titles(db: Annotated[Session, Depends(get_db)]):
     media_list = db.query(models.MediaTitles).all()
     return media_list
 
+# Create a new watchlist
 @app.post(
     "/api/watchlists",
     response_model=WatchlistResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def create_watchlist(watchlist: WatchlistCreate):
+def create_watchlist(watchlist: WatchlistCreate, db: Annotated[Session, Depends(get_db)]):
     # Interact with DB to create new watchlist as specified
-    return
+    new_watchlist = models.Watchlists(
+        watchlist_name=watchlist.watchlist_name,
+        date_created=datetime.now()
+    )
+    db.add(new_watchlist)
+    db.commit()
+    db.refresh(new_watchlist)
+    return new_watchlist
 
 
 # Get all watchlists of given user (for display purposes)
 @app.get("/api/watchlists", response_model=list[WatchlistResponse])
-def get_watchlists():
+def get_watchlists(db: Annotated[Session, Depends(get_db)]):
     # Get all watchlists for the current user
-    return
+    watchlists = db.query(models.Watchlists).all()
+    return watchlists
 
 
 # NOTE: Can use {} in route to specify path parameter
 @app.get("/api/watchlist/{list_id}", response_model=WatchlistResponse)
-def get_watchlist(list_id: int):
-    # Make use of list_id parameter for lookup
+def get_watchlist(list_id: int, db: Annotated[Session, Depends(get_db)]):
     # Return contents of specified watchlist
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.watchlist_id == list_id.first())
     # Return error JSON or HTTPException if not found
+    if not watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
     return
 
 
