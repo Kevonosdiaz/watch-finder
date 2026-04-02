@@ -231,7 +231,17 @@ def get_watchdata_for_media_in_watchlist(watchlist_id: int, media_id: int, db: A
         raise HTTPException(status_code=404, detail="Watchlist not found")
     # Get all WatchData fields for that media title
     watchdata = db.query(models.WatchData).filter(models.WatchData.media_id == media_id, models.WatchData.email == watchlist.email).all()
-    return watchdata
+    result = []
+    for wd in watchdata:
+        result.append({
+            "email": wd.email,
+            "media_id": wd.media_id,
+            "start_date": wd.start_date,
+            "end_date": wd.end_date,
+            "completion_status": (wd.completion_status.value if hasattr(wd.completion_status, "value") else wd.completion_status),
+            "personal_rating": (int(wd.personal_rating.value) if hasattr(wd.personal_rating, "value") else int(wd.personal_rating)) if wd.personal_rating is not None else None,
+        })
+    return result
 
 # TODO: May want to setup exception handler (may just need to tell frontend about error)
 
