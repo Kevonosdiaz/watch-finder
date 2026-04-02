@@ -50,7 +50,6 @@ class WatchlistBase(BaseModel):
     email: str
     watchlist_name: str = Field(max_length=255)
 
-
 # What we need specifically to create a watchlist from frontend side
 class WatchlistCreate(WatchlistBase):
     pass
@@ -61,6 +60,13 @@ class WatchlistResponse(WatchlistBase):
     date_created: date = Field(alias="date_added")
     model_config = ConfigDict(from_attributes=True)
 
+# Response for watchlist + media titles
+class WatchlistWithMediaResponse(WatchlistBase):
+    watchlist_id: int
+    date_created: date = Field(alias="date_added")
+    media: List[MediaResponse]
+    model_config = ConfigDict(from_attributes=True)
+    
 # Attributes for watchdata
 class WatchdataBase(BaseModel):    
     start_date: Optional[date] = None

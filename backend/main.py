@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 import models
 from database import Base, engine, get_db
-from schemas import MediaResponse, WatchlistResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate, UserResponse, UserCreate
+from schemas import MediaResponse, WatchlistResponse, WatchlistWithMediaResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate, UserResponse, UserCreate
 from core.config import settings
 from datetime import datetime
 
@@ -131,6 +131,26 @@ def add_media_to_watchlist(list_id: int, media_id: int, db: Annotated[Session, D
     db.commit()
     db.refresh(media_title_in_watchlist)
     return media_title_in_watchlist
+
+# Get all watchlists with media titles for a given user
+@app.get("/api/users/{email}/watchlists", response_model=list[WatchlistWithMediaResponse])
+def get_user_watchlist_with_media(email: str, db: Annotated[Session, Depends(get_db)]):
+    watchlists = db.query(models.Watchlists).filter(models.Watchlists.email == email).all()
+    # Return error JSON or HTTPException if not found
+    if not watchlists:
+        return []
+    result = []
+    for watchlist in watchlists:
+        # Get media titles for this watchlist
+        media = db.query(models.MediaTitles).join(models.WatchlistContains, models.MediaTitles.media_id == models.WatchlistContains.media_id).filter(models.WatchlistContains.watchlist_id == watchlist.watchlist_id).all()
+        result.append({
+            "watchlist_id": watchlist.watchlist_id,
+            "email": watchlist.email,
+            "watchlist_name": watchlist.watchlist_name,
+            "date_added": watchlist.date_added,
+            "media": media
+        })
+    return result
 
 # Add watchdata to a media title
 @app.post(
