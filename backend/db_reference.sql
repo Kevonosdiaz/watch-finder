@@ -78,7 +78,7 @@ CREATE TABLE WATCHLISTS (
     Email           VARCHAR(255)    NOT NULL,
     WatchlistName   VARCHAR(255)    NOT NULL,
     WatchlistID     SERIAL          ,
-    DateAdded       DATE            DEFAULT CURRENT_DATE(),
+    DateAdded       DATE            NOT NULL,
     PRIMARY KEY (WatchlistID),
     FOREIGN KEY (Email) REFERENCES USERS(Email) ON DELETE CASCADE
 );
@@ -194,7 +194,10 @@ VALUES
 INSERT INTO SUBSCRIBED_TO (Email, StreamingServiceName)
 VALUES ('alice@email.com', 'Netflix'), ('john2@email.com', 'Prime Video');
 
-INSERT INTO WATCHLISTS (Email) VALUES ('alice@email.com'), ('john2@email.com');
+INSERT INTO WATCHLISTS (Email, WatchlistName, DateAdded) 
+VALUES 
+    ('alice@email.com', 'Alices Watchlist', CURDATE()), 
+    ('john2@email.com', 'Johns Watchlist', CURDATE());
 
 INSERT INTO WATCHLIST_CONTAINS (WatchlistID, MediaID) 
 VALUES 
@@ -202,7 +205,7 @@ VALUES
     (2, 4);
 
 INSERT INTO WATCHDATA (Email, MediaID, StartDate, CompletionStatus, PersonalRating)
-VALUES ('john2@email.com', 4, '2026-03-19', 'W', 9);
+VALUES ('john2@email.com', 4, '2026-03-19', 'W', 5);
 
 INSERT INTO MANAGES (MediaID, AdminID) VALUES (1, 1), (2, 1), (3, 1), (4, 2), (5, 2), (6, 2);
 
@@ -221,7 +224,7 @@ WHERE A.CountryName = 'Canada' AND M.MediaID = A.MediaID;
 UPDATE WATCHDATA 
 SET CompletionStatus = 'C', 
     EndDate = '2026-03-19', 
-    PersonalRating = 10
+    PersonalRating = 5
 WHERE Email = 'john2@email.com' AND MediaID = 4;
 
 -- Increment number of seasons of a given show, using its title
