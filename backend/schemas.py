@@ -9,8 +9,8 @@ from datetime import date
 
 # Attributes for a user
 class UserBase(BaseModel):
-    first_name: str
-    last_name: str
+    firstname: str
+    lastname: str
     country_name: str
     email: str = Field(max_length=255)
 

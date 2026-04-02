@@ -43,8 +43,8 @@ def create_user(user:UserCreate, db: Annotated[Session, Depends(get_db)]):
     if existing:
         raise HTTPException(status_code=400, detail="User already exists")
     new_user = models.Users(
-        first_name=user.first_name,
-        last_name=user.last_name,
+        firstname=user.firstname,
+        lastname=user.lastname,
         country_name=user.country_name,
         email=user.email,
         password=user.password # TODO: Hash password in production
