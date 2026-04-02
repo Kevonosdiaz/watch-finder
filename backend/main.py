@@ -220,7 +220,17 @@ def add_watchdata(list_id: int, media_id: int, watchdata: WatchdataCreate, db: A
 @app.get("/api/watchdata/{email}", response_model=list[WatchdataResponse])
 def get_watchdata(email: str, db: Annotated[Session, Depends(get_db)]):
     watchdata = db.query(models.WatchData).filter(models.WatchData.email == email).all()
-    return watchdata
+    result = []
+    for wd in watchdata:
+        result.append({
+            "email": wd.email,
+            "media_id": wd.media_id,
+            "start_date": wd.start_date,
+            "end_date": wd.end_date,
+            "completion_status": (wd.completion_status.value if hasattr(wd.completion_status, "value") else wd.completion_status),
+            "personal_rating": (int(wd.personal_rating.value) if hasattr(wd.personal_rating, "value") else int(wd.personal_rating)) if wd.personal_rating is not None else None,
+        })
+    return result
 
 # Get watchdata for a specific media title for a given user
 @app.get("/api/watchlist/{watchlist_id}/media/{media_id}/watchdata", response_model=list[WatchdataResponse])
