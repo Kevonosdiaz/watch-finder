@@ -78,7 +78,8 @@ def create_watchlist(watchlist: WatchlistCreate, db: Annotated[Session, Depends(
     # Interact with DB to create new watchlist as specified
     new_watchlist = models.Watchlists(
         watchlist_name=watchlist.watchlist_name,
-        date_created=datetime.now()
+        email=watchlist.email, 
+        date_added=datetime.now()
     )
     db.add(new_watchlist)
     db.commit()

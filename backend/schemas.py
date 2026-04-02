@@ -47,6 +47,7 @@ class MediaResponse(MediaBase):
 # TODO: Update constraints for date to different type
 # Shared attributes used when needing to create/return watchlist
 class WatchlistBase(BaseModel):
+    email: str
     watchlist_name: str = Field(max_length=255)
 
 
@@ -57,7 +58,7 @@ class WatchlistCreate(WatchlistBase):
 # What to include when returning a watchlist to the frontend
 class WatchlistResponse(WatchlistBase):
     watchlist_id: int
-    date_created: date
+    date_created: date = Field(alias="date_added")
     model_config = ConfigDict(from_attributes=True)
 
 # Attributes for watchdata
