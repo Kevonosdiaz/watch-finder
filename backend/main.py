@@ -101,7 +101,7 @@ def get_watchlist(list_id: int, db: Annotated[Session, Depends(get_db)]):
     # Return error JSON or HTTPException if not found
     if not watchlist:
         raise HTTPException(status_code=404, detail="Watchlist not found")
-    return
+    return watchlist
 
 # Add watchdata to a media title
 @app.post(
