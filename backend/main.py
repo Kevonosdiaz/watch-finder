@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import FastAPI, HTTPException, Request, status, Depends
+from fastapi import FastAPI, HTTPException, Request, status, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -67,6 +67,24 @@ def get_user(email: str, db: Annotated[Session, Depends(get_db)]):
 def get_media_titles(db: Annotated[Session, Depends(get_db)]):
     media_list = db.query(models.MediaTitles).all()
     return media_list
+
+# Get all media titles by region with search query
+@app.get("/api/regions/{region}/media", response_model=list[MediaResponse])
+def get_media_in_region(region: str, db: Annotated[Session, Depends(get_db)], search: str | None = Query(None, description="Filter by title name")):
+    # Check to see if a region exists
+    region_exists = db.query(models.Regions).filter(models.Regions.country_name == region).first()
+    if not region_exists:
+        raise HTTPException(status_code=404, detail="Region not found")
+    query = (
+        db.query(models.MediaTitles)
+        .join(models.AvailableIn, models.AvailableIn.media_id == models.MediaTitles.media_id)
+        .filter(models.AvailableIn.country_name == region)
+    )
+    # Apply search filter
+    if search:
+        query = query.filter(models.MediaTitles.title_name.ilike(f"%{search}%")) 
+    media = query.order_by(models.MediaTitles.title_name).all()
+    return media
 
 # Create a new watchlist
 @app.post(
