@@ -91,8 +91,13 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
     });
   };
     
-  const deleteWatchlist = (id: number) => {
-    setWatchlists(watchlists.filter(w => w.id !== id));
+  const deleteWatchlist = async (watchlistId: number) => {
+    try {
+      await api(`/api/users/${email}/watchlists/${watchlistId}`, { method: "DELETE" });
+      setWatchlists(prev => prev.filter(w => w.id !== watchlistId));
+    } catch (err) {
+      console.error("Failed to delete watchlist", err)
+    }
   }
 
   const saveEdit = async () => {
