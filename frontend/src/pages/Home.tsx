@@ -105,8 +105,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
             setSearchError("Search failed");
             } finally {
             setIsSearching(false);
-            }
-            
+            }  
         }
 
         fetchResults();
@@ -225,9 +224,9 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
                 <FaSearch />
             </div>
         </div>
-        {results.length > 0 && (
+        {results.length > 0 ? (
             <div className="results-card">
-            <div className="results-list">
+            <div className="results-list scrollable">
             {results.map((item) => {
                 const isOpen = expandedId === item.id;
 
@@ -302,7 +301,15 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
             })}
           </div>
         </div>
-    )}
+        ) : (
+            search.trim() && !isSearching && (
+                <div className="no-results">
+                    <h2>No results found for "{search}" in {region}</h2>
+                    <p>Try switching regions or searching for another title.</p>
+                </div>
+            )
+        )
+    }
     {showLogoutPopup && (
         <div className="logout-popup" onClick={() => setShowLogoutPopup(false)}>
             <div className="logout-popup-card" onClick={(e) => e.stopPropagation()}>
