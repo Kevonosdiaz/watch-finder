@@ -47,7 +47,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
             name: wl.watchlist_name,
             email: wl.email,
             date_created: wl.date_added,
-            items: wl.media.map((m: any) => ({
+            items: (wl.media ?? []).map((m: any) => ({
               id: m.media_id,
               title: m.title_name,
               year: m.release_year,
@@ -68,11 +68,13 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
     fetchWatchlists();
   }, [email]);
 
+  const [editWatchlistName, setEditWatchlistName] = useState("");
+
   const createWatchlist = async (watchlistName: string) => {
     if (!watchlistName.trim()) return; 
 
     try {
-      const newWatchlist = await api<Watchlist>(
+      const newWatchlist = await api<any>(
         `/api/users/${email}/watchlists`,
         {
           method: "POST",
@@ -83,13 +85,16 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
         }
       );
 
-      setWatchlists(prev => [...prev, {
-        id: newWatchlist.id,
-        name: newWatchlist.name,
+      // Newly created watchlists will show up at the top
+      setWatchlists(prev => [ {
+        id: newWatchlist.watchlist_id,
+        name: newWatchlist.watchlist_name,
         email: email,
-        date_created: newWatchlist.date_created,
+        date_created: newWatchlist.date_added,
         items: []
-      }])
+      },
+      ...prev,
+    ]);
     } catch (err) {
       console.error("Failed to create watchlist", err);
     }  
@@ -101,7 +106,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
   
   const startEdit = (id: number, currentName: string, items: Media[]) => {
     setEditingId(id);
-    setNewWatchlistName(currentName);
+    setEditWatchlistName(currentName);
     // Keep track of edits
     setEditingItems(prev => new Map(prev).set(id, [...items]));
   }
