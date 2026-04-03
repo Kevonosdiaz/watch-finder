@@ -117,7 +117,7 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                        {ratingData.map((_, index) => {
                         const starIndex = index + 1
                         return (
-                            <button key={starIndex} onClick={() => setRating(starIndex)}>
+                            <button key={starIndex} onClick={() => setRating(prev => (prev === starIndex ? 0 : starIndex))}>
                                 {starIndex <= rating ? <FaStar /> : <FaRegStar />}
                             </button>
                         )
