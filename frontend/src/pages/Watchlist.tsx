@@ -70,50 +70,78 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newWatchlistName, setNewWatchlistName] = useState("");
+  const [editingItems, setEditingItems] = useState<Map<number, Media[]>>(new Map());
   
-  const startEdit = (id: number, currentName: string) => {
+  const startEdit = (id: number, currentName: string, items: Media[]) => {
     setEditingId(id);
     setNewWatchlistName(currentName);
+    // Keep track of edits
+    setEditingItems(prev => new Map(prev).set(id, [...items]));
   }
-
-  const removeWatchlistItem = async (watchlistId: number, itemId: number) => {
-    try {
-      await api(
-        `/api/watchlists/${watchlistId}/media/${itemId}`,
-        { method: "DELETE"}
+  
+  const removeWatchlistItem = (watchlistId: number, itemId: number) => {
+    setEditingItems(prev => {
+      const copy = new Map(prev);
+      const currentItems = copy.get(watchlistId) ?? [];
+      copy.set(
+        watchlistId,
+        currentItems.filter(item => item.id !== itemId)
       );
-
-      setWatchlists(watchlists.map(w => {
-        if (w.id === watchlistId) {
-          return {
-            ...w,
-            items: w.items.filter(item => item.id !== itemId)
-          };
-        }
-        return w;
-      }));
-    } catch (err) {
-      console.error("Failed to remove item", err);
-    }
-  }    
+      return copy;
+    });
+  };
     
   const deleteWatchlist = (id: number) => {
     setWatchlists(watchlists.filter(w => w.id !== id));
   }
 
-  const saveEdit = () => {
-    setWatchlists(
-      watchlists.map(w => 
-        w.id === editingId ? { ...w, name: newWatchlistName } : w
-      )
-    );
-    setEditingId(null);
-    setNewWatchlistName("");
-  }
+  const saveEdit = async () => {
+    if (editingId == null) return;
+
+    const updatedItems = editingItems.get(editingId) ?? [];
+
+    try {
+      // Find the original watchlist with media titles
+      const original = watchlists.find(w => w.id === editingId);
+      const removed = original!.items.filter(
+        item => !updatedItems.some(u => u.id === item.id)
+      );
+
+      // Delete removed items from backend
+      for (const item of removed) {
+        await api(`/api/watchlists/${editingId}/media/${item.id}`, { method: "DELETE" });
+      }
+
+      // Update frontend
+      setWatchlists(prev =>
+        prev.map(w =>
+          w.id === editingId
+            ? { ...w, name: newWatchlistName, items: updatedItems }
+            : w
+        )
+      );
+
+      setEditingId(null);
+      setNewWatchlistName("");
+      setEditingItems(prev => {
+        const updatedWatchlist = new Map(prev);
+        updatedWatchlist.delete(editingId);
+        return updatedWatchlist;
+    });
+    } catch (err) {
+      console.error("Failed to save watchlist edits", err);
+    }
+  };
 
   const cancelEdit = () => {
     setEditingId(null);
     setNewWatchlistName("");
+    // Reset editing state
+    setEditingItems(prev => {
+      const newMap = new Map(prev);
+      if (editingId) newMap.delete(editingId);
+      return newMap;
+    });
   };
   
   return (
@@ -176,7 +204,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
               <h3>{watchlist.name}</h3>
               <button 
                 className="edit-btn"
-                onClick={() => startEdit(watchlist.id, watchlist.name)}
+                onClick={() => startEdit(watchlist.id, watchlist.name, watchlist.items)}
               >
                 <MdOutlineEdit size={18}/>
               </button>
@@ -184,7 +212,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
           )}
         </div>
       <div className="watchlist-content scroll">
-        {watchlist.items.map((item) => (
+        {(editingId === watchlist.id ? (editingItems.get(watchlist.id) ?? []) : watchlist.items).map((item) => (
           <div key={item.id} className="poster-wrapper">
             <button
               type="button"
