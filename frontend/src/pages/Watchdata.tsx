@@ -17,6 +17,13 @@ interface Watchdata {
     personal_rating?: number;
 }
 
+type MediaTitle = {
+  media_id: number;
+  title_name: string;
+  poster_url?: string | null;
+};
+
+
 export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataProps) {
     const [watchdata, setWatchdata] = useState<Watchdata | null>(null);
     const [completionStatus, setCompletionStatus] = useState("");
@@ -24,6 +31,7 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
     const [endDate, setEndDate] = useState("");
     const [rating, setRating] = useState<number>(0);
     let ratingData = [1,2,3,4,5]
+    const [media, setMedia] = useState<MediaTitle | null>(null);
 
     useEffect(() => {
         const fetchWatchdata = async () => {
@@ -32,7 +40,7 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                     `/api/watchlist/${watchlistId}/media/${titleId}/watchdata`
                 );
 
-                // WDisplay watchdata
+                // Display watchdata
                 const data = result?.[0] ?? null;
 
                 if (!data) return;
@@ -42,9 +50,14 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                 setStartDate(data.start_date ?? "");
                 setEndDate(data.end_date ?? "");
                 setRating(data?.personal_rating ?? 0);
-                console.log("WATCHDATA RAW:", data);
+                
+                const mediaTitle = await api<any>(
+                    `/api/media/${data.media_id}`
+                );
+
+                setMedia(mediaTitle);
             } catch (err) {
-                console.error("Failed to fetch watchdata", err);
+                console.error("Failed to load watchdata", err);
             }
         };
         fetchWatchdata();
@@ -82,7 +95,9 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                     </div>
                     <div className="watchdata-header-content">
                         <div className="header">Add your Watchdata</div>
-                        <div className="subheader">Lord of the Rings: The Fellowship of the Ring</div>
+                        <div className="subheader">
+                            {media?.title_name ?? "Loading title..."}
+                        </div>
                     </div>
                 </div>
                 <div className="title-poster"></div>
