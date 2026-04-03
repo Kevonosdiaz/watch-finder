@@ -531,6 +531,24 @@ border: none;
 }
 
 /* Search results */
+
+.no-results {
+    width: 100%;
+    max-width: 860px;
+    margin: 18px auto 0;
+    border-radius: 20px;
+    padding: 10px 12px; 
+    text-align: center;
+}
+
+.no-results h2 {
+    font-size: 16px;
+}
+
+.no-results p {
+    font-size: 13px;
+}
+
 .results-card {
     width: 100%;
     max-width: 860px;
