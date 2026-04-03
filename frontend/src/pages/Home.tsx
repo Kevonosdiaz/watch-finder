@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { api } from "../api/Client";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle } from "react-icons/fa";
 import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd } from "react-icons/md";
 import logo from "../assets/watch-finder-logo.png";
@@ -6,21 +7,22 @@ import logo from "../assets/watch-finder-logo.png";
 type ActiveMenu = "none" | "region" | "account";
 
 type StreamingPlatform = {
-  name: string;
-  logoUrl?: string;
+    name: string;
+    logoUrl?: string;
 };
 
 type SearchResult = {
-  id: number;
-  title: string;
-  year: number;
-  criticsScore?: number;
-  rating?: string;
-  kind: "Movie" | "TV";
-  runtime?: string;
-  synopsis?: string;
-  posterUrl: string;
-  providers: StreamingPlatform[];
+    id: number;
+    title: string;
+    year: number;
+    criticsScore?: number;
+    rating?: string;
+    kind: "Movie" | "TV";
+    runtime?: string;
+    creator?: string;
+    synopsis?: string;
+    posterUrl: string;
+    providers: StreamingPlatform[];
 };
 
 interface HomeProps {
@@ -60,57 +62,52 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
     const [showLogoutPopup, setShowLogoutPopup] = useState(false);
 
     const [search, setSearch] = useState("");
+    const [results, setResults] = useState<SearchResult[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchError, setSearchError] = useState<string | null>(null);
 
-    const mockResults: SearchResult[] = useMemo(
-        () => [
-        {
-            id: 1,
-            title: "The Lord of the Rings: The Fellowship of the Ring",
-            year: 2001,
-            criticsScore: 91,
-            rating: "PG-13",
-            kind: "Movie",
-            runtime: "2h 58m",
-            synopsis:
-            "A young hobbit named Frodo inherits a powerful ring and must leave the Shire to destroy it before evil forces reclaim it.",
-            posterUrl: "https://m.media-amazon.com/images/I/51Qvs9i5a%2BL._AC_.jpg",
-            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
-        },
-        {
-            id: 2,
-            title: "The Lord of the Rings: The Two Towers",
-            year: 2002,
-            criticsScore: 95,
-            rating: "PG-13",
-            kind: "Movie",
-            runtime: "2h 59m",
-            synopsis:
-            "The Fellowship is split, and the quest continues as war grows across Middle-earth.",
-            posterUrl: "https://m.media-amazon.com/images/I/51gVJZQpY2L._AC_.jpg",
-            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
-        },
-        {
-            id: 3,
-            title: "The Lord of the Rings: The Return of the King",
-            year: 2003,
-            criticsScore: 94,
-            rating: "PG-13",
-            kind: "Movie",
-            runtime: "3h 21m",
-            synopsis:
-            "The final battle begins as Frodo and Sam reach Mount Doom and the fate of Middle-earth is decided.",
-            posterUrl: "https://m.media-amazon.com/images/I/51QYJbS4LhL._AC_.jpg",
-            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
-        },
-        ],
-        []
-    );
+    useEffect(() => {
+        if (!search.trim()) {
+            setResults([]);
+            return;
+        }
 
-    const results = useMemo(() => {
-        const q = search.trim().toLowerCase();
-        if (!q) return [];
-        return mockResults.filter((r) => r.title.toLowerCase().includes(q));
-    }, [search, mockResults]);
+        async function fetchResults() {
+            try {
+            setIsSearching(true);
+            // API call with search query
+            const queryParam = search.trim() ? `?search=${encodeURIComponent(search)}` : "";
+            const data = await api<SearchResult[]>(
+                `/api/regions/${region}/media${queryParam}`
+            );
+            
+            // Backend mapping to frontend state
+            setResults(
+                data.map((m: any) => ({
+                    id: m.media_id ?? 0,
+                    title: m.title_name ?? "Unknown",
+                    year: m.release_year ?? 0,
+                    kind: (m.kind ?? "Movie") as "Movie" | "TV",
+                    posterUrl: m.posterUrl ?? "",
+                    providers: m.providers ?? [],
+                    criticsScore: m.rating ?? 0,
+                    rating: m.age_rating ?? 0,
+                    runtime: m.runtime,
+                    creator: m.creator,
+                    synopsis: m.description,
+                }))
+            );
+
+            } catch {
+            setSearchError("Search failed");
+            } finally {
+            setIsSearching(false);
+            }
+            
+        }
+
+        fetchResults();
+    }, [search, region]);
 
     const joinDot = (parts: Array<string | null | undefined>) =>
         parts.filter(Boolean).join(" • ");
@@ -240,6 +237,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
                 const runtimeLine = joinDot([
                     item.kind,
                     item.runtime ? `(${item.runtime})` : null,
+                    item.creator ? `Creator: ${item.creator}` : null,
                 ]);
 
             return (
