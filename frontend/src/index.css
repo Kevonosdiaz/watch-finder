@@ -1021,7 +1021,7 @@ border: none;
 /* Save button */
 .save-btn {
     padding: 8px 16px;
-    border-radius: 12px;
+    border-radius: 999px;
     border: none;
     background-color: #4d9129;
     color: white;
