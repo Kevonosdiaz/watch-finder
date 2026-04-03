@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { api } from "../api/Client";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle } from "react-icons/fa";
 import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd } from "react-icons/md";
 import logo from "../assets/watch-finder-logo.png";
@@ -61,7 +62,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
 
     const [search, setSearch] = useState("");
 
-    const mockResults: SearchResult[] = useMemo(
+    /*const mockResults: SearchResult[] = useMemo(
         () => [
         {
             id: 1,
@@ -111,6 +112,50 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
         if (!q) return [];
         return mockResults.filter((r) => r.title.toLowerCase().includes(q));
     }, [search, mockResults]);
+*/
+    const [results, setResults] = useState<SearchResult[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchError, setSearchError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!search.trim()) {
+            setResults([]);
+            return;
+        }
+
+        async function fetchResults() {
+            try {
+            setIsSearching(true);
+            const data = await api<SearchResult[]>(
+                `/api/media?query=${search}&region=${region}`
+            );
+            
+            setResults(
+                data.map((m: any) => ({
+                    id: m.media_id ?? 0, // map backend id
+                    title: m.title_name ?? "Unknown", // map backend title
+                    year: m.release_year ?? 0,
+                    kind: (m.kind ?? "Movie") as "Movie" | "TV",
+                    posterUrl: m.posterUrl ?? "", // adjust if API uses different name
+                    providers: m.providers ?? [],
+                    criticsScore: m.rating ?? 0,
+                    rating: m.age_rating ?? 0,
+                    runtime: m.runtime,
+                    creator: m.creator,
+                    synopsis: m.description,
+                }))
+            );
+
+            } catch {
+            setSearchError("Search failed");
+            } finally {
+            setIsSearching(false);
+            }
+            
+        }
+
+        fetchResults();
+    }, [search, region]);
 
     const joinDot = (parts: Array<string | null | undefined>) =>
         parts.filter(Boolean).join(" • ");
