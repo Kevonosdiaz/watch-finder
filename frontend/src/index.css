@@ -566,6 +566,11 @@ border: none;
     overflow-y: auto;
 }
 
+.scrollable {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
 .result-row-top {
     display: grid;
     grid-template-columns: 54px 1fr auto;

@@ -226,7 +226,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
         </div>
         {results.length > 0 ? (
             <div className="results-card">
-            <div className="results-list">
+            <div className="results-list scrollable">
             {results.map((item) => {
                 const isOpen = expandedId === item.id;
 
