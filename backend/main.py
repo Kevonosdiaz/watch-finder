@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 import models
 from database import Base, engine, get_db
-from schemas import MediaResponse, WatchlistResponse, WatchlistWithMediaResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate, UserResponse, UserCreate
+from schemas import MediaResponse, WatchlistResponse, WatchlistWithMediaResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate, UserResponse, UserCreate, RegionResponse
 from core.config import settings
 from datetime import datetime
 
@@ -61,6 +61,12 @@ def get_user(email: str, db: Annotated[Session, Depends(get_db)]):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+# Get all regions in the db
+@app.get("/api/regions", response_model=list[RegionResponse])
+def get_regions(db: Annotated[Session, Depends(get_db)]):
+    regions = db.query(models.Regions).all()
+    return [{"country_name": r.country_name} for r in regions]
 
 # Get all media titles in the db
 @app.get("/api/media", response_model=list[MediaResponse])

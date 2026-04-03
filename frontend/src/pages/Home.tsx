@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../api/Client";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle } from "react-icons/fa";
 import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd } from "react-icons/md";
@@ -25,6 +25,10 @@ type SearchResult = {
     providers: StreamingPlatform[];
 };
 
+type Region = {
+    country_name: string;
+}
+
 interface HomeProps {
     goToWatchlist: () => void;
     goToProfile: () => void;
@@ -42,22 +46,21 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
         setExpandedId((prev) => (prev === id ? null : id));
 
     const [region, setRegion] = useState("Canada");
-    const regions = [
-        "Canada",
-        "United States",
-        "United Kingdom",
-        "Australia",
-        "France",
-        "Germany",
-        "Spain",
-        "Italy",
-        "Japan",
-        "South Korea",
-        "India",
-        "Brazil",
-        "Mexico",
-        "South Africa",
-    ];
+    const [regions, setRegions] = useState<Region[]>([]);
+    
+    useEffect(() => {
+        async function fetchRegions() {
+            try {
+                const data = await api<Region[]>("/api/regions");
+                console.log("regions:", data);
+                setRegions(data)
+            } catch {
+                console.error("Failed to fetch regions");
+            }
+        }
+
+        fetchRegions();
+    }, []);
 
     const [showLogoutPopup, setShowLogoutPopup] = useState(false);
 
@@ -131,17 +134,17 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
                 </div>
             {activeMenu === "region" && (
                 <div className="dropdown">
-                {regions.map((r) => (
+                {Array.isArray(regions) && regions.map((r) => (
                     <button
-                        key={r}
+                        key={r.country_name}
                         type="button"
                         className="dropdown-item"
                         onClick={() => {
-                            setRegion(r);
+                            setRegion(r.country_name);
                             setActiveMenu("none");
                         }}
                     >
-                        {r}
+                        {r.country_name}
                     </button>
                 ))}
                 </div>
