@@ -11,8 +11,8 @@ interface WatchdataProps {
 interface Watchdata {
     email: string;
     media_id: number,
-    start_date?: Date;
-    end_date?: Date;
+    start_date?: string | null;
+    end_date?: string | null;
     completion_status?: "P" | "W" | "C"
     personal_rating?: number;
 }
@@ -20,30 +20,56 @@ interface Watchdata {
 export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataProps) {
     const [watchdata, setWatchdata] = useState<Watchdata | null>(null);
     const [completionStatus, setCompletionStatus] = useState("");
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [rating, setRating] = useState<number>(0);
     let ratingData = [1,2,3,4,5]
 
     useEffect(() => {
         const fetchWatchdata = async () => {
             try {
-                const data = await api<Watchdata>(
+                const result = await api<Watchdata[]>(
                     `/api/watchlist/${watchlistId}/media/${titleId}/watchdata`
                 );
+
+                // WDisplay watchdata
+                const data = result?.[0] ?? null;
+                
+                if (!data) return;
                     
                 setWatchdata(data);
                 setCompletionStatus(data?.completion_status ?? "");
-                setStartDate(data?.start_date ? new Date(data.start_date) : null);
-                setEndDate(data?.end_date ? new Date(data.end_date) : null);
+                setStartDate(data.start_date ?? "");
+                setEndDate(data.end_date ?? "");
                 setRating(data?.personal_rating ?? 0);
-
+                console.log("WATCHDATA RAW:", data);
             } catch (err) {
                 console.error("Failed to fetch watchdata", err);
             }
         };
         fetchWatchdata();
     }, [watchlistId, titleId]);
+
+    const saveWatchdata = async () => {
+        if (!watchlistId || !titleId) return;
+
+        try {
+            await api(`/api/watchlist/${watchlistId}/media/${titleId}/watchdata`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    completion_status: completionStatus,
+                    start_date: startDate || null,
+                    end_date: endDate || null,
+                    personal_rating: rating
+                }),
+            });
+        } catch (err) {
+        console.error("Failed to save watchdata", err);
+        }
+    };
 
     return (
         <div className="watchdata-container">
@@ -75,15 +101,15 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                     <div className="form-label">Start date</div>
                     <input
                         type="date"
-                        value={startDate ? startDate.toISOString().slice(0, 10) : ""}
-                        onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : null)}
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
                         className="form-field-input"
                     />
                     <div className="form-label">End date</div>
                     <input
                         type="date"
-                        value={endDate ? endDate.toISOString().slice(0, 10) : ""}
-                        onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : null)}
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
                         className="form-field-input"
                     />
                     <div className="form-label">Personal rating</div>    
@@ -97,6 +123,13 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                         )
                        })}
                     </div>
+                    <button
+                        type="button"
+                        onClick={saveWatchdata} 
+                        className="save-btn"
+                    >
+                        Save changes
+                    </button>
                 </div>
             </div>
         </div>
