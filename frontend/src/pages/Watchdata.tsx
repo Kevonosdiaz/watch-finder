@@ -34,7 +34,7 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
 
                 // WDisplay watchdata
                 const data = result?.[0] ?? null;
-                
+
                 if (!data) return;
                     
                 setWatchdata(data);
@@ -126,7 +126,7 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                     <button
                         type="button"
                         onClick={saveWatchdata} 
-                        className="save-btn"
+                        className="save-watchdata-btn"
                     >
                         Save changes
                     </button>
