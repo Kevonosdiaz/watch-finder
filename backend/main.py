@@ -164,6 +164,16 @@ def get_user_watchlist_with_media(email: str, db: Annotated[Session, Depends(get
         })
     return result
 
+# Delete media from a watchlist
+@app.delete("/api/watchlists/{list_id}/media/{media_id}")
+def remove_media_from_watchlist(list_id: int, media_id: int, db: Annotated[Session, Depends(get_db)]):
+    media = db.query(models.WatchlistContains).filter(models.WatchlistContains.watchlist_id == list_id, models.WatchlistContains.media_id == media_id).first()
+    if not media:
+        raise HTTPException(status_code=404, detail="Media title not found")
+    db.delete(media)
+    db.commit()
+    return {"message": "Removed"}
+
 # Get a specific watchlist with media titles for a given user
 @app.get("/api/users/{email}/watchlists/{list_id}", response_model=WatchlistWithMediaResponse)
 def get_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_db)]):
