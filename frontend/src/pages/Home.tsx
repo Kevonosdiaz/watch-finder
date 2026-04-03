@@ -7,21 +7,22 @@ import logo from "../assets/watch-finder-logo.png";
 type ActiveMenu = "none" | "region" | "account";
 
 type StreamingPlatform = {
-  name: string;
-  logoUrl?: string;
+    name: string;
+    logoUrl?: string;
 };
 
 type SearchResult = {
-  id: number;
-  title: string;
-  year: number;
-  criticsScore?: number;
-  rating?: string;
-  kind: "Movie" | "TV";
-  runtime?: string;
-  synopsis?: string;
-  posterUrl: string;
-  providers: StreamingPlatform[];
+    id: number;
+    title: string;
+    year: number;
+    criticsScore?: number;
+    rating?: string;
+    kind: "Movie" | "TV";
+    runtime?: string;
+    creator?: string;
+    synopsis?: string;
+    posterUrl: string;
+    providers: StreamingPlatform[];
 };
 
 interface HomeProps {
@@ -285,6 +286,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
                 const runtimeLine = joinDot([
                     item.kind,
                     item.runtime ? `(${item.runtime})` : null,
+                    item.creator ? `Creator: ${item.creator}` : null,
                 ]);
 
             return (
