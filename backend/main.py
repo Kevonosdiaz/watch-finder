@@ -192,6 +192,16 @@ def get_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_d
         "media": media
     }
 
+# Delete a watchlist for a given user
+@app.delete("/api/users/{email}/watchlists/{list_id}")
+def remove_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_db)]):
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.email == email, models.Watchlists.watchlist_id == list_id).first()
+    if not watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    db.delete(watchlist)
+    db.commit()
+    return {"message": "Removed"}
+
 # Add/update watchdata to a media title
 @app.post(
     "/api/watchlist/{list_id}/media/{media_id}/watchdata",
