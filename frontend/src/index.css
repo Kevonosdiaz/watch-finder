@@ -963,11 +963,6 @@ border: none;
     background: #f3f4f7;
 }
 
-.edit-btn:active,
-.edit-field-btn:active {
-    transform: translateY(-50%) scale(0.95);
-}
-
 .watchlist-content,
 .watchlist-content.scroll {
     display: flex;      
