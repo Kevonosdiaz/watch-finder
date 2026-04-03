@@ -92,17 +92,17 @@ def get_media_in_region(region: str, db: Annotated[Session, Depends(get_db)], se
     media = query.order_by(models.MediaTitles.title_name).all()
     return media
 
-# Create a new watchlist
+# Create a new watchlist for a given user
 @app.post(
-    "/api/watchlists",
+    "/api/users/{email}/watchlists",
     response_model=WatchlistResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def create_watchlist(watchlist: WatchlistCreate, db: Annotated[Session, Depends(get_db)]):
+def create_watchlist(email: str, watchlist: WatchlistCreate, db: Annotated[Session, Depends(get_db)]):
     # Interact with DB to create new watchlist as specified
     new_watchlist = models.Watchlists(
         watchlist_name=watchlist.watchlist_name,
-        email=watchlist.email, 
+        email=email, 
         date_added=datetime.now()
     )
     db.add(new_watchlist)
