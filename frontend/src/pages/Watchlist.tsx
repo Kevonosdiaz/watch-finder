@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { api } from "../api/Client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit, MdOutlineCancel } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
@@ -8,74 +9,185 @@ interface WatchlistProps {
   goToWatchdata: (watchlistId: number, titleId: number) => void;
 }
 
+type Media = {
+  id: number;
+  title: string;
+  year: number;
+  criticsScore?: number;
+  rating?: string;
+  creator?: string;
+  synopsis?: string;
+  posterUrl?: string;
+};
+
 interface Watchlist {
   id: number;
   name: string;
-  items: WatchlistItem[];
-}
-
-interface WatchlistItem {
-  id: number;
-  name: string;
+  email: string;
+  date_created: string;
+  items: Media[];
 }
 
 export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
-  const [watchlists, setWatchlists] = useState<Watchlist[]>([
-    { id: 1, 
-      name: "Journey through the Rings",
-      items: [
-        { id: 101, name: "The Fellowship of the Ring" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-      ]
-    
-    },
-  ]);
+  const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
+  // Hardcoded for testing
+  const email = "jane.doe@ucalgary.ca";
+  useEffect(() => {
+    async function fetchWatchlists() {
+        try {
+        // API call
+        const data = await api<Watchlist[]>(
+            `/api/users/${email}/watchlists`
+        );
+        
+        // Backend mapping to frontend state
+        setWatchlists(
+          data.map((wl: any) => ({
+            id: wl.watchlist_id,
+            name: wl.watchlist_name,
+            email: wl.email,
+            date_created: wl.date_added,
+            items: (wl.media ?? []).map((m: any) => ({
+              id: m.media_id,
+              title: m.title_name,
+              year: m.release_year,
+              creator: m.creator,
+              rating: m.age_rating,
+              criticsScore: m.rating,
+              synopsis: m.description,
+              posterUrl: m.posterUrl ?? "",
+            })),
+          }))
+        );
+
+        } catch (err) {
+        console.error("Failed to fetch watchlists", err);
+        }
+    }
+
+    fetchWatchlists();
+  }, [email]);
+
+  const [createWatchlistName, setCreateWatchlistName] = useState("");
+  const createWatchlist = async (watchlistName: string) => {
+    if (!watchlistName.trim()) return; 
+
+    try {
+      const newWatchlist = await api<any>(
+        `/api/users/${email}/watchlists`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            watchlist_name: watchlistName
+          }),
+        }
+      );
+
+      // Newly created watchlists will show up at the top
+      setWatchlists(prev => [ {
+        id: newWatchlist.watchlist_id,
+        name: newWatchlist.watchlist_name,
+        email: email,
+        date_created: newWatchlist.date_added,
+        items: []
+      },
+      ...prev,
+    ]);
+    } catch (err) {
+      console.error("Failed to create watchlist", err);
+    }  
+  }
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newWatchlistName, setNewWatchlistName] = useState("");
+  const [editingItems, setEditingItems] = useState<Map<number, Media[]>>(new Map());
   
-  const startEdit = (id: number, currentName: string) => {
+  const startEdit = (id: number, currentName: string, items: Media[]) => {
     setEditingId(id);
     setNewWatchlistName(currentName);
+    // Keep track of edits
+    setEditingItems(prev => new Map(prev).set(id, [...items]));
   }
-
+  
   const removeWatchlistItem = (watchlistId: number, itemId: number) => {
-    setWatchlists(watchlists.map(w => {
-      if (w.id === watchlistId) {
-        return {
-          ...w,
-          items: w.items.filter(item => item.id !== itemId)
-        };
+    setEditingItems(prev => {
+      const copy = new Map(prev);
+      const currentItems = copy.get(watchlistId) ?? [];
+      copy.set(
+        watchlistId,
+        currentItems.filter(item => item.id !== itemId)
+      );
+      return copy;
+    });
+  };
+    
+  const deleteWatchlist = async (watchlistId: number) => {
+    try {
+      await api(`/api/users/${email}/watchlists/${watchlistId}`, { method: "DELETE" });
+      setWatchlists(prev => prev.filter(w => w.id !== watchlistId));
+    } catch (err) {
+      console.error("Failed to delete watchlist", err)
+    }
+  }
+
+  const saveEdit = async () => {
+    if (editingId == null) return;
+
+    const updatedItems = editingItems.get(editingId) ?? [];
+
+    try {
+      await api(`/api/users/${email}/watchlists/${editingId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          watchlist_name: newWatchlistName,
+          email: email
+        }),
+      });
+      // Find the original watchlist with media titles
+      const original = watchlists.find(w => w.id === editingId);
+      const removed = original!.items.filter(
+        item => !updatedItems.some(u => u.id === item.id)
+      );
+
+      // Delete removed items from backend
+      for (const item of removed) {
+        await api(`/api/watchlists/${editingId}/media/${item.id}`, { method: "DELETE" });
       }
-      return w;
-    }));
-  }
 
-  const deleteWatchlist = (id: number) => {
-    setWatchlists(watchlists.filter(w => w.id !== id));
-  }
+      // Update frontend
+      setWatchlists(prev =>
+        prev.map(w =>
+          w.id === editingId
+            ? { ...w, name: newWatchlistName, items: updatedItems }
+            : w
+        )
+      );
 
-  const saveEdit = () => {
-    setWatchlists(
-      watchlists.map(w => 
-        w.id === editingId ? { ...w, name: newWatchlistName } : w
-      )
-    );
-    setEditingId(null);
-    setNewWatchlistName("");
-  }
+      setEditingId(null);
+      setNewWatchlistName("");
+      setEditingItems(prev => {
+        const updatedWatchlist = new Map(prev);
+        updatedWatchlist.delete(editingId);
+        return updatedWatchlist;
+    });
+    } catch (err) {
+      console.error("Failed to save watchlist edits", err);
+    }
+  };
 
   const cancelEdit = () => {
     setEditingId(null);
     setNewWatchlistName("");
+    // Reset editing state
+    setEditingItems(prev => {
+      const newMap = new Map(prev);
+      if (editingId) newMap.delete(editingId);
+      return newMap;
+    });
   };
   
   return (
@@ -98,8 +210,18 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
       <input
         type="text"
         placeholder="Enter the name of your watchlist"
+        value={createWatchlistName}
+        onChange={(e) => setCreateWatchlistName(e.target.value)}
       />
-      <button className="create-btn">
+      <button 
+        className="create-btn"
+        type="button"
+        onClick={() => {
+          if (!newWatchlistName.trim()) return;
+          createWatchlist(newWatchlistName);
+          setCreateWatchlistName("");
+        }}
+      >
         <IoAddCircleOutline />
       </button>
     </div>
@@ -138,7 +260,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
               <h3>{watchlist.name}</h3>
               <button 
                 className="edit-btn"
-                onClick={() => startEdit(watchlist.id, watchlist.name)}
+                onClick={() => startEdit(watchlist.id, watchlist.name, watchlist.items)}
               >
                 <MdOutlineEdit size={18}/>
               </button>
@@ -146,7 +268,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
           )}
         </div>
       <div className="watchlist-content scroll">
-        {watchlist.items.map((item) => (
+        {(editingId === watchlist.id ? (editingItems.get(watchlist.id) ?? []) : watchlist.items).map((item) => (
           <div key={item.id} className="poster-wrapper">
             <button
               type="button"

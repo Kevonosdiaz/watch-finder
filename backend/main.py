@@ -92,23 +92,34 @@ def get_media_in_region(region: str, db: Annotated[Session, Depends(get_db)], se
     media = query.order_by(models.MediaTitles.title_name).all()
     return media
 
-# Create a new watchlist
+# Create a new watchlist for a given user
 @app.post(
-    "/api/watchlists",
+    "/api/users/{email}/watchlists",
     response_model=WatchlistResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def create_watchlist(watchlist: WatchlistCreate, db: Annotated[Session, Depends(get_db)]):
+def create_watchlist(email: str, watchlist: WatchlistCreate, db: Annotated[Session, Depends(get_db)]):
     # Interact with DB to create new watchlist as specified
     new_watchlist = models.Watchlists(
         watchlist_name=watchlist.watchlist_name,
-        email=watchlist.email, 
+        email=email, 
         date_added=datetime.now()
     )
     db.add(new_watchlist)
     db.commit()
     db.refresh(new_watchlist)
     return new_watchlist
+
+# Update watchlist name
+@app.put("/api/users/{email}/watchlists/{list_id}", response_model=WatchlistResponse)
+def update_watchlist_name(email: str, list_id: int, watchlist: WatchlistCreate, db: Annotated[Session, Depends(get_db)]):
+    existing_watchlist = db.query(models.Watchlists).filter(models.Watchlists.email == email, models.Watchlists.watchlist_id == list_id).first()
+    if not existing_watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    existing_watchlist.watchlist_name = watchlist.watchlist_name
+    db.commit()
+    db.refresh(existing_watchlist)
+    return existing_watchlist
 
 # Get all watchlists in the db
 @app.get("/api/watchlists", response_model=list[WatchlistResponse])
@@ -164,6 +175,16 @@ def get_user_watchlist_with_media(email: str, db: Annotated[Session, Depends(get
         })
     return result
 
+# Delete media from a watchlist
+@app.delete("/api/watchlists/{list_id}/media/{media_id}")
+def remove_media_from_watchlist(list_id: int, media_id: int, db: Annotated[Session, Depends(get_db)]):
+    media = db.query(models.WatchlistContains).filter(models.WatchlistContains.watchlist_id == list_id, models.WatchlistContains.media_id == media_id).first()
+    if not media:
+        raise HTTPException(status_code=404, detail="Media title not found")
+    db.delete(media)
+    db.commit()
+    return {"message": "Removed"}
+
 # Get a specific watchlist with media titles for a given user
 @app.get("/api/users/{email}/watchlists/{list_id}", response_model=WatchlistWithMediaResponse)
 def get_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_db)]):
@@ -181,6 +202,16 @@ def get_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_d
         "date_added": watchlist.date_added,
         "media": media
     }
+
+# Delete a watchlist for a given user
+@app.delete("/api/users/{email}/watchlists/{list_id}")
+def remove_watchlist(email: str, list_id: int, db: Annotated[Session, Depends(get_db)]):
+    watchlist = db.query(models.Watchlists).filter(models.Watchlists.email == email, models.Watchlists.watchlist_id == list_id).first()
+    if not watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    db.delete(watchlist)
+    db.commit()
+    return {"message": "Removed"}
 
 # Add/update watchdata to a media title
 @app.post(
