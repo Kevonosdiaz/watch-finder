@@ -110,6 +110,17 @@ def create_watchlist(email: str, watchlist: WatchlistCreate, db: Annotated[Sessi
     db.refresh(new_watchlist)
     return new_watchlist
 
+# Update watchlist name
+@app.put("/api/users/{email}/watchlists/{list_id}", response_model=WatchlistResponse)
+def update_watchlist_name(email: str, list_id: int, watchlist: WatchlistCreate, db: Annotated[Session, Depends(get_db)]):
+    existing_watchlist = db.query(models.Watchlists).filter(models.Watchlists.email == email, models.Watchlists.watchlist_id == list_id).first()
+    if not existing_watchlist:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    existing_watchlist.watchlist_name = watchlist.watchlist_name
+    db.commit()
+    db.refresh(existing_watchlist)
+    return existing_watchlist
+
 # Get all watchlists in the db
 @app.get("/api/watchlists", response_model=list[WatchlistResponse])
 def get_watchlists(db: Annotated[Session, Depends(get_db)]):
