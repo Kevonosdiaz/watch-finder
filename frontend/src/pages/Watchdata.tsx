@@ -25,7 +25,7 @@ type MediaTitle = {
 
 
 export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataProps) {
-    const [watchdata, setWatchdata] = useState<Watchdata | null>(null);
+    const [, setWatchdata] = useState<Watchdata | null>(null);
     const [completionStatus, setCompletionStatus] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
@@ -57,14 +57,20 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
 
                 setMedia(mediaTitle);
             } catch (err) {
-                console.error("Failed to load watchdata", err);
+                setErrorMessage("Failed to load watchdata");
             }
         };
         fetchWatchdata();
     }, [watchlistId, titleId]);
 
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+
     const saveWatchdata = async () => {
         if (!watchlistId || !titleId) return;
+
+        setErrorMessage(null);
+        setSaveSuccess(false);
 
         try {
             await api(`/api/watchlist/${watchlistId}/media/${titleId}/watchdata`, {
@@ -79,8 +85,12 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                     personal_rating: rating
                 }),
             });
+
+            setSaveSuccess(true);
+
         } catch (err) {
-        console.error("Failed to save watchdata", err);
+            setErrorMessage("Unable to save changes");
+        } finally {
         }
     };
 
@@ -138,12 +148,13 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                         )
                        })}
                     </div>
+                    {errorMessage && <p className="error">{errorMessage}</p>}
                     <button
                         type="button"
                         onClick={saveWatchdata} 
                         className="save-watchdata-btn"
                     >
-                        Save changes
+                        {saveSuccess ? "Saved" : "Save changes"}
                     </button>
                 </div>
             </div>
