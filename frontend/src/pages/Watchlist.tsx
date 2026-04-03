@@ -68,8 +68,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
     fetchWatchlists();
   }, [email]);
 
-  const [editWatchlistName, setEditWatchlistName] = useState("");
-
+  const [createWatchlistName, setCreateWatchlistName] = useState("");
   const createWatchlist = async (watchlistName: string) => {
     if (!watchlistName.trim()) return; 
 
@@ -106,7 +105,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
   
   const startEdit = (id: number, currentName: string, items: Media[]) => {
     setEditingId(id);
-    setEditWatchlistName(currentName);
+    setNewWatchlistName(currentName);
     // Keep track of edits
     setEditingItems(prev => new Map(prev).set(id, [...items]));
   }
@@ -138,6 +137,16 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
     const updatedItems = editingItems.get(editingId) ?? [];
 
     try {
+      await api(`/api/users/${email}/watchlists/${editingId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          watchlist_name: newWatchlistName,
+          email: email
+        }),
+      });
       // Find the original watchlist with media titles
       const original = watchlists.find(w => w.id === editingId);
       const removed = original!.items.filter(
@@ -201,8 +210,8 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
       <input
         type="text"
         placeholder="Enter the name of your watchlist"
-        value={newWatchlistName}
-        onChange={(e) => setNewWatchlistName(e.target.value)}
+        value={createWatchlistName}
+        onChange={(e) => setCreateWatchlistName(e.target.value)}
       />
       <button 
         className="create-btn"
@@ -210,7 +219,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
         onClick={() => {
           if (!newWatchlistName.trim()) return;
           createWatchlist(newWatchlistName);
-          setNewWatchlistName("");
+          setCreateWatchlistName("");
         }}
       >
         <IoAddCircleOutline />
