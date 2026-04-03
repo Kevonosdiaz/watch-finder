@@ -74,6 +74,12 @@ def get_media_titles(db: Annotated[Session, Depends(get_db)]):
     media_list = db.query(models.MediaTitles).all()
     return media_list
 
+# Get media details
+@app.get("/api/media/{media_id}", response_model=MediaResponse)
+def get_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
+    media = db.query(models.MediaTitles).filter(models.MediaTitles.media_id == media_id).first()
+    return media
+
 # Get all media titles by region with search query
 @app.get("/api/regions/{region}/media", response_model=list[MediaResponse])
 def get_media_in_region(region: str, db: Annotated[Session, Depends(get_db)], search: str | None = Query(None, description="Filter by title name")):
