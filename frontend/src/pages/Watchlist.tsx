@@ -68,6 +68,33 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
     fetchWatchlists();
   }, [email]);
 
+  const createWatchlist = async (watchlistName: string) => {
+    if (!watchlistName.trim()) return; 
+
+    try {
+      const newWatchlist = await api<Watchlist>(
+        `/api/users/${email}/watchlists`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            watchlist_name: watchlistName
+          }),
+        }
+      );
+
+      setWatchlists(prev => [...prev, {
+        id: newWatchlist.id,
+        name: newWatchlist.name,
+        email: email,
+        date_created: newWatchlist.date_created,
+        items: []
+      }])
+    } catch (err) {
+      console.error("Failed to create watchlist", err);
+    }  
+  }
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newWatchlistName, setNewWatchlistName] = useState("");
   const [editingItems, setEditingItems] = useState<Map<number, Media[]>>(new Map());
@@ -169,8 +196,18 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
       <input
         type="text"
         placeholder="Enter the name of your watchlist"
+        value={newWatchlistName}
+        onChange={(e) => setNewWatchlistName(e.target.value)}
       />
-      <button className="create-btn">
+      <button 
+        className="create-btn"
+        type="button"
+        onClick={() => {
+          if (!newWatchlistName.trim()) return;
+          createWatchlist(newWatchlistName);
+          setNewWatchlistName("");
+        }}
+      >
         <IoAddCircleOutline />
       </button>
     </div>
