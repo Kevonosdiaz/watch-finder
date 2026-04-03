@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { api } from "../api/Client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit, MdOutlineCancel } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
@@ -8,36 +9,64 @@ interface WatchlistProps {
   goToWatchdata: (watchlistId: number, titleId: number) => void;
 }
 
+type Media = {
+  id: number;
+  title: string;
+  year: number;
+  criticsScore?: number;
+  rating?: string;
+  creator?: string;
+  synopsis?: string;
+  posterUrl?: string;
+};
+
 interface Watchlist {
   id: number;
   name: string;
-  items: WatchlistItem[];
-}
-
-interface WatchlistItem {
-  id: number;
-  name: string;
+  email: string;
+  date_created: string;
+  items: Media[];
 }
 
 export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
-  const [watchlists, setWatchlists] = useState<Watchlist[]>([
-    { id: 1, 
-      name: "Journey through the Rings",
-      items: [
-        { id: 101, name: "The Fellowship of the Ring" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-        { id: 102, name: "The Two Towers" },
-      ]
-    
-    },
-  ]);
+  const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
+  // Hardcoded for testing
+  const email = "jane.doe@ucalgary.ca";
+  useEffect(() => {
+    async function fetchWatchlists() {
+        try {
+        // API call
+        const data = await api<Watchlist[]>(
+            `/api/users/${email}/watchlists`
+        );
+        
+        // Backend mapping to frontend state
+        setWatchlists(
+          data.map((wl: any) => ({
+            id: wl.watchlist_id,
+            name: wl.watchlist_name,
+            email: wl.email,
+            date_created: wl.date_added,
+            items: wl.media.map((m: any) => ({
+              id: m.media_id,
+              title: m.title_name,
+              year: m.release_year,
+              creator: m.creator,
+              rating: m.age_rating,
+              criticsScore: m.rating,
+              synopsis: m.description,
+              posterUrl: m.posterUrl ?? "",
+            })),
+          }))
+        );
+
+        } catch (err) {
+        console.error("Failed to fetch watchlists", err);
+        }
+    }
+
+    fetchWatchlists();
+  }, [email]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newWatchlistName, setNewWatchlistName] = useState("");
