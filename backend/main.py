@@ -21,7 +21,7 @@ app = FastAPI(title="Watch Finder API", docs_url="/docs", redoc_url="/redoc")
 # Allow frontend to interact with backend
 # NOTE: Can specify allowed ports, methods like GET, etc.
 app.add_middleware(CORSMiddleware,
-                   settings.ALLOWED_ORIGINS,
+                   allow_origins=settings.ALLOWED_ORIGINS,
                    allow_credentials=True,
                    allow_methods=["*"],
                    allow_headers=["*"])

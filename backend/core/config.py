@@ -7,13 +7,17 @@ from pydantic import field_validator
 class Settings(BaseSettings):
     DATABASE_URL: str
     DEBUG: bool = False
-    ALLOWED_ORIGINS: str = ""
+    ALLOWED_ORIGINS: List[str]
     API_PREFIX: str = "/api"
 
     # Replace ALLOWED_ORIGINS with populated list
     @field_validator("ALLOWED_ORIGINS")
-    def parse_allowed_origins(cls, v: str) -> List[str]:
-        return v.split(",") if v else []
+    def parse_allowed_origins(cls, v):
+        if isinstance(v, str):
+            return [i.strip() for i in v.split(",")]
+        elif isinstance(v, list):
+            return v
+        return []
 
     class Config:
         env_file = ".env"
