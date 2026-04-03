@@ -76,18 +76,27 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
     setNewWatchlistName(currentName);
   }
 
-  const removeWatchlistItem = (watchlistId: number, itemId: number) => {
-    setWatchlists(watchlists.map(w => {
-      if (w.id === watchlistId) {
-        return {
-          ...w,
-          items: w.items.filter(item => item.id !== itemId)
-        };
-      }
-      return w;
-    }));
-  }
+  const removeWatchlistItem = async (watchlistId: number, itemId: number) => {
+    try {
+      await api(
+        `/api/watchlists/${watchlistId}/media/${itemId}`,
+        { method: "DELETE"}
+      );
 
+      setWatchlists(watchlists.map(w => {
+        if (w.id === watchlistId) {
+          return {
+            ...w,
+            items: w.items.filter(item => item.id !== itemId)
+          };
+        }
+        return w;
+      }));
+    } catch (err) {
+      console.error("Failed to remove item", err);
+    }
+  }    
+    
   const deleteWatchlist = (id: number) => {
     setWatchlists(watchlists.filter(w => w.id !== id));
   }
