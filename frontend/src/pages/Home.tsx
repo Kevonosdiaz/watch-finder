@@ -62,58 +62,6 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
     const [showLogoutPopup, setShowLogoutPopup] = useState(false);
 
     const [search, setSearch] = useState("");
-
-    /*const mockResults: SearchResult[] = useMemo(
-        () => [
-        {
-            id: 1,
-            title: "The Lord of the Rings: The Fellowship of the Ring",
-            year: 2001,
-            criticsScore: 91,
-            rating: "PG-13",
-            kind: "Movie",
-            runtime: "2h 58m",
-            synopsis:
-            "A young hobbit named Frodo inherits a powerful ring and must leave the Shire to destroy it before evil forces reclaim it.",
-            posterUrl: "https://m.media-amazon.com/images/I/51Qvs9i5a%2BL._AC_.jpg",
-            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
-        },
-        {
-            id: 2,
-            title: "The Lord of the Rings: The Two Towers",
-            year: 2002,
-            criticsScore: 95,
-            rating: "PG-13",
-            kind: "Movie",
-            runtime: "2h 59m",
-            synopsis:
-            "The Fellowship is split, and the quest continues as war grows across Middle-earth.",
-            posterUrl: "https://m.media-amazon.com/images/I/51gVJZQpY2L._AC_.jpg",
-            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
-        },
-        {
-            id: 3,
-            title: "The Lord of the Rings: The Return of the King",
-            year: 2003,
-            criticsScore: 94,
-            rating: "PG-13",
-            kind: "Movie",
-            runtime: "3h 21m",
-            synopsis:
-            "The final battle begins as Frodo and Sam reach Mount Doom and the fate of Middle-earth is decided.",
-            posterUrl: "https://m.media-amazon.com/images/I/51QYJbS4LhL._AC_.jpg",
-            providers: [{ name: "Crave" }, { name: "Starz" }, { name: "Prime Video" }],
-        },
-        ],
-        []
-    );
-
-    const results = useMemo(() => {
-        const q = search.trim().toLowerCase();
-        if (!q) return [];
-        return mockResults.filter((r) => r.title.toLowerCase().includes(q));
-    }, [search, mockResults]);
-*/
     const [results, setResults] = useState<SearchResult[]>([]);
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
@@ -127,17 +75,20 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
         async function fetchResults() {
             try {
             setIsSearching(true);
+            // API call with search query
+            const queryParam = search.trim() ? `?search=${encodeURIComponent(search)}` : "";
             const data = await api<SearchResult[]>(
-                `/api/media?query=${search}&region=${region}`
+                `/api/regions/${region}/media${queryParam}`
             );
             
+            // Backend mapping to frontend state
             setResults(
                 data.map((m: any) => ({
-                    id: m.media_id ?? 0, // map backend id
-                    title: m.title_name ?? "Unknown", // map backend title
+                    id: m.media_id ?? 0,
+                    title: m.title_name ?? "Unknown",
                     year: m.release_year ?? 0,
                     kind: (m.kind ?? "Movie") as "Movie" | "TV",
-                    posterUrl: m.posterUrl ?? "", // adjust if API uses different name
+                    posterUrl: m.posterUrl ?? "",
                     providers: m.providers ?? [],
                     criticsScore: m.rating ?? 0,
                     rating: m.age_rating ?? 0,
