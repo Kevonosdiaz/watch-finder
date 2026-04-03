@@ -1,11 +1,12 @@
 import { useState } from "react";
+import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Watchlist from "./pages/Watchlist";
 import Watchdata from "./pages/Watchdata";
 import Profile from "./pages/Profile";
 import Password from "./pages/Password";
 
-type Page = "home" | "watchlist" | "watchdata" | "password" | "profile";
+type Page = "login" | "home" | "watchlist" | "watchdata" | "password" | "profile";
 
 type SelectedWatchlistItem = {
   watchlistId: number;
@@ -13,7 +14,7 @@ type SelectedWatchlistItem = {
 } | null;
 
 function App() {
-  const [page, setPage] = useState<Page>("home");
+  const [page, setPage] = useState<Page>("login");
   const [selectedTitle, setSeletectedTitle] = useState<SelectedWatchlistItem>(null);
   const goToWatchdata = (watchlistId: number, titleId: number) => {
     setSeletectedTitle({ watchlistId, titleId });
@@ -21,6 +22,7 @@ function App() {
   }
   return (
     <>
+      {page === "login" && <Login onLogin={() => setPage("home")} />}
       {page === "home" && <Home goToWatchlist={() => setPage("watchlist")} goToProfile={() => setPage("profile")} goToPassword={() => setPage("password")} />}
       {page === "watchlist" && 
         <Watchlist 
