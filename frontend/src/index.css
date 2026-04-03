@@ -961,7 +961,6 @@ border: none;
 .edit-btn:hover,
 .edit-field-btn:hover {
     background: #f3f4f7;
-    transform: translateY(-50%) scale(1.05);
 }
 
 .edit-btn:active,
