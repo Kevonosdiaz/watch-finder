@@ -57,7 +57,8 @@ def create_user(user:UserCreate, db: Annotated[Session, Depends(get_db)]):
 # Retrieve a user
 @app.get("/api/users/{email}", response_model=UserResponse)
 def get_user(email: str, db: Annotated[Session, Depends(get_db)]):
-    user = db.query(models.Users).filter(models.Users.email == email).first()
+    result = db.execute(select(models.Users).where(models.Users.email == email))
+    user = result.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

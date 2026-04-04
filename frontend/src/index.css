@@ -122,6 +122,106 @@ code {
   background: var(--code-bg);
 }
 
+/* Login page */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Logo */
+.login-logo {
+    display: flex;
+    justify-content: center;
+    margin: 60px 0 12px;
+}
+
+.login-logo img {
+    width: clamp(200px, 18vw, 260px);
+    height: auto;
+}
+
+/* Header */
+.login-header-content .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-top: -5px;
+}
+
+/* Login fields */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+}
+
+.login-form-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #49454F;
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+.form-text-input {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;;
+    color: #1f1b2e;
+    width: 100%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-text-input:focus {
+    outline: none;
+    border: 2px solid #0081d281;
+    box-shadow: 0 0 6px rgba(125, 207, 255, 0.4);
+}
+
+/* Login button */
+.login-btn {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    height: 44px;
+    width: 350px;
+    border: 1px solid rgba(0,0,0,0.06);
+    background-color: #0077C1;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.07);
+}
+
+.create-account-text {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    height: auto; 
+}
+
+/* Sign up hyperlink */
+.create-account-text a {
+    color: #0063a0;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.create-account-text a:hover {
+  text-decoration: underline;
+}
+
 /* Homepage and Watchlist page */
 .home-container,
 .watchlist-container {
