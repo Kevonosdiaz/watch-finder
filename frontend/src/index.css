@@ -132,6 +132,7 @@ code {
     text-align: center;
 }
 
+/* Logo */
 .login-logo {
     display: flex;
     justify-content: center;
@@ -143,6 +144,7 @@ code {
     height: auto;
 }
 
+/* Header */
 .login-header-content .header {
     display: flex;
     align-items: center;
@@ -151,6 +153,7 @@ code {
     margin-top: -5px;
 }
 
+/* Login fields */
 .form-field {
     display: flex;
     flex-direction: column;
@@ -178,6 +181,7 @@ code {
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
 }
 
+/* Login button */
 .login-btn {
     margin-top: 10px;
     padding: 10px 12px;
@@ -194,6 +198,23 @@ code {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.07);
 }
 
+.create-account-text {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    height: auto; 
+}
+
+/* Sign up hyperlink */
+.create-account-text a {
+    color: #0063a0;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.create-account-text a:hover {
+  text-decoration: underline;
+}
 
 /* Homepage and Watchlist page */
 .home-container,
