@@ -74,6 +74,22 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                     <div className="subheader">Add, update or remove media titles.</div>
                 </div>
             </div>
+            <div className="poster-grid">
+                {mediaTitles.map((media) => (
+                    <div key={media.id} className="poster-wrapper">
+                    <button
+                        type="button"
+                        className="poster-btn"
+                        onClick={() => setSelectedMedia(media)}
+                    >
+                        <div className="poster-overlay">
+                        <div className="poster-overlay-title">{media.title}</div>
+                        <div className="poster-overlay-sub">({media.year})</div>
+                        </div> 
+                    </button>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
