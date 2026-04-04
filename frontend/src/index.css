@@ -181,6 +181,12 @@ code {
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
 }
 
+.form-text-input:focus {
+    outline: none;
+    border: 2px solid #0081d281;
+    box-shadow: 0 0 6px rgba(125, 207, 255, 0.4);
+}
+
 /* Login button */
 .login-btn {
     margin-top: 10px;
