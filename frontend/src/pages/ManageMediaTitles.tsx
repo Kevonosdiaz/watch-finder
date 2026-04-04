@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react"
+import { api } from "../api/client";
 import { FaArrowLeft } from "react-icons/fa";
 
 interface ManageMediaTitleProps {
@@ -5,6 +7,21 @@ interface ManageMediaTitleProps {
 }
 
 export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
+    const [mediaTitles, setMediaTitles] = useState<any[]>([]);
+    useEffect(() => {
+        async function fetchMediaTitles() {
+            try {
+                // API call to fetch all media titles
+                const data = await api<any[]>("/api/media");
+                console.log("media:", data);
+                setMediaTitles(data);
+            } catch {
+                console.error("Failed to fetch media");
+            }
+        }
+
+        fetchMediaTitles();
+    }, []);
 
     return (
         <div className="admin-container">
@@ -19,6 +36,7 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                     <div className="subheader">Add, update or remove media titles.</div>
                 </div>
             </div>
+
         </div>
     );
 }
