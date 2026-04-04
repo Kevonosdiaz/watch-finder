@@ -20,6 +20,7 @@ interface MediaTitle {
     posterUrl?: string;
     providers: StreamingPlatform[];
     regions: Region[];
+    availability?: Availability[];
 }
 
 type Region = {
@@ -28,7 +29,14 @@ type Region = {
 
 type StreamingPlatform = {
     name: string;
+    website_url?: string;
     logoUrl?: string;
+};
+
+
+type Availability = {
+  country_name: string;
+  providers: StreamingPlatform[];
 };
 
 export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
@@ -45,7 +53,8 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
     : "";
     const runtimeLine = selectedMedia ? [
         selectedMedia.kind,
-        selectedMedia.runtime ? `(${selectedMedia.runtime})` : null,
+        selectedMedia.kind === "TV" && selectedMedia.number_of_seasons != null ? `${selectedMedia.number_of_seasons} seasons` : null,
+        selectedMedia.kind === "Movie" && selectedMedia.runtime != null ? `(${selectedMedia.runtime}m)` : null,
         selectedMedia.creator ? `Creator: ${selectedMedia.creator}` : null,
         ]
         .filter(Boolean)
@@ -70,8 +79,11 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                         creator: m.creator,
                         synopsis: m.description,
                         posterUrl: m.poster_url,
+                        number_of_seasons: m.number_of_seasons ?? [],
+                        runtime: m.duration ?? [],
                         providers: m.providers ?? [],
                         regions: m.regions ?? [],
+                        availability: m.availability ?? [],
                     }))
                 );
 
@@ -141,15 +153,38 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                                 <div className="result-runtime">{runtimeLine}</div>
                                 <div className="result-details">
                                     <div className="synopsis-line">
-                                        <span className="synopsis-label">Synopsis: </span>
+                                        <span className="synopsis-label">Synopsis:</span>
                                         <span className="synopsis-text">
                                             {selectedMedia.synopsis ?? "No synopsis available yet."}
                                         </span>
                                     </div>
                                 </div>
+                                <div className="availability-list">
+                                    {(selectedMedia.availability ?? []).map((region) => (
+                                        <div key={region.country_name} className="availability-row">
+                                            <div className="availability-region">{region.country_name}</div>
+                                            <div className="media-details-streaming-platforms">
+                                                {region.providers.length > 0 ? (
+                                                    region.providers.map((p) => (
+                                                        <span key={p.name} className="streaming-platform-icon" title={p.name}>
+                                                        {p.logoUrl ? (
+                                                            <img src={p.logoUrl} alt={p.name} />
+                                                        ) : (
+                                                            p.name[0]
+                                                        )}
+                                                        </span>
+                                                    ))
+                                                ) : ( 
+                                                    <span className="no-providers">
+                                                        No streaming providers listed.
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    
                     )}
                 </>
             )}
