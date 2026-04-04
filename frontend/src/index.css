@@ -990,7 +990,7 @@ border: none;
 .form-field-input {
     flex: 1;
     height: 44px;
-    padding: 0 55px 0 14px; /* space on right for edit button */
+    padding: 0 55px 0 14px;
     border-radius: 14px;
     border: 1px solid #e5e7eb;
     font-size: 15px;
@@ -1366,6 +1366,36 @@ border: none;
     align-items: center;
     gap: 16px;
     margin-top: 20px;
+}
+
+.details-actions {
+    margin-left: auto;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Top right buttons */
+.delete-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background: white;
+    color: #a31616;
+    font-size: 20px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+}
+
+.delete-btn:hover {
+    background: #f7eaea;;
 }
 
 .details-main {
