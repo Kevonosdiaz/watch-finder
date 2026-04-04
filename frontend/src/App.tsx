@@ -6,9 +6,9 @@ import Watchlist from "./pages/Watchlist";
 import Watchdata from "./pages/Watchdata";
 import Profile from "./pages/Profile";
 import Password from "./pages/Password";
-import AdminDashboard from "./pages/AdminDashboard";
+import ManageMediaTitles from "./pages/ManageMediaTitles";
 
-type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile" | "admin";
+type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile" | "media-titles" | "streaming-services";
 
 type SelectedWatchlistItem = {
   watchlistId: number;
@@ -36,8 +36,9 @@ function App() {
         goToWatchlist={() => setPage("watchlist")} 
         goToProfile={() => setPage("profile")} 
         goToPassword={() => setPage("password")} 
-        goToAdmin={() => setPage("admin")}
         onLogout={() => setPage("login")}
+        goToMediaTitles={() => setPage("media-titles")}
+       // goToStreamingServices={() => setPage("streaming-services")}
       />}
       {page === "watchlist" && 
         <Watchlist 
@@ -51,7 +52,7 @@ function App() {
       {page === "password" && (
         <Password goBack={() => setPage("home")} />
       )}
-      {page === "admin" && (<AdminDashboard goToHome={() => setPage("home")} />)}
+      {page === "media-titles" && (<ManageMediaTitles goToHome={() => setPage("home")} />)}
       {page === "watchdata" && selectedTitle && (
         <Watchdata
           watchlistId={selectedTitle.watchlistId}
