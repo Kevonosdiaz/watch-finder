@@ -120,6 +120,16 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
         })
     return results
 
+# Delete a media title
+@app.delete("/api/media/{media_id}")
+def delete_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
+    media = db.query(models.MediaTitles).filter(models.MediaTitles.media_id == media_id).first()
+    if not media:
+        raise HTTPException(status_code=404, detail="Media title not found")
+    db.delete(media)
+    db.commit()
+    return {"message": "Removed"}
+
 # Get all regions in the db
 @app.get("/api/regions", response_model=list[RegionResponse])
 def get_regions(db: Annotated[Session, Depends(get_db)]):
