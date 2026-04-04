@@ -6,8 +6,9 @@ import Watchlist from "./pages/Watchlist";
 import Watchdata from "./pages/Watchdata";
 import Profile from "./pages/Profile";
 import Password from "./pages/Password";
+import AdminDashboard from "./pages/AdminDashboard";
 
-type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile";
+type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile" | "admin";
 
 type SelectedWatchlistItem = {
   watchlistId: number;
@@ -35,6 +36,7 @@ function App() {
         goToWatchlist={() => setPage("watchlist")} 
         goToProfile={() => setPage("profile")} 
         goToPassword={() => setPage("password")} 
+        goToAdmin={() => setPage("admin")}
         onLogout={() => setPage("login")}
       />}
       {page === "watchlist" && 
@@ -49,6 +51,7 @@ function App() {
       {page === "password" && (
         <Password goBack={() => setPage("home")} />
       )}
+      {page === "admin" && (<AdminDashboard goToHome={() => setPage("home")} />)}
       {page === "watchdata" && selectedTitle && (
         <Watchdata
           watchlistId={selectedTitle.watchlistId}
