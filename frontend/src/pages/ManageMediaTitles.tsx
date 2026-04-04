@@ -80,8 +80,8 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                         creator: m.creator,
                         synopsis: m.description,
                         posterUrl: m.poster_url,
-                        number_of_seasons: m.number_of_seasons ?? [],
-                        runtime: m.duration ?? [],
+                        number_of_seasons: m.number_of_seasons ?? undefined,
+                        runtime: m.duration ?? undefined,
                         providers: m.providers ?? [],
                         regions: m.regions ?? [],
                         availability: m.availability ?? [],
@@ -95,6 +95,22 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
 
         fetchMediaTitles();
     }, []);
+
+    const handleDelete = async () => { 
+        if (!selectedMedia) return;
+
+        try {
+            await api(`/api/media/${selectedMedia.id}`,
+                { method: "DELETE" }
+            );
+
+            setMediaTitles(prev => prev.filter(media => media.id !== selectedMedia.id));
+            setSelectedMedia(null);
+            setShowDetails(false);
+        } catch (err) {
+            console.error("Failed to delete media title", err);
+        }
+    }
 
     return (
         <div className="admin-container">
@@ -153,7 +169,7 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                             <button
                                 type="button"
                                 className="delete-btn"
-                                onClick={() => console.log("Remove", selectedMedia?.id)}
+                                onClick={handleDelete}
                             >
                                 <FaTrashAlt />
                             </button>
