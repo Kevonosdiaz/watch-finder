@@ -33,9 +33,10 @@ interface HomeProps {
     goToWatchlist: () => void;
     goToProfile: () => void;
     goToPassword: () => void;
+    onLogout: () => void;
 }
 
-export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeProps) {
+export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogout }: HomeProps) {
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
         setActiveMenu((prev) => (prev === menu ? "none" : menu));
@@ -67,7 +68,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
     const [search, setSearch] = useState("");
     const [results, setResults] = useState<SearchResult[]>([]);
     const [isSearching, setIsSearching] = useState(false);
-    const [searchError, setSearchError] = useState<string | null>(null);
+    const [, setSearchError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!search.trim()) {
@@ -315,7 +316,13 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword }: HomeP
             <div className="logout-popup-card" onClick={(e) => e.stopPropagation()}>
                 <div className="logout-popup-title">Are you sure you want to log out?</div>
                 <div className="logout-actions">
-                    <button className="secondary-logout-btn" onClick={() => setShowLogoutPopup(false)}>
+                    <button 
+                        className="secondary-logout-btn" 
+                        onClick={() => {
+                            setShowLogoutPopup(false);
+                            onLogout();
+                        }}
+                    >
                         Log out
                     </button>
                     <button className="primary-logout-btn" onClick={() => setShowLogoutPopup(false)}>
