@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { api } from "../api/client";
-import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle } from "react-icons/fa";
-import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd } from "react-icons/md";
+import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle, FaTv } from "react-icons/fa";
+import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd, MdAdminPanelSettings } from "react-icons/md";
+import { SiOpenmediavault } from "react-icons/si";
 import logo from "../assets/watch-finder-logo.png";
 
-type ActiveMenu = "none" | "region" | "account";
+type ActiveMenu = "none" | "region" | "account" | "admin";
 
 type StreamingPlatform = {
     name: string;
@@ -34,9 +35,10 @@ interface HomeProps {
     goToProfile: () => void;
     goToPassword: () => void;
     onLogout: () => void;
+    goToMediaTitles: () => void;
 }
 
-export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogout }: HomeProps) {
+export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogout, goToMediaTitles }: HomeProps) {
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
         setActiveMenu((prev) => (prev === menu ? "none" : menu));
@@ -206,6 +208,43 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                                 <MdChevronRight />
                             </span>
                         </button>
+                    </div>
+                )}
+            </div>
+            <div className="admin-wrapper">
+                <button
+                    type="button"
+                    className="admin-btn"
+                    onClick={() => toggleMenu("admin")}
+                    aria-label="Open admin menu"
+                    aria-expanded={activeMenu === "admin"}
+                >
+                    <MdAdminPanelSettings size={25}/>
+                </button>
+                {activeMenu === "admin" && (
+                    <div className="admin-dropdown">
+                        <button type="button" className="admin-item" onClick={() => { setActiveMenu("none"); goToMediaTitles(); }}>
+                            <span className="admin-left">
+                                <span className="admin-item-icon">
+                                    <SiOpenmediavault />
+                                </span>
+                                <span className="admin-label">Media titles</span>
+                            </span>
+                            <span className="admin-item-chevron">
+                                <MdChevronRight />
+                            </span>
+                        </button>
+                        <button type="button" className="admin-item" onClick={() => { setActiveMenu("none"); }}>
+                            <span className="admin-left">
+                                <span className="admin-item-icon">
+                                    <FaTv />
+                                </span>
+                                <span className="admin-label">Streaming services</span>
+                            </span>
+                            <span className="admin-item-chevron">
+                                <MdChevronRight />
+                            </span>
+                        </button> 
                     </div>
                 )}
             </div>

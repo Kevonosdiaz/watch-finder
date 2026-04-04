@@ -232,7 +232,8 @@ code {
 
 /* Homepage and Watchlist page */
 .home-container,
-.watchlist-container {
+.watchlist-container,
+.admin-container {
   background-color: white;
   min-height: 100vh;
   padding: 24px clamp(16px, 3vw, 32px);
@@ -448,7 +449,8 @@ code {
 
 /* Top right buttons */
 .list-btn,
-.account-btn {
+.account-btn,
+.admin-btn {
 border: none;
     background: transparent;
     box-shadow: none;
@@ -467,12 +469,14 @@ border: none;
     background: #f5f6fa;
 }
 
-/* Account button */
-.account-wrapper {
+/* Account / admin button */
+.account-wrapper,
+.admin-wrapper {
     position: relative;
 }
 
-.account-dropdown {
+.account-dropdown,
+.admin-dropdown {
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
@@ -487,7 +491,8 @@ border: none;
     padding: 10px 12px;
 }
 
-.account-item {
+.account-item,
+.admin-item {
     width: 100%;
     border: none;
     background: transparent;
@@ -502,20 +507,23 @@ border: none;
     color: #2b2436;
 }
 
-.account-left {
+.account-left,
+.admin-left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.account-item-icon {
+.account-item-icon,
+.admin-item-icon {
     display: inline-grid;
     place-items: center;
     font-size: 18px;
     color: #3a3346;
 }
 
-.account-item-chevron {
+.account-item-chevron,
+.admin-item-chevron {
     display: inline-grid;
     place-items: center;
     font-size: 20px;
@@ -523,16 +531,19 @@ border: none;
     transition: transform 0.15s ease, color 0.15s ease;
 }
 
-.account-item:hover {
+.account-item:hover,
+.admin-item:hover{
     background: #f3f4f7;
 }
 
-.account-item:hover .account-item-chevron {
+.account-item:hover .account-item-chevron,
+.admin-item:hover .admin-item-chevron {
     transform: translateX(2px);
     color: rgba(58, 51, 70, 0.8);
 }
 
-.account-item:focus-visible {
+.account-item:focus-visible,
+.admin-item:focus-visible {
     outline: 2px solid rgba(170, 59, 255, 0.45);
     outline-offset: -2px;
 }
@@ -979,7 +990,7 @@ border: none;
 .form-field-input {
     flex: 1;
     height: 44px;
-    padding: 0 55px 0 14px; /* space on right for edit button */
+    padding: 0 55px 0 14px;
     border-radius: 14px;
     border: 1px solid #e5e7eb;
     font-size: 15px;
@@ -1298,4 +1309,171 @@ border: none;
     border-radius: 8px;
     font-size: 14px;
     margin: 12px 0;
+}
+
+/* Manage media titles */
+.poster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    padding: 0 40px;
+    margin-top: 50px;
+    box-sizing: border-box;
+}
+
+.poster-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border: 0;
+}
+
+/* Poster hover overlay */
+.poster-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 140ms ease;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.05));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.poster-btn:hover .poster-overlay {
+    opacity: 0.5;
+}
+
+.poster-overlay-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.poster-overlay-sub {
+    color: rgba(255,255,255,0.9);
+    font-size: 10px;
+}
+
+/* Media title details */
+.details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.details-actions {
+    margin-left: auto;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Top right buttons */
+.delete-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background: white;
+    color: #a31616;
+    font-size: 20px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+}
+
+.delete-btn:hover {
+    background: #f7eaea;;
+}
+
+.details-main {
+    width: 100%;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Title */
+.details-title {
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.details-metadata,
+.details-runtime {
+    font-size: 16px;
+    text-align: left;
+}
+
+.details-synopsis-line {
+    display: block;
+    font-size: 16px;
+}
+
+.details-synopsis-label {
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+/* Availability */
+.availability-header {
+    margin-bottom: 4px;
+}
+
+.availability-list {
+    margin-top: 4px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Region */
+.availability-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: center;
+    padding: 10px 0;
+    gap: 12px;
+}
+
+/* Light divider between rows */
+.availability-row + .availability-row {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Region label */
+.availability-region {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Streaming platforms */
+.media-details-streaming-platforms {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Empty state */
+.no-providers {
+  font-size: 13px;
+  color: #7a7285;
+  font-style: italic;
 }

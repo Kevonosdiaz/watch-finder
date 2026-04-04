@@ -108,9 +108,18 @@ class MediaInRegion(BaseModel):
 
 # Response for streaming service
 class StreamingServiceResponse(StreamingServiceBase):
-    streaming_service_id: int
-    # Shows which media titles are available in which regions
-    media_titles: Optional[List[MediaInRegion]] = []
-    # Shows the region where the streaming service operates in
-    regions: Optional[List[str]] = []
+    logoUrl: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
+# Response for availability (region -> providers)
+class AvailabilityResponse(RegionBase):
+    providers: List[StreamingServiceResponse]
+    model_config = ConfigDict(from_attributes=True)
+
+# Response for media + availability
+class MediaWithAvailabilityResponse(MediaBase):
+    kind: Literal["Movie", "TV"]
+    number_of_seasons: Optional[int] = None
+    duration: Optional[int] = None 
+    availability: List[AvailabilityResponse] = []
     model_config = ConfigDict(from_attributes=True)
