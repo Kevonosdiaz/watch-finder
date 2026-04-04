@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { api } from "../api/client";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
+import { MdOutlineEdit } from "react-icons/md";
 
 interface ManageMediaTitleProps {
     goToHome: () => void;
@@ -140,6 +141,22 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                         </div>
                         <div className="watchlist-header-content">
                             <div className="header">Details</div>
+                        </div>
+                        <div className="details-actions">
+                            <button
+                                type="button"
+                                className="edit-btn"
+                                onClick={() => console.log("Edit", selectedMedia?.id)}
+                            >
+                                <MdOutlineEdit size={18}/>
+                            </button>
+                            <button
+                                type="button"
+                                className="delete-btn"
+                                onClick={() => console.log("Remove", selectedMedia?.id)}
+                            >
+                                <FaTrashAlt />
+                            </button>
                         </div>
                     </div>
                     {selectedMedia && (
