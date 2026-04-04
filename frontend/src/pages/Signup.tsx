@@ -15,15 +15,15 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
     const [showPassword, ] = useState(false);
 
      return (
-        <div className="login-container">
-            <div className="login-logo">
+        <div className="signup-container">
+            <div className="signup-logo">
                 <img src={logo} alt="WatchFinder Logo" />
             </div>
-            <div className="login-header-content">
+            <div className="signup-header-content">
                 <div className="header">Create an Account</div>
                 <div className="form-box">
                     <div className="form-field">
-                        <label className="login-form-label">First name</label>
+                        <label className="signup-form-label">First name</label>
                         <input
                             type="text"
                             className="form-text-input"
@@ -80,7 +80,7 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
                         className="link-btn"
                         onClick={goToLogin}
                     >
-                        Sign up
+                        Login
                     </button>
                 </div>
             </div>
