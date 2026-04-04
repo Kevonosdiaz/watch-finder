@@ -4,7 +4,7 @@ import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle } from "r
 import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd, MdAdminPanelSettings } from "react-icons/md";
 import logo from "../assets/watch-finder-logo.png";
 
-type ActiveMenu = "none" | "region" | "account";
+type ActiveMenu = "none" | "region" | "account" | "admin";
 
 type StreamingPlatform = {
     name: string;
@@ -178,17 +178,6 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, goToAdm
                                 <MdChevronRight />
                             </span>
                         </button>
-                        <button type="button" className="account-item" onClick={() => { setActiveMenu("none"); goToAdmin(); }}>
-                            <span className="account-left">
-                                <span className="account-item-icon">
-                                    <MdAdminPanelSettings />
-                                </span>
-                                <span className="account-label">Admin dashboard</span>
-                            </span>
-                            <span className="account-item-chevron">
-                                <MdChevronRight />
-                            </span>
-                        </button>
                         <button type="button" className="account-item" onClick={() => { setActiveMenu("none"); goToPassword(); }}>
                             <span className="account-left">
                                 <span className="account-item-icon">
@@ -218,6 +207,32 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, goToAdm
                                 <MdChevronRight />
                             </span>
                         </button>
+                    </div>
+                )}
+            </div>
+            <div className="admin-wrapper">
+                <button
+                    type="button"
+                    className="admin-btn"
+                    onClick={() => toggleMenu("admin")}
+                    aria-label="Open admin menu"
+                    aria-expanded={activeMenu === "admin"}
+                >
+                    <MdAdminPanelSettings />
+                </button>
+                {activeMenu === "admin" && (
+                    <div className="admin-dropdown">
+                        <button type="button" className="admin-item" onClick={() => { setActiveMenu("none"); goToAdmin(); }}>
+                            <span className="admin-left">
+                                <span className="admin-item-icon">
+                                    <MdAdminPanelSettings />
+                                </span>
+                                <span className="admin-label">Admin dashboard</span>
+                            </span>
+                            <span className="admin-item-chevron">
+                                <MdChevronRight />
+                            </span>
+                        </button> 
                     </div>
                 )}
             </div>
