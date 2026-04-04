@@ -4,9 +4,10 @@ import logo from "../assets/watch-finder-logo.png";
 
 type LoginProps = {
     onLogin: () => void;
+    goToSignup: () => void;
 };
 
-export default function Login({ onLogin }: LoginProps) {
+export default function Login({ onLogin, goToSignup }: LoginProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, ] = useState(false);
@@ -61,7 +62,14 @@ export default function Login({ onLogin }: LoginProps) {
                     Login
                 </button>
                 <div className="create-account-text">
-                    Don't have an account? <a href="/signup">Sign up</a>
+                    Don't have an account? 
+                    <button
+                        type="button"
+                        className="link-btn"
+                        onClick={goToSignup}
+                    >
+                        Sign up
+                    </button>
                 </div>
             </div>
         </div>
