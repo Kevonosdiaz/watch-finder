@@ -219,7 +219,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                     aria-label="Open admin menu"
                     aria-expanded={activeMenu === "admin"}
                 >
-                    <MdAdminPanelSettings />
+                    <MdAdminPanelSettings size={25}/>
                 </button>
                 {activeMenu === "admin" && (
                     <div className="admin-dropdown">
