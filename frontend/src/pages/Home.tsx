@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../api/Client";
+import { api } from "../api/client";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle } from "react-icons/fa";
 import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd } from "react-icons/md";
 import logo from "../assets/watch-finder-logo.png";

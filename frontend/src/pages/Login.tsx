@@ -12,17 +12,17 @@ export default function Login({ onLogin }: LoginProps) {
     
     return (
         <div className="login-container">
-            <div className="logo-container">
+            <div className="login-logo">
                 <img src={logo} alt="WatchFinder Logo" />
             </div>
             <div className="login-header-content">
                 <div className="header">Log in to your Account</div>
                 <div className="form-box">
                     <div className="form-field">
-                        <label className="form-label">Email address</label>
+                        <label className="login-form-label">Email address</label>
                         <input
                             type="text"
-                            className="form-field"
+                            className="form-text-input"
                             placeholder="Enter your email address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -30,7 +30,7 @@ export default function Login({ onLogin }: LoginProps) {
                         />
                     </div>
                     <div className="form-field">
-                        <label className="form-label">Password</label>
+                        <label className="login-form-label login">Password</label>
                         <input
                             type={showPassword ? "text" : "password"}
                             className="form-text-input"
