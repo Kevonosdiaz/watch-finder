@@ -23,7 +23,12 @@ function App() {
   return (
     <>
       {page === "login" && <Login onLogin={() => setPage("home")} />}
-      {page === "home" && <Home goToWatchlist={() => setPage("watchlist")} goToProfile={() => setPage("profile")} goToPassword={() => setPage("password")} />}
+      {page === "home" && <Home 
+        goToWatchlist={() => setPage("watchlist")} 
+        goToProfile={() => setPage("profile")} 
+        goToPassword={() => setPage("password")} 
+        onLogout={() => setPage("login")}
+      />}
       {page === "watchlist" && 
         <Watchlist 
           goToHome={() => setPage("home")}
