@@ -42,6 +42,9 @@ export default function Login({ onLogin }: LoginProps) {
                     </div>
                 </div>
                 <button className="login-btn">Login</button>
+                <div className="create-account-text">
+                    Don't have an account? <a href="/signup">Sign up</a>
+                </div>
             </div>
         </div>
     );
