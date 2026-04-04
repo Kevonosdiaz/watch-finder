@@ -232,7 +232,8 @@ code {
 
 /* Homepage and Watchlist page */
 .home-container,
-.watchlist-container {
+.watchlist-container,
+.admin-container {
   background-color: white;
   min-height: 100vh;
   padding: 24px clamp(16px, 3vw, 32px);
@@ -448,7 +449,8 @@ code {
 
 /* Top right buttons */
 .list-btn,
-.account-btn {
+.account-btn,
+.admin-btn {
 border: none;
     background: transparent;
     box-shadow: none;
@@ -467,12 +469,14 @@ border: none;
     background: #f5f6fa;
 }
 
-/* Account button */
-.account-wrapper {
+/* Account / admin button */
+.account-wrapper,
+.admin-wrapper {
     position: relative;
 }
 
-.account-dropdown {
+.account-dropdown,
+.admin-dropdown {
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
@@ -487,7 +491,8 @@ border: none;
     padding: 10px 12px;
 }
 
-.account-item {
+.account-item,
+.admin-item {
     width: 100%;
     border: none;
     background: transparent;
@@ -502,20 +507,23 @@ border: none;
     color: #2b2436;
 }
 
-.account-left {
+.account-left,
+.admin-left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.account-item-icon {
+.account-item-icon,
+.admin-item-icon {
     display: inline-grid;
     place-items: center;
     font-size: 18px;
     color: #3a3346;
 }
 
-.account-item-chevron {
+.account-item-chevron,
+.admin-item-chevron {
     display: inline-grid;
     place-items: center;
     font-size: 20px;
@@ -523,16 +531,19 @@ border: none;
     transition: transform 0.15s ease, color 0.15s ease;
 }
 
-.account-item:hover {
+.account-item:hover,
+.admin-item:hover{
     background: #f3f4f7;
 }
 
-.account-item:hover .account-item-chevron {
+.account-item:hover .account-item-chevron,
+.admin-item:hover .admin-item-chevron {
     transform: translateX(2px);
     color: rgba(58, 51, 70, 0.8);
 }
 
-.account-item:focus-visible {
+.account-item:focus-visible,
+.admin-item:focus-visible {
     outline: 2px solid rgba(170, 59, 255, 0.45);
     outline-offset: -2px;
 }
