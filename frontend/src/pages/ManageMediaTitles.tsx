@@ -144,21 +144,22 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                     </div>
                     {selectedMedia && (
                         <div className="details-container">
-                            <div className="poster">
+                            <div className="poster-wrapper">
                                 <img src={selectedMedia.posterUrl || "/placeholder-poster.png"} />
                             </div>
-                            <div className="result-main">
-                                <div className="result-title">{selectedMedia.title}</div>
-                                <div className="result-metadata">{metadata}</div>
-                                <div className="result-runtime">{runtimeLine}</div>
-                                <div className="result-details">
-                                    <div className="synopsis-line">
-                                        <span className="synopsis-label">Synopsis:</span>
-                                        <span className="synopsis-text">
+                            <div className="details-main">
+                                <div className="details-title">{selectedMedia.title}</div>
+                                <div className="details-metadata">{metadata}</div>
+                                <div className="details-runtime">{runtimeLine}</div>
+                                <div className="details-details">
+                                    <div className="details-synopsis-line">
+                                        <span className="details-synopsis-label">Synopsis:</span>
+                                        <span className="details-synopsis-text">
                                             {selectedMedia.synopsis ?? "No synopsis available yet."}
                                         </span>
                                     </div>
                                 </div>
+                                <h3 className="availability-header">Where to Watch</h3>
                                 <div className="availability-list">
                                     {(selectedMedia.availability ?? []).map((region) => (
                                         <div key={region.country_name} className="availability-row">

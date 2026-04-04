@@ -1358,3 +1358,92 @@ border: none;
     color: rgba(255,255,255,0.9);
     font-size: 10px;
 }
+
+/* Media title details */
+.details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.details-main {
+    width: 100%;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Title */
+.details-title {
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.details-metadata,
+.details-runtime {
+    font-size: 16px;
+    text-align: left;
+}
+
+.details-synopsis-line {
+    display: block;
+    font-size: 16px;
+}
+
+.details-synopsis-label {
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+/* Availability */
+.availability-header {
+    margin-bottom: 4px;
+}
+
+.availability-list {
+    margin-top: 4px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Region */
+.availability-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: center;
+    padding: 10px 0;
+    gap: 12px;
+}
+
+/* Light divider between rows */
+.availability-row + .availability-row {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Region label */
+.availability-region {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Streaming platforms */
+.media-details-streaming-platforms {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Empty state */
+.no-providers {
+  font-size: 13px;
+  color: #7a7285;
+  font-style: italic;
+}
