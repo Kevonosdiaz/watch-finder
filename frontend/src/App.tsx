@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import Watchlist from "./pages/Watchlist";
 import Watchdata from "./pages/Watchdata";
 import Profile from "./pages/Profile";
 import Password from "./pages/Password";
 
-type Page = "login" | "home" | "watchlist" | "watchdata" | "password" | "profile";
+type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile";
 
 type SelectedWatchlistItem = {
   watchlistId: number;
@@ -22,7 +23,14 @@ function App() {
   }
   return (
     <>
-      {page === "login" && <Login onLogin={() => setPage("home")} />}
+      {page === "login" && <Login 
+        onLogin={() => setPage("home")}
+        goToSignup={() => setPage("signup")}
+      />}
+      {page === "signup" && <Signup 
+        onSignup={() => setPage("home")} 
+        goToLogin={() => setPage("login")}
+      />}
       {page === "home" && <Home 
         goToWatchlist={() => setPage("watchlist")} 
         goToProfile={() => setPage("profile")} 
