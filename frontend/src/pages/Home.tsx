@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../api/client";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle } from "react-icons/fa";
-import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd } from "react-icons/md";
+import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd, MdAdminPanelSettings } from "react-icons/md";
 import logo from "../assets/watch-finder-logo.png";
 
 type ActiveMenu = "none" | "region" | "account";
@@ -33,10 +33,11 @@ interface HomeProps {
     goToWatchlist: () => void;
     goToProfile: () => void;
     goToPassword: () => void;
+    goToAdmin: () => void;
     onLogout: () => void;
 }
 
-export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogout }: HomeProps) {
+export default function Home({ goToWatchlist, goToProfile, goToPassword, goToAdmin, onLogout }: HomeProps) {
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
         setActiveMenu((prev) => (prev === menu ? "none" : menu));
@@ -172,6 +173,17 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                                     <MdOutlineManageAccounts />
                                 </span>
                                 <span className="account-label">Profile</span>
+                            </span>
+                            <span className="account-item-chevron">
+                                <MdChevronRight />
+                            </span>
+                        </button>
+                        <button type="button" className="account-item" onClick={() => { setActiveMenu("none"); goToAdmin(); }}>
+                            <span className="account-left">
+                                <span className="account-item-icon">
+                                    <MdAdminPanelSettings />
+                                </span>
+                                <span className="account-label">Admin dashboard</span>
                             </span>
                             <span className="account-item-chevron">
                                 <MdChevronRight />
