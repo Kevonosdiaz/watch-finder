@@ -272,7 +272,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
 
                 const metadata = joinDot([
                     String(item.year),
-                    item.criticsScore != null ? `${item.criticsScore}% critics` : null,
+                    item.criticsScore != null ? `${item.criticsScore}/10★` : null,
                     item.rating ?? null,
                 ]);
 
