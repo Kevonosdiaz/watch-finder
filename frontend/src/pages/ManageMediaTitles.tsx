@@ -46,7 +46,7 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
     const [showDetails, setShowDetails] = useState(false);
     const metadata = selectedMedia ? [
         String(selectedMedia.year),
-        selectedMedia.criticsScore != null ? `${selectedMedia.criticsScore}% critics` : null,
+        selectedMedia.criticsScore != null ? `${selectedMedia.criticsScore}/10★` : null,
         selectedMedia.rating ?? null,
         ]
         .filter(Boolean)
