@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { api } from "../api/client";
+import { api } from "../api/Client";
 import logo from "../assets/watch-finder-logo.png";
 
 type SignupProps = {

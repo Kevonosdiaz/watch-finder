@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { api } from "../api/client";
+import { api } from "../api/Client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit } from "react-icons/md";
 
