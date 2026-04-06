@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { api } from "../api/client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit, MdOutlineFileUpload, MdOutlineCancel } from "react-icons/md";
-import { useRef } from "react";
+import { IoAddCircleOutline } from "react-icons/io5";
 
 interface ManageMediaTitleProps {
     goToHome: () => void;
@@ -187,6 +187,12 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                             <div className="header">Media titles</div>
                             <div className="subheader">Add, update or remove media titles.</div>
                         </div>
+                    </div>
+                    <div className="add-media">
+                        <button>
+                            <IoAddCircleOutline size={18} />
+                            Add new media title
+                        </button>
                     </div>
                     <div className="poster-grid">
                         {mediaTitles.map((media) => (
