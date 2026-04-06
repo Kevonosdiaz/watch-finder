@@ -1312,12 +1312,35 @@ border: none;
 }
 
 /* Manage media titles */
+/* Add new media title */
+.add-media {
+    margin-bottom: 16px;
+    padding: 0 40px;
+    margin-top: 20px;
+}
+
+.add-media button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    height: 44px;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+/* Media list */
 .poster-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 12px;
     padding: 0 40px;
-    margin-top: 50px;
+    margin-top: 30px;
     box-sizing: border-box;
 }
 

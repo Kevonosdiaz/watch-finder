@@ -7,8 +7,9 @@ import Watchdata from "./pages/Watchdata";
 import Profile from "./pages/Profile";
 import Password from "./pages/Password";
 import ManageMediaTitles from "./pages/ManageMediaTitles";
+import AddMediaTitle from "./pages/AddMediaTitle";
 
-type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile" | "media-titles" | "streaming-services";
+type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile" | "media-titles" | "add-media-title" | "streaming-services";
 
 type SelectedWatchlistItem = {
   watchlistId: number;
@@ -52,7 +53,11 @@ function App() {
       {page === "password" && (
         <Password goBack={() => setPage("home")} />
       )}
-      {page === "media-titles" && (<ManageMediaTitles goToHome={() => setPage("home")} />)}
+      {page === "media-titles" && (<ManageMediaTitles 
+        goToHome={() => setPage("home")}
+        goToAddMediaTitles={() => setPage("add-media-title")} 
+      />)}
+      {page === "add-media-title" && (<AddMediaTitle goBack={() => setPage("media-titles")}/>)}
       {page === "watchdata" && selectedTitle && (
         <Watchdata
           watchlistId={selectedTitle.watchlistId}

@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { api } from "../api/client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit, MdOutlineFileUpload, MdOutlineCancel } from "react-icons/md";
-import { useRef } from "react";
+import { IoAddCircleOutline } from "react-icons/io5";
 
 interface ManageMediaTitleProps {
     goToHome: () => void;
+    goToAddMediaTitles: () => void;
 }
   
 interface MediaTitle {
@@ -23,11 +24,11 @@ interface MediaTitle {
     providers: StreamingPlatform[];
     regions: Region[];
     availability?: Availability[];
-}
+};
 
 type Region = {
     country_name: string;
-}
+};
 
 type StreamingPlatform = {
     name: string;
@@ -41,7 +42,7 @@ type Availability = {
   providers: StreamingPlatform[];
 };
 
-export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
+export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: ManageMediaTitleProps) {
    /* useEffect(() => {
         const role = localStorage.getItem("role");
         if (role !== "admin") {
@@ -188,6 +189,12 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                             <div className="subheader">Add, update or remove media titles.</div>
                         </div>
                     </div>
+                    <div className="add-media">
+                        <button onClick={goToAddMediaTitles}>
+                            <IoAddCircleOutline size={18} />
+                            Add new media title
+                        </button>
+                    </div>
                     <div className="poster-grid">
                         {mediaTitles.map((media) => (
                             <div key={media.id} className="poster-wrapper">
@@ -211,13 +218,20 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
             ) : (
                 <>
                     <div className="watchlist-header">
-                        <div className="back-btn">
-                            <button onClick={goToHome}>
-                                <FaArrowLeft size={24}/>
-                            </button>
-                        </div>
+                        {!isEditing && (
+                            <div className="back-btn">
+                                <button 
+                                    onClick={() => {
+                                        setSelectedMedia(null); 
+                                        setShowDetails(false);
+                                    }}
+                                >
+                                    <FaArrowLeft size={24}/>
+                                </button>
+                            </div>
+                        )}
                         <div className="watchlist-header-content">
-                            <div className="header">Details</div>
+                            <div className="header">Media details</div>
                         </div>
                         <div className="details-actions">
                             {isEditing ? (
