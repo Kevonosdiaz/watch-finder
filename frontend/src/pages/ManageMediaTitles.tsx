@@ -109,7 +109,7 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
     const [posterFile, setPosterFile] = useState<File | null>(null);
     const [posterPreview, setPosterPreview] = useState<string>("");
     const [removePoster, setRemovePoster] = useState(false);
-const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const handleDelete = async () => { 
         if (!selectedMedia) return;
 
@@ -125,6 +125,18 @@ const fileInputRef = useRef<HTMLInputElement | null>(null);
             console.error("Failed to delete media title", err);
         }
     }
+
+    // Handle cancelling edits
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditedMedia(null);
+        // Reset editing state
+        setPosterFile(null);
+        setPosterPreview("");
+        setRemovePoster(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+  
 
     return (
         <div className="admin-container">
@@ -178,6 +190,7 @@ const fileInputRef = useRef<HTMLInputElement | null>(null);
                                 <button
                                     type="button"
                                     className="cancel-edit-btn"
+                                    onClick={handleCancelEdit}
                                 >
                                     <MdOutlineCancel size={24} />
                                 </button>
