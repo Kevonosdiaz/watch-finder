@@ -212,7 +212,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                     </div>
                 )}
             </div>
-            {role === "admin" && (
+            {/*localStorage.getItem("role") === "admin" && (*/}
             <div className="admin-wrapper">
                 <button
                     type="button"
@@ -250,7 +250,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                     </div>
                 )}
             </div>
-            )}
+            
         </div>
         </div>
         <div className="logo-container">
