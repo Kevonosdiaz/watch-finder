@@ -33,10 +33,12 @@ def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)]):
 
 
 # Retrieve a user
-@router.get("/{email}", response_model=UserResponse)
-def get_user(email: str, db: Annotated[Session, Depends(get_db)]):
+@router.get("/{email}/{password}", response_model=UserResponse)
+def get_user(email: str, password: str, db: Annotated[Session,
+                                                      Depends(get_db)]):
     result = db.execute(
-        select(models.Users).where(models.Users.email == email))
+        select(models.Users).where(models.Users.email == email,
+                                   models.Users.password == password))
     user = result.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

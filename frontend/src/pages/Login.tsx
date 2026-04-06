@@ -16,7 +16,7 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
         e.preventDefault();
         
         try {
-            const loginUser = await api<any>(`/api/users/${email}`);
+            const loginUser = await api<any>(`/api/users/${email}/${password}`);
             console.log("User: ", loginUser)
             onLogin();
         } catch (err) {
