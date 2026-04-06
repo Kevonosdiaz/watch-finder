@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../api/client";
+import { api } from "../api/Client";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle, FaTv } from "react-icons/fa";
 import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd, MdAdminPanelSettings } from "react-icons/md";
 import { SiOpenmediavault } from "react-icons/si";
@@ -272,7 +272,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
 
                 const metadata = joinDot([
                     String(item.year),
-                    item.criticsScore != null ? `${item.criticsScore}% critics` : null,
+                    item.criticsScore != null ? `${item.criticsScore}/10★` : null,
                     item.rating ?? null,
                 ]);
 

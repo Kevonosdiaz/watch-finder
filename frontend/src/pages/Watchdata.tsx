@@ -1,5 +1,5 @@
 import { useState, useEffect} from "react";
-import { api } from "../api/client";
+import { api } from "../api/Client";
 import { FaArrowLeft, FaRegStar, FaStar } from "react-icons/fa";
 
 interface WatchdataProps {
@@ -73,7 +73,7 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
         setSaveSuccess(false);
 
         try {
-            await api(`/api/watchlist/${watchlistId}/media/${titleId}/watchdata`, {
+            await api(`/api/watchlists/${watchlistId}/media/${titleId}/watchdata`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
