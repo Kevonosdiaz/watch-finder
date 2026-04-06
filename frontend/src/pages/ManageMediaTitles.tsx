@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import { api } from "../api/client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
-import { MdOutlineEdit } from "react-icons/md";
+import { MdOutlineEdit, MdOutlineFileUpload } from "react-icons/md";
+import { useRef } from "react";
 
 interface ManageMediaTitleProps {
     goToHome: () => void;
@@ -102,9 +103,13 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
         fetchMediaTitles();
     }, []);
 
+    // Editing constants
     const [isEditing, setIsEditing] = useState(false);
     const [editedMedia, setEditedMedia] = useState<MediaTitle | null>(null);
-
+    const [posterFile, setPosterFile] = useState<File | null>(null);
+    const [posterPreview, setPosterPreview] = useState<string>("");
+    const [removePoster, setRemovePoster] = useState(false);
+const fileInputRef = useRef<HTMLInputElement | null>(null);
     const handleDelete = async () => { 
         if (!selectedMedia) return;
 
@@ -174,6 +179,9 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                                 onClick={() => {
                                     setIsEditing(true);
                                     setEditedMedia(selectedMedia);
+                                    setPosterFile(null);
+                                    setRemovePoster(false);
+                                    setPosterPreview(selectedMedia?.posterUrl ?? "");
                                 }}
                             >
                                 <MdOutlineEdit size={18}/>
@@ -189,9 +197,52 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                     </div>
                     {selectedMedia && (
                         <div className="details-container">
-                            <div className="poster-wrapper">
-                                <img src={selectedMedia.posterUrl || "/placeholder-poster.png"} />
-                            </div>
+                            <div className="poster-stack">
+                                <div className="poster-wrapper">
+                                <img
+                                    src={
+                                    isEditing
+                                        ? posterPreview ||
+                                        editedMedia?.posterUrl ||
+                                        "/placeholder-poster.png"
+                                        : selectedMedia.posterUrl || "/placeholder-poster.png"
+                                    }
+                                    className="poster-img"
+                                />
+                                </div>
+                                {isEditing && (
+                                    <div className="poster-actions">
+                                        <button
+                                            type="button"
+                                            className="poster-upload-btn"
+                                            onClick={() => fileInputRef.current?.click()}
+                                        >
+                                            <MdOutlineFileUpload size={18}/>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="poster-remove-btn"
+                                           // onClick={() => fileInputRef.current?.click()}
+                                        >
+                                            <FaTrashAlt />
+                                        </button>
+                                        
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        hidden
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            setRemovePoster(false);
+                                            setPosterFile(file);
+                                            setPosterPreview(URL.createObjectURL(file));
+                                        }}
+                                    />
+                                    </div>
+                                )}
+                            </div>  
                             <div className="details-main">
                             {isEditing && editedMedia ? (
                                 <>
