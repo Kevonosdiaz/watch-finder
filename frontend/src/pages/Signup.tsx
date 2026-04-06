@@ -27,7 +27,7 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
                         <input
                             type="text"
                             className="form-text-input"
-                            placeholder="Enter your email address"
+                            placeholder="Enter your first name"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             required
@@ -38,7 +38,7 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
                         <input
                             type="text"
                             className="form-text-input"
-                            placeholder="Enter your email address"
+                            placeholder="Enter your last name"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             required
