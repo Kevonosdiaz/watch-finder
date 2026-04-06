@@ -5,6 +5,7 @@ from typing import Annotated
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database import Base, engine, get_db
+from datetime import datetime
 
 router = APIRouter()
 # '/api/users/' is automatically part of api route here
