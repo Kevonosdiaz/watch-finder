@@ -211,13 +211,15 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
             ) : (
                 <>
                     <div className="watchlist-header">
-                        <div className="back-btn">
-                            <button onClick={goToHome}>
-                                <FaArrowLeft size={24}/>
-                            </button>
-                        </div>
+                        {!isEditing && (
+                            <div className="back-btn">
+                                <button onClick={goToHome}>
+                                    <FaArrowLeft size={24}/>
+                                </button>
+                            </div>
+                        )}
                         <div className="watchlist-header-content">
-                            <div className="header">Details</div>
+                            <div className="header">Media details</div>
                         </div>
                         <div className="details-actions">
                             {isEditing ? (
