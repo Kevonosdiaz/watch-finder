@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
-import { api } from "../api/Client";
+import { api } from "../api/client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
-import { MdOutlineEdit } from "react-icons/md";
+import { MdOutlineEdit, MdOutlineFileUpload, MdOutlineCancel } from "react-icons/md";
+import { useRef } from "react";
 
 interface ManageMediaTitleProps {
     goToHome: () => void;
@@ -41,6 +42,12 @@ type Availability = {
 };
 
 export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
+   /* useEffect(() => {
+        const role = localStorage.getItem("role");
+        if (role !== "admin") {
+            goToHome();
+        }
+    }, []);*/
     const [mediaTitles, setMediaTitles] = useState<MediaTitle[]>([]);
     const [selectedMedia, setSelectedMedia] = useState<MediaTitle | null>(null);
     const [showDetails, setShowDetails] = useState(false);
@@ -96,6 +103,13 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
         fetchMediaTitles();
     }, []);
 
+    // Editing constants
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedMedia, setEditedMedia] = useState<MediaTitle | null>(null);
+    const [, setPosterFile] = useState<File | null>(null);
+    const [posterPreview, setPosterPreview] = useState<string>("");
+    const [, setRemovePoster] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const handleDelete = async () => { 
         if (!selectedMedia) return;
 
@@ -111,6 +125,53 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
             console.error("Failed to delete media title", err);
         }
     }
+
+    // Handle cancelling edits
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditedMedia(null);
+        // Reset editing state
+        setPosterFile(null);
+        setPosterPreview("");
+        setRemovePoster(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+  
+    // Handle saving edits
+    const handleSaveEdit = async () => {
+        if (!editedMedia) return;
+
+        try {
+            await api(`/api/media/${editedMedia.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                title_name: editedMedia.title,
+                release_year: editedMedia.year,
+                creator: editedMedia.creator,
+                age_rating: editedMedia.rating,
+                rating: editedMedia.criticsScore,
+                description: editedMedia.synopsis,
+                duration: editedMedia.runtime ? Number(editedMedia.runtime) : undefined,
+                number_of_seasons: editedMedia.number_of_seasons,
+            }),
+            });
+            // Update the frontend
+            setSelectedMedia(editedMedia);
+            setMediaTitles((prev) =>
+            prev.map((m) => (m.id === editedMedia.id ? editedMedia : m))
+            );
+            // Exit editing mode
+            setIsEditing(false);
+            setEditedMedia(null);
+            setPosterFile(null);
+            setPosterPreview("");
+            setRemovePoster(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        } catch (err) {
+            console.error("Failed to update media", err);
+        }
+    };
 
     return (
         <div className="admin-container">
@@ -159,66 +220,246 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                             <div className="header">Details</div>
                         </div>
                         <div className="details-actions">
-                            <button
-                                type="button"
-                                className="edit-btn"
-                                onClick={() => console.log("Edit", selectedMedia?.id)}
-                            >
-                                <MdOutlineEdit size={18}/>
-                            </button>
-                            <button
-                                type="button"
-                                className="delete-btn"
-                                onClick={handleDelete}
-                            >
-                                <FaTrashAlt />
-                            </button>
+                            {isEditing ? (
+                                <>
+                                <button
+                                    type="button"
+                                    className="cancel-edit-btn"
+                                    onClick={handleCancelEdit}
+                                >
+                                    <MdOutlineCancel size={24} />
+                                </button>
+                                <button
+                                    type="button"
+                                    className="save-btn"
+                                    onClick={handleSaveEdit}
+                                >
+                                    Save
+                                </button>
+                                </>
+                            ) : (
+                                <>
+                                <button
+                                    type="button"
+                                    className="edit-btn"
+                                    onClick={() => {
+                                        setIsEditing(true);
+                                        setEditedMedia(selectedMedia);
+                                        setPosterFile(null);
+                                        setRemovePoster(false);
+                                        setPosterPreview(selectedMedia?.posterUrl ?? "");
+                                    }}
+                                >
+                                    <MdOutlineEdit size={18}/>
+                                </button>
+                                <button
+                                    type="button"
+                                    className="delete-btn"
+                                    onClick={handleDelete}
+                                >
+                                    <FaTrashAlt />
+                                </button>
+                            </>
+                            )}
                         </div>
                     </div>
                     {selectedMedia && (
                         <div className="details-container">
-                            <div className="poster-wrapper">
-                                <img src={selectedMedia.posterUrl || "/placeholder-poster.png"} />
-                            </div>
+                            <div className="poster-stack">
+                                <div className="poster-wrapper">
+                                <img
+                                    src={
+                                    isEditing
+                                        ? posterPreview ||
+                                        editedMedia?.posterUrl ||
+                                        "/placeholder-poster.png"
+                                        : selectedMedia.posterUrl || "/placeholder-poster.png"
+                                    }
+                                    className="poster-img"
+                                />
+                                </div>
+                                {isEditing && (
+                                    <div className="poster-actions">
+                                        <button
+                                            type="button"
+                                            className="poster-upload-btn"
+                                            onClick={() => fileInputRef.current?.click()}
+                                        >
+                                            <MdOutlineFileUpload size={18}/>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="poster-remove-btn"
+                                           // onClick={() => fileInputRef.current?.click()}
+                                        >
+                                            <FaTrashAlt />
+                                        </button>
+                                        
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        hidden
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            setRemovePoster(false);
+                                            setPosterFile(file);
+                                            setPosterPreview(URL.createObjectURL(file));
+                                        }}
+                                    />
+                                    </div>
+                                )}
+                            </div>  
                             <div className="details-main">
+                            {isEditing && editedMedia ? (
+                                <>
+                                <div className="edit-form-box">
+                                    <div className="edit-form-field">
+                                        <div className="form-label">Title</div>
+                                        <input
+                                            className="edit-form-field-input"
+                                            value={editedMedia.title || ""}
+                                            onChange={(e) =>
+                                            setEditedMedia(prev => prev && { ...prev, title: e.target.value })
+                                            }
+                                            placeholder="Enter the title of movie/show"
+                                        />
+                                    </div>
+                                    <div className="edit-form-field">
+                                        <div className="form-label">Year</div>
+                                        <input
+                                            className="edit-form-field-input"
+                                            type="number"
+                                            value={editedMedia.year || ""}
+                                            onChange={(e) =>
+                                            setEditedMedia(prev => prev && { ...prev, year: Number(e.target.value) })
+                                            }
+                                            placeholder="Enter the release year"
+                                        />
+                                    </div>
+                                    <div className="edit-form-field">
+                                        <div className="form-label">Critics score</div>
+                                        <input
+                                            className="edit-form-field-input"
+                                            value={editedMedia.criticsScore || ""}
+                                            onChange={(e) =>
+                                            setEditedMedia(prev => prev && { ...prev, criticsScore: Number(e.target.value) })
+                                            }
+                                            placeholder="Enter the critics score"
+                                        />
+                                    </div>
+                                    <div className="edit-form-field">
+                                        <div className="form-label">Age rating</div>
+                                        <input
+                                            className="edit-form-field-input"
+                                            value={editedMedia.rating || ""}
+                                            onChange={(e) =>
+                                            setEditedMedia(prev => prev && { ...prev, rating: e.target.value })
+                                            }
+                                            placeholder="Enter the age rating"
+                                        />
+                                    </div>
+                                    <div className="edit-form-field">
+                                        <div className="form-label">Movie or show?</div>
+                                        <select
+                                            value={editedMedia.kind || "Movie"}
+                                            onChange={(e) =>
+                                                setEditedMedia(prev => prev && { ...prev, kind: e.target.value as "Movie" | "TV" })
+                                            }
+                                            className="edit-form-field-select"
+                                        >
+                                            <option value="Movie">Movie</option>
+                                            <option value="TV">TV Show</option>
+                                        </select>
+                                    </div>
+                                    {editedMedia.kind === "Movie" ? (
+                                        <div className="edit-form-field">
+                                            <div className="form-label">Movie runtime</div>
+                                            <input
+                                                className="edit-form-field-input"
+                                                type="number"
+                                                value={editedMedia.runtime || ""}
+                                                onChange={(e) =>
+                                                    setEditedMedia(prev => prev && { ...prev, runtime: e.target.value })
+                                                }
+                                                placeholder="Enter the movie's runtime (minutes)"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="edit-form-field">
+                                            <div className="form-label">Number of seasons</div>
+                                            <input
+                                                className="edit-form-field-input"
+                                                type="number"
+                                                value={editedMedia.number_of_seasons || ""}
+                                                onChange={(e) =>
+                                                    setEditedMedia(prev => prev && { ...prev, number_of_seasons: Number(e.target.value) })
+                                                }
+                                                placeholder="Enter the show's number of seasons"
+                                            />
+                                        </div>
+                                    )}
+                                <div className="edit-form-field">
+                                    <div className="form-label">Creator</div>      
+                                    <input
+                                        className="edit-form-field-input"
+                                        value={editedMedia.creator || ""}
+                                        onChange={(e) =>
+                                            setEditedMedia(prev => prev && { ...prev, creator: e.target.value })
+                                        }
+                                        placeholder="Creator"
+                                    />
+                                </div>
+                                <div className="edit-form-field">
+                                    <div className="form-label">Synopsis</div>
+                                    <textarea
+                                        className="edit-form-field-textfield"
+                                        value={editedMedia.synopsis || ""}
+                                        onChange={(e) =>
+                                        setEditedMedia(prev => prev && { ...prev, synopsis: e.target.value })
+                                        }
+                                        placeholder="Synopsis"
+                                    />
+                                </div>
+                                </div>
+                                </>
+                            ) : (
+                                <>
                                 <div className="details-title">{selectedMedia.title}</div>
                                 <div className="details-metadata">{metadata}</div>
                                 <div className="details-runtime">{runtimeLine}</div>
                                 <div className="details-details">
                                     <div className="details-synopsis-line">
-                                        <span className="details-synopsis-label">Synopsis:</span>
-                                        <span className="details-synopsis-text">
-                                            {selectedMedia.synopsis ?? "No synopsis available yet."}
-                                        </span>
+                                    <span className="details-synopsis-label">Synopsis:</span>
+                                    <span className="details-synopsis-text">
+                                        {selectedMedia.synopsis ?? "No synopsis available yet."}
+                                    </span>
                                     </div>
                                 </div>
-                                <h3 className="availability-header">Where to Watch</h3>
-                                <div className="availability-list">
-                                    {(selectedMedia.availability ?? []).map((region) => (
-                                        <div key={region.country_name} className="availability-row">
-                                            <div className="availability-region">{region.country_name}</div>
-                                            <div className="media-details-streaming-platforms">
-                                                {region.providers.length > 0 ? (
-                                                    region.providers.map((p) => (
-                                                        <span key={p.name} className="streaming-platform-icon" title={p.name}>
-                                                        {p.logoUrl ? (
-                                                            <img src={p.logoUrl} alt={p.name} />
-                                                        ) : (
-                                                            p.name[0]
-                                                        )}
-                                                        </span>
-                                                    ))
-                                                ) : ( 
-                                                    <span className="no-providers">
-                                                        No streaming providers listed.
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
+                                </>
+                            )}
+                            <h3 className="availability-header">Where to Watch</h3>
+                            <div className="availability-list">
+                                {(selectedMedia.availability ?? []).map(region => (
+                                <div key={region.country_name} className="availability-row">
+                                    <div className="availability-region">{region.country_name}</div>
+                                    <div className="media-details-streaming-platforms">
+                                    {region.providers.length > 0 ? (
+                                        region.providers.map(p => (
+                                        <span key={p.name} className="streaming-platform-icon" title={p.name}>
+                                            {p.logoUrl ? <img src={p.logoUrl} alt={p.name} /> : p.name[0]}
+                                        </span>
+                                        ))
+                                    ) : (
+                                        <span className="no-providers">No streaming providers listed.</span>
+                                    )}
+                                    </div>
                                 </div>
+                                ))}
                             </div>
                         </div>
+                    </div>
                     )}
                 </>
             )}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../api/Client";
+import { api } from "../api/client";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle, FaTv } from "react-icons/fa";
 import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd, MdAdminPanelSettings } from "react-icons/md";
 import { SiOpenmediavault } from "react-icons/si";
@@ -39,6 +39,7 @@ interface HomeProps {
 }
 
 export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogout, goToMediaTitles }: HomeProps) {
+    const role = localStorage.getItem("role");
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
         setActiveMenu((prev) => (prev === menu ? "none" : menu));
@@ -211,6 +212,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                     </div>
                 )}
             </div>
+            {/*localStorage.getItem("role") === "admin" && (*/}
             <div className="admin-wrapper">
                 <button
                     type="button"
@@ -248,6 +250,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                     </div>
                 )}
             </div>
+            
         </div>
         </div>
         <div className="logo-container">
@@ -359,7 +362,9 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                         className="secondary-logout-btn" 
                         onClick={() => {
                             setShowLogoutPopup(false);
-                            onLogout();
+                            onLogout = () => {
+                                localStorage.removeItem("role");
+                            }
                         }}
                     >
                         Log out

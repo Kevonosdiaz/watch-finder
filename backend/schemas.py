@@ -40,6 +40,20 @@ class Shows(MediaBase):
 class Movies(MediaBase):
     duration: int
 
+from typing import Literal
+
+# All optional attrbutes for updating media title fields
+class MediaUpdate(BaseModel):
+    title_name: Optional[str] = Field(default=None, max_length=255)
+    release_year: Optional[int] = None
+    creator: Optional[str] = None
+    age_rating: Optional[str] = Field(default=None, max_length=10)
+    rating: Optional[float] = None
+    description: Optional[str] = None
+    kind: Optional[Literal["Movie", "TV"]] = None
+    duration: Optional[int] = None
+    number_of_seasons: Optional[int] = None
+
 # Response for a media title
 class MediaResponse(MediaBase):
     model_config = ConfigDict(from_attributes=True)

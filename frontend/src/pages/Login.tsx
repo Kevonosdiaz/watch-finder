@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { api } from "../api/Client";
+import { api } from "../api/client";
 import logo from "../assets/watch-finder-logo.png";
 
 type LoginProps = {
@@ -18,6 +18,8 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
         try {
             const loginUser = await api<any>(`/api/users/${email}/${password}`);
             console.log("User: ", loginUser)
+            // Set the user/admin role
+            localStorage.setItem("role", loginUser.role);
             onLogin();
         } catch (err) {
         console.error("Login failed: ", err);
