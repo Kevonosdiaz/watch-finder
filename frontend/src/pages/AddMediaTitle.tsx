@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { useState, useRef } from "react";
+import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
+import { MdOutlineFileUpload } from "react-icons/md";
 
 interface AddMediaTitleProps {
   goBack: () => void;
@@ -19,18 +20,21 @@ type MediaTitle = {
 
 
 export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
-  
-const [media, setMedia] = useState<MediaTitle>({
-    title: "",
-    year: "",
-    kind: undefined,
-    criticsScore: "",
-    rating: "",
-    runtime: "",
-    number_of_seasons: "",
-    creator: "",
-    synopsis: "",
-  });
+    const [media, setMedia] = useState<MediaTitle>({
+        title: "",
+        year: "",
+        kind: undefined,
+        criticsScore: "",
+        rating: "",
+        runtime: "",
+        number_of_seasons: "",
+        creator: "",
+        synopsis: "",
+    });
+
+    const [, setPosterFile] = useState<File | null>(null);
+    const [posterPreview, setPosterPreview] = useState<string>("");
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     return (
     <div className="admin-container">
@@ -42,9 +46,53 @@ const [media, setMedia] = useState<MediaTitle>({
         </div>
         <div className="watchlist-header-content">
           <div className="header">Add media title</div>
-          <div className="subheader">Create a new movie or TV show.</div>
+          <div className="subheader">Create a new movie or TV show</div>
         </div>
       </div>
+      <div className="poster-stack">
+  <div className="poster-wrapper">
+    <img
+      src={posterPreview || "/placeholder-poster.png"}
+      className="poster-img"
+    />
+  </div>
+
+  <div className="poster-actions">
+    <button
+      type="button"
+      className="poster-upload-btn"
+      onClick={() => fileInputRef.current?.click()}
+    >
+      <MdOutlineFileUpload size={20} />
+    </button>
+
+    {posterPreview && (
+      <button
+        type="button"
+        className="poster-remove-btn"
+        onClick={() => {
+          setPosterFile(null);
+          setPosterPreview("");
+          if (fileInputRef.current) fileInputRef.current.value = "";
+        }}
+      >
+        <FaTrashAlt />
+      </button>
+    )}
+    <input
+      ref={fileInputRef}
+      type="file"
+      accept="image/*"
+      hidden
+      onChange={(e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setPosterFile(file);
+        setPosterPreview(URL.createObjectURL(file));
+      }}
+    />
+  </div>
+</div>
       <div className="edit-form-box">
         <div className="edit-form-field">
           <div className="form-label">Title</div>
@@ -103,12 +151,10 @@ const [media, setMedia] = useState<MediaTitle>({
             <option value="TV">TV Show</option>
           </select>
         </div>
-
         {media.kind === "Movie" ? (
           <div className="edit-form-field">
             <div className="form-label">Movie runtime</div>
-
-<input
+            <input
               type="number"
               className="edit-form-field-input"
               placeholder="Enter the movie's runtime in minutes (e.g. 124)"
