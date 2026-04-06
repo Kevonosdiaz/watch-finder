@@ -41,6 +41,12 @@ type Availability = {
 };
 
 export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
+    useEffect(() => {
+        const role = localStorage.getItem("role");
+        if (role !== "admin") {
+            goToHome();
+        }
+    }, []);
     const [mediaTitles, setMediaTitles] = useState<MediaTitle[]>([]);
     const [selectedMedia, setSelectedMedia] = useState<MediaTitle | null>(null);
     const [showDetails, setShowDetails] = useState(false);

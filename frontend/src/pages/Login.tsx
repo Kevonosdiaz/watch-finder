@@ -18,6 +18,8 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
         try {
             const loginUser = await api<any>(`/api/users/${email}/${password}`);
             console.log("User: ", loginUser)
+            // Set the user/admin role
+            localStorage.setItem("role", loginUser.role);
             onLogin();
         } catch (err) {
         console.error("Login failed: ", err);
