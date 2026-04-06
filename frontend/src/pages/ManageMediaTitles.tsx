@@ -6,6 +6,7 @@ import { IoAddCircleOutline } from "react-icons/io5";
 
 interface ManageMediaTitleProps {
     goToHome: () => void;
+    goToAddMediaTitles: () => void;
 }
   
 interface MediaTitle {
@@ -23,11 +24,11 @@ interface MediaTitle {
     providers: StreamingPlatform[];
     regions: Region[];
     availability?: Availability[];
-}
+};
 
 type Region = {
     country_name: string;
-}
+};
 
 type StreamingPlatform = {
     name: string;
@@ -41,7 +42,7 @@ type Availability = {
   providers: StreamingPlatform[];
 };
 
-export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
+export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: ManageMediaTitleProps) {
    /* useEffect(() => {
         const role = localStorage.getItem("role");
         if (role !== "admin") {
@@ -189,7 +190,7 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                         </div>
                     </div>
                     <div className="add-media">
-                        <button>
+                        <button onClick={goToAddMediaTitles}>
                             <IoAddCircleOutline size={18} />
                             Add new media title
                         </button>
