@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { api } from "../api/client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
-import { MdOutlineEdit, MdOutlineFileUpload } from "react-icons/md";
+import { MdOutlineEdit, MdOutlineFileUpload, MdOutlineCancel } from "react-icons/md";
 import { useRef } from "react";
 
 interface ManageMediaTitleProps {
@@ -173,26 +173,45 @@ const fileInputRef = useRef<HTMLInputElement | null>(null);
                             <div className="header">Details</div>
                         </div>
                         <div className="details-actions">
-                            <button
-                                type="button"
-                                className="edit-btn"
-                                onClick={() => {
-                                    setIsEditing(true);
-                                    setEditedMedia(selectedMedia);
-                                    setPosterFile(null);
-                                    setRemovePoster(false);
-                                    setPosterPreview(selectedMedia?.posterUrl ?? "");
-                                }}
-                            >
-                                <MdOutlineEdit size={18}/>
-                            </button>
-                            <button
-                                type="button"
-                                className="delete-btn"
-                                onClick={handleDelete}
-                            >
-                                <FaTrashAlt />
-                            </button>
+                            {isEditing ? (
+                                <>
+                                <button
+                                    type="button"
+                                    className="cancel-edit-btn"
+                                >
+                                    <MdOutlineCancel size={24} />
+                                </button>
+                                <button
+                                    type="button"
+                                    className="save-btn"
+                                >
+                                    Save
+                                </button>
+                                </>
+                            ) : (
+                                <>
+                                <button
+                                    type="button"
+                                    className="edit-btn"
+                                    onClick={() => {
+                                        setIsEditing(true);
+                                        setEditedMedia(selectedMedia);
+                                        setPosterFile(null);
+                                        setRemovePoster(false);
+                                        setPosterPreview(selectedMedia?.posterUrl ?? "");
+                                    }}
+                                >
+                                    <MdOutlineEdit size={18}/>
+                                </button>
+                                <button
+                                    type="button"
+                                    className="delete-btn"
+                                    onClick={handleDelete}
+                                >
+                                    <FaTrashAlt />
+                                </button>
+                            </>
+                            )}
                         </div>
                     </div>
                     {selectedMedia && (
