@@ -23,7 +23,6 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
             localStorage.setItem("role", loginUser.role);
             onLogin();
         } catch (err) {
-            console.error("Login failed: ", err);
             setError("Invalid email or password");
         }  
     }
@@ -59,7 +58,7 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
                         />
                     </div>
                 </div>
-                {error && <p className="form-error">{error}</p>}
+                {error && <p className="login-form-error">{error}</p>}
                 <button 
                     className="login-btn"
                     onClick={handleLogin}
