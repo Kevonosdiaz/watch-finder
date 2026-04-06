@@ -84,3 +84,25 @@ def get_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
     media = db.query(models.MediaTitles).filter(
         models.MediaTitles.media_id == media_id).first()
     return media
+
+@router.put("/{media_id}")
+def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depends(get_db)):
+    media = db.query(models.MediaTitles).filter_by(media_id=media_id).first()
+    if not media:
+        raise HTTPException(status_code=404, detail="Media title not found")
+    data = payload.model_dump(exclude_unset=True)
+    # Update media title fields directly
+    for key, value in data.items():
+        if hasattr(models.MediaTitles, key):
+            setattr(media, key, value)
+    # Update movies/shows if needed
+    if "duration" in data:
+        movie = db.query(models.Movies).filter_by(media_id=media_id).first()
+        if movie:
+            movie.duration = data["duration"]
+    if "number_of_seasons" in data:
+        show = db.query(models.Shows).filter_by(media_id=media_id).first()
+        if show:
+            show.number_of_seasons = data["number_of_seasons"]
+    db.commit()
+    return {"message": "Updated"}
