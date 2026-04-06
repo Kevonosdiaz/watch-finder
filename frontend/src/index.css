@@ -191,6 +191,17 @@ code {
     box-shadow: 0 0 6px rgba(125, 207, 255, 0.4);
 }
 
+.login-form-error {
+    color: #c62828;
+    background: rgba(198, 40, 40, 0.08);
+    border: 1px solid rgba(198, 40, 40, 0.2);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin: 12px auto;
+    width: 300px;
+}
+
 /* Login / signup button */
 .login-btn,
 .signup-btn {
