@@ -213,7 +213,12 @@ export default function ManageMediaTitles({goToHome}: ManageMediaTitleProps) {
                     <div className="watchlist-header">
                         {!isEditing && (
                             <div className="back-btn">
-                                <button onClick={goToHome}>
+                                <button 
+                                    onClick={() => {
+                                        setSelectedMedia(null); 
+                                        setShowDetails(false);
+                                    }}
+                                >
                                     <FaArrowLeft size={24}/>
                                 </button>
                             </div>
