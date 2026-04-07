@@ -55,14 +55,6 @@ CREATE TABLE ADMINS (
     PRIMARY KEY (AdminID)
 );
 
-CREATE TABLE MANAGES (
-    MediaID BIGINT UNSIGNED NOT NULL,
-    AdminID BIGINT UNSIGNED NOT NULL,
-    PRIMARY KEY (MediaID, AdminID),
-    FOREIGN KEY (MediaID) REFERENCES MEDIA_TITLES(MediaID) ON DELETE CASCADE,
-    FOREIGN KEY (AdminID) REFERENCES ADMINS(AdminID) ON DELETE CASCADE
-);
-
 CREATE TABLE USERS (
     Email           VARCHAR(255)    NOT NULL,
     CountryName     VARCHAR(80)     NOT NULL,
@@ -71,6 +63,14 @@ CREATE TABLE USERS (
     LastName        VARCHAR(255)    NOT NULL,
     PRIMARY KEY (Email),
     FOREIGN KEY (CountryName) REFERENCES REGIONS(CountryName) ON UPDATE CASCADE
+);
+
+CREATE TABLE IS_ADMIN (
+    Email           VARCHAR(255)    NOT NULL,
+    AdminID         BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (Email, AdminID),
+    FOREIGN KEY (Email) REFERENCES USERS(Email) ON DELETE CASCADE,
+    FOREIGN KEY (AdminID) REFERENCES ADMINS(AdminID) ON DELETE CASCADE
 );
 
 -- NOTE: Changed Email to no longer be part of primary key, not needed with ID
@@ -207,36 +207,37 @@ VALUES
 INSERT INTO WATCHDATA (Email, MediaID, StartDate, CompletionStatus, PersonalRating)
 VALUES ('john2@email.com', 4, '2026-03-19', 'W', 5);
 
-INSERT INTO MANAGES (MediaID, AdminID) VALUES (1, 1), (2, 1), (3, 1), (4, 2), (5, 2), (6, 2);
+INSERT INTO IS_ADMIN (Email, AdminID)
+VALUES ('john2email.com', 1)
 
 -- DML Statements
 -- Retrieve all media titles from watchlist of user with email 'john2@email.com'
-SELECT U.FirstName, MT.TitleName, W.DateAdded
-FROM USERS U, WATCHLISTS W, WATCHLIST_CONTAINS WC, MEDIA_TITLES MT
-WHERE U.Email = 'john2@email.com' AND U.Email = W.Email AND W.WatchlistID = WC.WatchlistID AND WC.MediaID = MT.MediaID;
-
--- Retrieve all media titles available in region 'Canada'
-SELECT M.TitleName, M.ReleaseYear, M.Rating
-FROM MEDIA_TITLES AS M, AVAILABLE_IN AS A
-WHERE A.CountryName = 'Canada' AND M.MediaID = A.MediaID;
-
--- Update user watchdata for a media title
-UPDATE WATCHDATA 
-SET CompletionStatus = 'C', 
-    EndDate = '2026-03-19', 
-    PersonalRating = 5
-WHERE Email = 'john2@email.com' AND MediaID = 4;
-
--- Increment number of seasons of a given show, using its title
-UPDATE SHOWS
-SET NumberOfSeasons = NumberOfSeasons + 1
-WHERE MediaID = (SELECT MediaID FROM MEDIA_TITLES WHERE TitleName = 'Attack on Titan');
-
--- Remove a media title from user's watchlist
-DELETE FROM WATCHLIST_CONTAINS
-WHERE WatchlistID = 1 AND MediaID = 1;
-
--- Delete entire watchlist for given user and watchlist
--- NOTE: ON DELETE CASCADE will take care of WATCHLIST_CONTAINS
-DELETE FROM WATCHLISTS
-WHERE WatchlistID = 1 AND Email = 'alice@email.com';
+-- SELECT U.FirstName, MT.TitleName, W.DateAdded
+-- FROM USERS U, WATCHLISTS W, WATCHLIST_CONTAINS WC, MEDIA_TITLES MT
+-- WHERE U.Email = 'john2@email.com' AND U.Email = W.Email AND W.WatchlistID = WC.WatchlistID AND WC.MediaID = MT.MediaID;
+--
+-- -- Retrieve all media titles available in region 'Canada'
+-- SELECT M.TitleName, M.ReleaseYear, M.Rating
+-- FROM MEDIA_TITLES AS M, AVAILABLE_IN AS A
+-- WHERE A.CountryName = 'Canada' AND M.MediaID = A.MediaID;
+--
+-- -- Update user watchdata for a media title
+-- UPDATE WATCHDATA 
+-- SET CompletionStatus = 'C', 
+--     EndDate = '2026-03-19', 
+--     PersonalRating = 5
+-- WHERE Email = 'john2@email.com' AND MediaID = 4;
+--
+-- -- Increment number of seasons of a given show, using its title
+-- UPDATE SHOWS
+-- SET NumberOfSeasons = NumberOfSeasons + 1
+-- WHERE MediaID = (SELECT MediaID FROM MEDIA_TITLES WHERE TitleName = 'Attack on Titan');
+--
+-- -- Remove a media title from user's watchlist
+-- DELETE FROM WATCHLIST_CONTAINS
+-- WHERE WatchlistID = 1 AND MediaID = 1;
+--
+-- -- Delete entire watchlist for given user and watchlist
+-- -- NOTE: ON DELETE CASCADE will take care of WATCHLIST_CONTAINS
+-- DELETE FROM WATCHLISTS
+-- WHERE WatchlistID = 1 AND Email = 'alice@email.com';

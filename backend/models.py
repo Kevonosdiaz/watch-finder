@@ -89,20 +89,6 @@ class Admins(Base):
                                           primary_key=True)
 
 
-class Manages(Base):
-    __tablename__ = "MANAGES"
-    media_id: Mapped[int] = mapped_column("MediaID",
-                                          BIGINT(unsigned=True),
-                                          ForeignKey("MEDIA_TITLES.MediaID",
-                                                     ondelete="CASCADE"),
-                                          primary_key=True)
-    admin_id: Mapped[int] = mapped_column("AdminID",
-                                          BIGINT(unsigned=True),
-                                          ForeignKey("ADMINS.AdminID",
-                                                     ondelete="CASCADE"),
-                                          primary_key=True)
-
-
 class Users(Base):
     __tablename__ = "USERS"
     email: Mapped[str] = mapped_column("Email", String(255), primary_key=True)
@@ -121,6 +107,20 @@ class Users(Base):
                                           nullable=False)
 
 
+class IsAdmin(Base):
+    __tablename__ = "IS_ADMIN"
+    email: Mapped[str] = mapped_column("Email",
+                                       String(255),
+                                       ForeignKey("USERS.Email",
+                                                  ondelete="CASCADE"),
+                                       primary_key=True)
+    admin_id: Mapped[int] = mapped_column("AdminID",
+                                          BIGINT(unsigned=True),
+                                          ForeignKey("ADMINS.AdminID",
+                                                     ondelete="CASCADE"),
+                                          primary_key=True)
+
+
 class Watchlists(Base):
     __tablename__ = "WATCHLISTS"
     email: Mapped[str] = mapped_column(
@@ -133,7 +133,10 @@ class Watchlists(Base):
                                                 String(255),
                                                 nullable=False)
     date_added: Mapped[date] = mapped_column(
-        "DateAdded", DateTime, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+        "DateAdded",
+        DateTime,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"))
 
 
 class WatchlistContains(Base):

@@ -1,3 +1,4 @@
+-- Example Data
 INSERT INTO REGIONS
 VALUES ('Canada'), ('USA'), ('UK'), ('Japan'), ('France');
 
@@ -65,4 +66,5 @@ VALUES
 INSERT INTO WATCHDATA (Email, MediaID, StartDate, CompletionStatus, PersonalRating)
 VALUES ('john2@email.com', 4, '2026-03-19', 'W', 5);
 
-INSERT INTO MANAGES (MediaID, AdminID) VALUES (1, 1), (2, 1), (3, 1), (4, 2), (5, 2), (6, 2);
+INSERT INTO IS_ADMIN (Email, AdminID)
+VALUES ('john2email.com', 1)
