@@ -36,9 +36,10 @@ interface HomeProps {
     goToPassword: () => void;
     onLogout: () => void;
     goToMediaTitles: () => void;
+    goToStreamingServices?: () => void;
 }
 
-export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogout, goToMediaTitles }: HomeProps) {
+export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogout, goToMediaTitles, goToStreamingServices }: HomeProps) {
     const role = localStorage.getItem("role");
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
@@ -212,7 +213,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                     </div>
                 )}
             </div>
-            {localStorage.getItem("role") === "admin" && (
+            {role === "admin" && (
             <div className="admin-wrapper">
                 <button
                     type="button"
@@ -236,7 +237,7 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                                 <MdChevronRight />
                             </span>
                         </button>
-                        <button type="button" className="admin-item" onClick={() => { setActiveMenu("none"); }}>
+                        <button type="button" className="admin-item" onClick={() => { setActiveMenu("none"); goToStreamingServices && goToStreamingServices(); }}>
                             <span className="admin-left">
                                 <span className="admin-item-icon">
                                     <FaTv />
@@ -357,14 +358,13 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
         <div className="logout-popup" onClick={() => setShowLogoutPopup(false)}>
             <div className="logout-popup-card" onClick={(e) => e.stopPropagation()}>
                 <div className="logout-popup-title">Are you sure you want to log out?</div>
-                <div className="logout-actions">
+                    <div className="logout-actions">
                     <button 
                         className="secondary-logout-btn" 
                         onClick={() => {
+                            localStorage.removeItem("role");
                             setShowLogoutPopup(false);
-                            onLogout = () => {
-                                localStorage.removeItem("role");
-                            }
+                            onLogout();
                         }}
                     >
                         Log out

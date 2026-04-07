@@ -376,6 +376,49 @@ code {
     align-items: center;
 }
 
+
+.streaming-card {
+    padding: 28px 28px;
+    margin-top: 18px;
+    width: 100%;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: calc(100vh - 220px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.streaming-card .form-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+.services-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin-top: 12px;
+}
+
+.services-list .form-field-row {
+    justify-content: center;
+}
+
+.services-list .form-field-row > div:first-child {
+    max-width: 520px;
+}
+
+.form-sub {
+    font-size: 13px;
+}
+
 .form-row {
     display: flex;
     flex-direction: column;
@@ -400,6 +443,20 @@ code {
     align-items: center;
     width: 100%;
     max-width: 600px;
+}
+
+.edit-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    align-items: center;
+}
+
+@media (max-width: 640px) {
+    .edit-row {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 
 .edit-field-btn {

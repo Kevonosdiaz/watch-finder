@@ -7,6 +7,7 @@ import Watchdata from "./pages/Watchdata";
 import Profile from "./pages/Profile";
 import Password from "./pages/Password";
 import ManageMediaTitles from "./pages/ManageMediaTitles";
+import StreamingServices from "./pages/StreamingServices";
 import AddMediaTitle from "./pages/AddMediaTitle";
 
 type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile" | "media-titles" | "add-media-title" | "streaming-services";
@@ -39,7 +40,7 @@ function App() {
         goToPassword={() => setPage("password")} 
         onLogout={() => setPage("login")}
         goToMediaTitles={() => setPage("media-titles")}
-       // goToStreamingServices={() => setPage("streaming-services")}
+        goToStreamingServices={() => setPage("streaming-services")}
       />}
       {page === "watchlist" && 
         <Watchlist 
@@ -64,6 +65,9 @@ function App() {
           titleId={selectedTitle.titleId}
           goBack={() => setPage("watchlist")}
         />
+      )}
+      {page === "streaming-services" && (
+        <StreamingServices goHome={() => setPage("home")} />
       )}
     </>
   );
