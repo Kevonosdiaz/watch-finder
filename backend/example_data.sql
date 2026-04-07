@@ -67,4 +67,4 @@ INSERT INTO WATCHDATA (Email, MediaID, StartDate, CompletionStatus, PersonalRati
 VALUES ('john2@email.com', 4, '2026-03-19', 'W', 5);
 
 INSERT INTO IS_ADMIN (Email, AdminID)
-VALUES ('john2email.com', 1)
+VALUES ('john2@email.com', 1)
