@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request, status, Depends, Query
 import models
 from schemas import *
 from typing import Annotated
-from sqlalchemy import select
+from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 from database import Base, engine, get_db
 from datetime import datetime
@@ -43,6 +43,10 @@ def get_user(email: str, password: str, db: Annotated[Session,
     user = result.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    is_admin_result = db.execute(
+        select(exists().where(models.IsAdmin.email == email)))
+    is_admin = is_admin_result.scalars().first()
+    user.role = 'admin' if is_admin else 'user'
     return user
 
 
