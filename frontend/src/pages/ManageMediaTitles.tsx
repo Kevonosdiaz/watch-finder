@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { api } from "../api/client";
+import { api } from "../api/Client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit, MdOutlineFileUpload, MdOutlineCancel } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
