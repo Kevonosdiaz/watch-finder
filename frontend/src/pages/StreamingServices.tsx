@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { api } from "../api/Client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
 
 interface StreamingService {
-  id: number;
-  name: string;
+  streaming_service_name: string;
   website_url?: string;
+  logoUrl?: string | null;
 }
 
 interface Props {
@@ -14,47 +15,94 @@ interface Props {
 }
 
 export default function StreamingServices({ goHome }: Props) {
-  const [services, setServices] = useState<StreamingService[]>([
-    { id: 1, name: "Netflix", website_url: "https://www.netflix.com" },
-    { id: 2, name: "Hulu", website_url: "https://www.hulu.com" },
-    { id: 3, name: "Disney+", website_url: "https://www.disneyplus.com" },
-  ]);
+  const [services, setServices] = useState<StreamingService[]>([]);
 
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingName, setEditingName] = useState<string | null>(null);
   const [editedName, setEditedName] = useState("");
   const [editedUrl, setEditedUrl] = useState("");
 
   const [newName, setNewName] = useState("");
   const [newUrl, setNewUrl] = useState("");
 
+
+  useEffect(() => {
+    async function loadStreamingServices() {
+      try {
+        const data = await api<StreamingService[]>("/api/streaming_services");
+        setServices(data);
+      } catch (err) {
+        console.error("Failed to fetch streaming services", err);
+      }
+    }
+
+    loadStreamingServices();
+  }, []);
+
   function startEdit(s: StreamingService) {
-    setEditingId(s.id);
-    setEditedName(s.name);
+    setEditingName(s.streaming_service_name);
+    setEditedName(s.streaming_service_name);
     setEditedUrl(s.website_url ?? "");
   }
 
   function cancelEdit() {
-    setEditingId(null);
+    setEditingName(null);
     setEditedName("");
     setEditedUrl("");
   }
 
-  function saveEdit() {
-    if (editingId == null) return;
-    setServices((prev) => prev.map(s => s.id === editingId ? { ...s, name: editedName, website_url: editedUrl } : s));
-    cancelEdit();
+  async function saveEdit() {
+    if (!editingName) return;
+
+    try {
+      const encodedName = encodeURIComponent(editingName);
+
+      const updatedService = await api<StreamingService>(`/api/streaming_services/${encodedName}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({website_url: editedUrl}),
+      });
+      setServices((prev) => prev.map(s => s.streaming_service_name === editingName ? updatedService : s ));
+      cancelEdit();
+    } catch (err) {
+      console.error("Failed to update streaming service", err);
+    }
   }
 
-  function removeService(id: number) {
-    setServices((prev) => prev.filter(s => s.id !== id));
+  async function removeService(name: string) {
+    try {
+      const encodedName = encodeURIComponent(name);
+
+      await api(`/api/streaming_services/${encodedName}`, {
+        method: "DELETE",
+      });
+
+      setServices((prev) => prev.filter(s => s.streaming_service_name !== name));
+    } catch (err) {
+      console.error("Failed to delete streaming service", err);
+    }
   }
 
-  function addService() {
+  async function addService() {
     if (!newName.trim()) return;
-    const id = services.length ? Math.max(...services.map(s => s.id)) + 1 : 1;
-    setServices(prev => [...prev, { id, name: newName.trim(), website_url: newUrl.trim() }]);
-    setNewName("");
-    setNewUrl("");
+    
+    try {
+      const newService = await api<StreamingService>("/api/streaming_services", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          streaming_service_name: newName.trim(),
+          website_url: newUrl.trim(),
+        }),
+      });
+
+      setServices((prev) => [...prev, newService]);
+    
+      // Clear form
+      setNewName("");
+      setNewUrl("");
+    } catch (err) {
+      console.error("Failed to add streaming service", err);
+    }
   }
 
   return (
@@ -95,8 +143,8 @@ export default function StreamingServices({ goHome }: Props) {
 
         <div className="services-list">
           {services.map((s) => (
-            <div key={s.id} className="form-field-row" style={{ alignItems: 'center' }}>
-              {editingId === s.id ? (
+            <div key={s.streaming_service_name} className="form-field-row" style={{ alignItems: 'center' }}>
+              {editingName === s.streaming_service_name ? (
                 <div className="edit-row">
                   <input className="form-field-input" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
                   <input className="form-field-input" value={editedUrl} onChange={(e) => setEditedUrl(e.target.value)} />
@@ -106,16 +154,16 @@ export default function StreamingServices({ goHome }: Props) {
               ) : (
                 <>
                   <div style={{ flex: 1 }}>
-                    <div className="form-label" style={{ fontWeight: 600 }}>{s.name}</div>
+                    <div className="form-label" style={{ fontWeight: 600 }}>{s.streaming_service_name}</div>
                     <div className="form-sub" style={{ color: '#4b5563' }}>{s.website_url}</div>
                   </div>
                   <div>
                     <button className="edit-btn" onClick={() => startEdit(s)}>
                       <MdOutlineEdit size={18} />
                     </button>
-                    <button className="delete-btn" onClick={() => removeService(s.id)}>
+                   <button className="delete-btn" onClick={() => removeService(s.streaming_service_name)}>
                       <FaTrashAlt />
-                    </button>
+                   </button>
                   </div>
                 </>
               )}
@@ -126,5 +174,3 @@ export default function StreamingServices({ goHome }: Props) {
     </div>
   );
 }
-
-

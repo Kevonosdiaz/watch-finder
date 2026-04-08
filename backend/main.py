@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 import models
 from database import Base, engine, get_db
 # from schemas import MediaResponse, WatchlistResponse, WatchlistWithMediaResponse, WatchlistCreate, WatchdataResponse, WatchdataCreate, UserResponse, UserCreate, RegionResponse, MediaWithAvailabilityResponse
-from routers import users, media, regions, watchlists, watchdata
+from routers import users, media, regions, streaming_services, watchlists, watchdata
 from core.config import settings
 from datetime import datetime
 
@@ -22,6 +22,7 @@ app = FastAPI(title="Watch Finder API", docs_url="/docs", redoc_url="/redoc")
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(media.router, prefix="/api/media", tags=["media"])
 app.include_router(regions.router, prefix="/api/regions", tags=["regions"])
+app.include_router(streaming_services.router, prefix="/api/streaming_services", tags=["streaming_services"])
 app.include_router(watchlists.router,
                    prefix="/api/watchlists",
                    tags=["watchlists"])

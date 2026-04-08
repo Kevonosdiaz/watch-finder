@@ -132,6 +132,12 @@ class StreamingServiceBase(BaseModel):
     website_url: str = Field(max_length=255)
 
 
+# Attributes for updating a streaming service
+class StreamingServiceUpdate(BaseModel):
+    website_url: Optional[str] = Field(default=None, max_length=255)
+    logoUrl: Optional[str] = None
+
+
 # Media titles available in a specific region
 class MediaInRegion(BaseModel):
     region: RegionResponse
