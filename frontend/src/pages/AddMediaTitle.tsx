@@ -11,7 +11,7 @@ interface AddMediaTitleProps {
 type MediaTitle = {
   title: string;
   year: number | "";
-  kind?: "Movie" | "TV";
+  kind: "" | "Movie" | "TV";
   criticsScore?: number | "";
   rating?: string;
   runtime?: number | "";
@@ -33,7 +33,7 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
     const [media, setMedia] = useState<MediaTitle>({
         title: "",
         year: "",
-        kind: undefined,
+        kind: "",
         criticsScore: "",
         rating: "",
         runtime: "",
@@ -200,14 +200,14 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
               setMedia({ ...media, kind: e.target.value as "Movie" | "TV" })
             }
           >
-            <option value="" disabled>
-                Select movie or TV show
+          <option value="" disabled>
+              Select movie or TV show
             </option>
             <option value="Movie">Movie</option>
             <option value="TV">TV Show</option>
           </select>
         </div>
-        {media.kind === "Movie" ? (
+        {media.kind === "Movie" && (
           <div className="edit-form-field">
             <div className="form-label">Movie runtime</div>
             <input
@@ -220,7 +220,8 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
               }
             />
           </div>
-        ) : (
+        )}
+        {media.kind === "TV" && (
           <div className="edit-form-field">
             <div className="form-label">Number of seasons</div>
             <input
