@@ -8,7 +8,7 @@ MEDIA_IMAGES_DIR = Path("media_images")
 
 
 # Process incoming image and save it out to specified path
-def process_img(content: bytes, output_name) -> str:
+def process_img(content: bytes, output_name: str) -> str:
     with Image.open(BytesIO(content)) as original:
         img = ImageOps.exif_transpose(original)
         # NOTE: Resize according to frontend expected size
