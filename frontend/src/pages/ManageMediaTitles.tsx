@@ -21,6 +21,7 @@ interface MediaTitle {
     creator?: string;
     synopsis?: string;
     posterUrl?: string;
+    posterFile?: string;
     providers: StreamingPlatform[];
     regions: Region[];
     availability?: Availability[];
@@ -81,6 +82,7 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                         creator: m.creator,
                         synopsis: m.description,
                         posterUrl: m.poster_url,
+                        posterFile: m.image_file,
                         number_of_seasons: m.number_of_seasons ?? undefined,
                         runtime: m.duration ?? undefined,
                         providers: m.providers ?? [],
@@ -352,12 +354,22 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                                         type="file"
                                         accept="image/*"
                                         hidden
-                                        onChange={(e) => {
+                                        onChange={async (e) => {
                                             const file = e.target.files?.[0];
                                             if (!file) return;
+
+                                            // Update local state for now
                                             setRemovePoster(false);
                                             setPosterFile(file);
                                             setPosterPreview(URL.createObjectURL(file));
+
+                                            // Prepare selected image file for API call to backend
+                                            const formData = new FormData();
+                                            formData.append("file", file)
+                                            await api(`/api/media/${selectedMedia.id}/img`,
+                                                { method: "PATCH", body: formData }
+                                            );
+                                            
                                         }}
                                     />
                                     </div>
