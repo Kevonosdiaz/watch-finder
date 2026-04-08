@@ -290,15 +290,13 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                                     className="edit-btn"
                                     onClick={() => {
                                         setIsEditing(true);
-                                        setEditedMedia(selectedMedia);
-                                        
-setEditedAvailability(
-  (selectedMedia?.availability ?? []).map(region => ({
-    country_name: region.country_name,
-    providers: [...region.providers], // clone providers
-  }))
-);
-
+                                        setEditedMedia(selectedMedia);     
+                                        setEditedAvailability(
+                                        (selectedMedia?.availability ?? []).map(region => ({
+                                            country_name: region.country_name,
+                                            providers: [...region.providers],
+                                        }))
+                                        );
                                         setPosterFile(null);
                                         setRemovePoster(false);
                                         setPosterPreview(selectedMedia?.posterUrl ?? "");
