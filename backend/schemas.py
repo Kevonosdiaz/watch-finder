@@ -46,19 +46,6 @@ class Movies(MediaBase):
     duration: int
 
 
-# All optional attrbutes for updating media title fields
-class MediaUpdate(BaseModel):
-    title_name: Optional[str] = Field(default=None, max_length=255)
-    release_year: Optional[int] = None
-    creator: Optional[str] = None
-    age_rating: Optional[str] = Field(default=None, max_length=10)
-    rating: Optional[float] = None
-    description: Optional[str] = None
-    kind: Optional[Literal["Movie", "TV"]] = None
-    duration: Optional[int] = None
-    number_of_seasons: Optional[int] = None
-
-
 class MediaPatchImg(BaseModel):
     media_id: int
     filepath: str
@@ -183,3 +170,17 @@ class MediaCreate(BaseModel):
     duration: Optional[int] = None
     number_of_seasons: Optional[int] = None
     availability: List[AvailabilityCreate] = []
+
+
+# All optional attrbutes for updating media title fields
+class MediaUpdate(BaseModel):
+    title_name: Optional[str] = Field(default=None, max_length=255)
+    release_year: Optional[int] = None
+    creator: Optional[str] = None
+    age_rating: Optional[str] = Field(default=None, max_length=10)
+    rating: Optional[float] = None
+    description: Optional[str] = None
+    kind: Optional[Literal["Movie", "TV"]] = None
+    duration: Optional[int] = None
+    number_of_seasons: Optional[int] = None
+    availability: Optional[List[AvailabilityCreate]] = None
