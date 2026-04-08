@@ -114,14 +114,14 @@ def update_media_title(media_id: int,
     return {"message": "Updated"}
 
 
-@router.patch("/{media_id}/img", response_model=MediaPatchImg)
-def upload_media_img(media_id: int,
-                     file: UploadFile,
-                     db: Session = Depends(get_db)):
-    content = file.read()
+@router.patch("/{media_id}/img")
+async def upload_media_img(media_id: int,
+                           file: UploadFile,
+                           db: Session = Depends(get_db)):
+    content = await file.read()
 
     try:
-        new_filename = process_img(content, media_id)
+        new_filename = process_img(content, str(media_id))
     except UnidentifiedImageError as err:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Invalid image file") from err

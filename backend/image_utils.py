@@ -12,7 +12,7 @@ def process_img(content: bytes, output_name: str) -> str:
     with Image.open(BytesIO(content)) as original:
         img = ImageOps.exif_transpose(original)
         # NOTE: Resize according to frontend expected size
-        img = ImageOps.fit(img, (300, 300), method=Image.Resampling.LANCZOS)
+        img = ImageOps.fit(img, (350, 500), method=Image.Resampling.LANCZOS)
 
         if img.mode in ("RGBA", "LA", "P"):
             img = img.convert("RGB")
