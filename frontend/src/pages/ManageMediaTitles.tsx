@@ -86,7 +86,15 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                         runtime: m.duration ?? undefined,
                         providers: m.providers ?? [],
                         regions: m.regions ?? [],
-                        availability: m.availability ?? [],
+                        availability: (m.availability ?? []).map((a: any) => ({
+                            country_name: a.country_name,
+                            providers: (a.providers ?? []).map((p: any) => ({
+                                name: p.streaming_service_name,
+                                website_url: p.website_url,
+                                logoUrl: p.logoUrl ?? null,
+                            })),
+                        })),
+
                     }))
                 );
 
