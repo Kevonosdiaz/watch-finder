@@ -170,6 +170,7 @@ class MediaWithAvailabilityResponse(MediaBase):
     availability: List[AvailabilityResponse] = []
     model_config = ConfigDict(from_attributes=True)
 
+
 # All attributes for creating a media title
 class MediaCreate(BaseModel):
     title_name: str = Field(default=None, max_length=255)
