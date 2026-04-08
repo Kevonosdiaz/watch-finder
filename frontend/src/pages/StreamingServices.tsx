@@ -17,7 +17,7 @@ interface Props {
 export default function StreamingServices({ goHome }: Props) {
   const [services, setServices] = useState<StreamingService[]>([]);
 
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingName, setEditingName] = useState<string | null>(null);
   const [editedName, setEditedName] = useState("");
   const [editedUrl, setEditedUrl] = useState("");
 
@@ -39,21 +39,34 @@ export default function StreamingServices({ goHome }: Props) {
   }, []);
 
   function startEdit(s: StreamingService) {
+    setEditingName(s.streaming_service_name);
     setEditedName(s.streaming_service_name);
     setEditedUrl(s.website_url ?? "");
   }
 
   function cancelEdit() {
-    setEditingId(null);
+    setEditingName(null);
     setEditedName("");
     setEditedUrl("");
   }
 
-// function saveEdit() {
- //   if (editingId == null) return;
- //   setServices((prev) => prev.map(s => s.id === editingId ? { ...s, name: editedName, website_url: editedUrl } : s));
- //   cancelEdit();
- // }
+  async function saveEdit() {
+    if (!editingName) return;
+
+    try {
+      const encodedName = encodeURIComponent(editingName);
+
+      const updatedService = await api<StreamingService>(`/api/streaming_services/${encodedName}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({website_url: editedUrl}),
+      });
+      setServices((prev) => prev.map(s => s.streaming_service_name === editingName ? updatedService : s ));
+      cancelEdit();
+    } catch (err) {
+      console.error("Failed to update streaming service", err);
+    }
+  }
 
   async function removeService(name: string) {
     try {
@@ -131,7 +144,7 @@ export default function StreamingServices({ goHome }: Props) {
         <div className="services-list">
           {services.map((s) => (
             <div key={s.streaming_service_name} className="form-field-row" style={{ alignItems: 'center' }}>
-           {/*   {editingId === s.id ? (
+              {editingName === s.streaming_service_name ? (
                 <div className="edit-row">
                   <input className="form-field-input" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
                   <input className="form-field-input" value={editedUrl} onChange={(e) => setEditedUrl(e.target.value)} />
@@ -139,21 +152,21 @@ export default function StreamingServices({ goHome }: Props) {
                   <button className="cancel-edit-btn" onClick={cancelEdit}>Cancel</button>
                 </div>
               ) : (
-                <>*/}
+                <>
                   <div style={{ flex: 1 }}>
                     <div className="form-label" style={{ fontWeight: 600 }}>{s.streaming_service_name}</div>
                     <div className="form-sub" style={{ color: '#4b5563' }}>{s.website_url}</div>
                   </div>
                   <div>
-                   {/* <button className="edit-btn" onClick={() => startEdit(s)}>
+                    <button className="edit-btn" onClick={() => startEdit(s)}>
                       <MdOutlineEdit size={18} />
-                    </button>*/}
+                    </button>
                    <button className="delete-btn" onClick={() => removeService(s.streaming_service_name)}>
                       <FaTrashAlt />
                    </button>
                   </div>
-               {/* </>
-              )}*/}
+                </>
+              )}
             </div>
           ))}
         </div>
