@@ -85,6 +85,7 @@ def get_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
         models.MediaTitles.media_id == media_id).first()
     return media
 
+
 @router.put("/{media_id}")
 def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depends(get_db)):
     media = db.query(models.MediaTitles).filter_by(media_id=media_id).first()

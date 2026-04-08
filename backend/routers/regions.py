@@ -39,6 +39,7 @@ def get_media_in_region(region: str,
     media = query.order_by(models.MediaTitles.title_name).all()
     return media
 
+
 # Add a region
 @router.post("", response_model=RegionResponse, status_code=status.HTTP_201_CREATED)
 def add_region(region: RegionBase, db: Annotated[Session, Depends(get_db)]):
