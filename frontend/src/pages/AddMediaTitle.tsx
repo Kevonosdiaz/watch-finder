@@ -271,7 +271,7 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
               setNewRegion("");
             }}
           >
-            <IoAddCircleOutline size={18} />
+            <IoAddCircleOutline size={24}/>
           </button>
         </div>
         {availability.map((region, regionIndex) => (
