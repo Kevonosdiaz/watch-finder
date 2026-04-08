@@ -24,6 +24,20 @@ export default function StreamingServices({ goHome }: Props) {
   const [newName, setNewName] = useState("");
   const [newUrl, setNewUrl] = useState("");
 
+
+  useEffect(() => {
+    async function loadStreamingServices() {
+      try {
+        const data = await api<StreamingService[]>("/api/streaming_services");
+        setServices(data);
+      } catch (err) {
+        console.error("Failed to fetch streaming services", err);
+      }
+    }
+
+    loadStreamingServices();
+  }, []);
+
   function startEdit(s: StreamingService) {
     setEditedName(s.streaming_service_name);
     setEditedUrl(s.website_url ?? "");
@@ -137,5 +151,3 @@ export default function StreamingServices({ goHome }: Props) {
     </div>
   );
 }
-
-
