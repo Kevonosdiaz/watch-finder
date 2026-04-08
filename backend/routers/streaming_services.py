@@ -33,6 +33,20 @@ def add_streaming_service(service: StreamingServiceBase, db: Annotated[Session, 
     db.refresh(new_service)
     return new_service
 
+# Update a streaming service
+@router.put("/{streaming_service_name}", response_model=StreamingServiceResponse)
+def update_streaming_service(streaming_service_name: str, payload: StreamingServiceUpdate, db: Annotated[Session, Depends(get_db)]):
+    service = db.query(models.StreamingServices).filter_by(streaming_service_name=streaming_service_name).first()
+    if not service:
+        raise HTTPException(status_code=404, detail="Streaming service not found")
+    data = payload.model_dump(exclude_unset=True)
+    for key, value in data.items():
+        if hasattr(models.StreamingServices, key):
+            setattr(service, key, value)
+    db.commit()
+    db.refresh(service)
+    return service
+
 # Delete a streaming service
 @router.delete("/{streaming_service_name}")
 def remove_streaming_service(streaming_service_name: str, db: Annotated[Session, Depends(get_db)]):
