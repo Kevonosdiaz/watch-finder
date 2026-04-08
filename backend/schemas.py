@@ -48,9 +48,6 @@ class Movies(MediaBase):
     duration: int
 
 
-from typing import Literal
-
-
 # All optional attrbutes for updating media title fields
 class MediaUpdate(BaseModel):
     title_name: Optional[str] = Field(default=None, max_length=255)
@@ -150,6 +147,12 @@ class StreamingServiceResponse(StreamingServiceBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+# Availability
+class AvailabilityCreate(BaseModel):
+    country_name: str
+    streaming_services: List[str]
+
+
 # Response for availability (region -> providers)
 class AvailabilityResponse(RegionBase):
     providers: List[StreamingServiceResponse]
@@ -164,3 +167,16 @@ class MediaWithAvailabilityResponse(MediaBase):
     availability: List[AvailabilityResponse] = []
     model_config = ConfigDict(from_attributes=True)
 
+
+# All attributes for creating a media title
+class MediaCreate(BaseModel):
+    title_name: str = Field(default=None, max_length=255)
+    release_year: Optional[int] = None
+    creator: Optional[str] = None
+    age_rating: Optional[str] = Field(default=None, max_length=10)
+    rating: Optional[float] = None
+    description: Optional[str] = None
+    kind: Literal["Movie", "TV"] = None
+    duration: Optional[int] = None
+    number_of_seasons: Optional[int] = None
+    availability: List[AvailabilityCreate] = []
