@@ -104,49 +104,49 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
         </div>
       </div>
       <div className="poster-stack">
-  <div className="poster-wrapper">
-    <img
-      src={posterPreview || "/placeholder-poster.png"}
-      className="poster-img"
-    />
-  </div>
+        <div className="poster-wrapper">
+          <img
+            src={posterPreview || "/placeholder-poster.png"}
+            className="poster-img"
+          />
+        </div>
 
-  <div className="poster-actions">
-    <button
-      type="button"
-      className="poster-upload-btn"
-      onClick={() => fileInputRef.current?.click()}
-    >
-      <MdOutlineFileUpload size={20} />
-    </button>
+        <div className="poster-actions">
+          <button
+            type="button"
+            className="poster-upload-btn"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <MdOutlineFileUpload size={20} />
+          </button>
 
-    {posterPreview && (
-      <button
-        type="button"
-        className="poster-remove-btn"
-        onClick={() => {
-          setPosterFile(null);
-          setPosterPreview("");
-          if (fileInputRef.current) fileInputRef.current.value = "";
-        }}
-      >
-        <FaTrashAlt />
-      </button>
-    )}
-    <input
-      ref={fileInputRef}
-      type="file"
-      accept="image/*"
-      hidden
-      onChange={(e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        setPosterFile(file);
-        setPosterPreview(URL.createObjectURL(file));
-      }}
-    />
-  </div>
-</div>
+          {posterPreview && (
+            <button
+              type="button"
+              className="poster-remove-btn"
+              onClick={() => {
+                setPosterFile(null);
+                setPosterPreview("");
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              }}
+            >
+              <FaTrashAlt />
+            </button>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setPosterFile(file);
+              setPosterPreview(URL.createObjectURL(file));
+            }}
+          />
+        </div>
+      </div>
       <div className="edit-form-box">
         <div className="edit-form-field">
           <div className="form-label">Title</div>
