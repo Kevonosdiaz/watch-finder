@@ -166,31 +166,27 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-  title_name: editedMedia.title,
-  release_year: editedMedia.year,
-  creator: editedMedia.creator,
-  age_rating: editedMedia.rating,
-  rating: editedMedia.criticsScore,
-  description: editedMedia.synopsis,
-  kind: editedMedia.kind,
-
-  duration:
-    editedMedia.kind === "Movie"
-      ? editedMedia.runtime
-        ? Number(editedMedia.runtime)
-        : null
-      : null,
-
-  number_of_seasons:
-    editedMedia.kind === "TV"
-      ? editedMedia.number_of_seasons
-      : null,
-
-  availability: editedAvailability.map(region => ({
-    country_name: region.country_name,
-    streaming_services: region.providers.map(p => p.name),
-  })),
-
+                title_name: editedMedia.title,
+                release_year: editedMedia.year,
+                creator: editedMedia.creator,
+                age_rating: editedMedia.rating,
+                rating: editedMedia.criticsScore,
+                description: editedMedia.synopsis,
+                kind: editedMedia.kind,
+                duration:
+                    editedMedia.kind === "Movie"
+                    ? editedMedia.runtime
+                        ? Number(editedMedia.runtime)
+                        : null
+                    : null,
+                number_of_seasons:
+                    editedMedia.kind === "TV"
+                    ? editedMedia.number_of_seasons
+                    : null,
+                availability: editedAvailability.map(region => ({
+                    country_name: region.country_name,
+                    streaming_services: region.providers.map(p => p.name),
+                })),
             }),
             });
             // Update the frontend
