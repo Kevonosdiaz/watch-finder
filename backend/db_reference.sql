@@ -19,6 +19,7 @@ CREATE TABLE MEDIA_TITLES (
     AgeRating   VARCHAR(10)     ,
     Rating      DECIMAL(3,1)    ,
     Description TEXT            ,
+    Image       VARCHAR(255)    ,
     PRIMARY KEY (MediaID)
 );
 

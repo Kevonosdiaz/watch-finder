@@ -35,6 +35,13 @@ class MediaTitles(Base):
     age_rating: Mapped[str | None] = mapped_column("AgeRating", String(10))
     rating: Mapped[float | None] = mapped_column("Rating", DECIMAL(3, 1))
     description: Mapped[str | None] = mapped_column("Description", Text)
+    image_file: Mapped[str | None] = mapped_column("Image", String(255))
+
+    @property
+    def image_path(self) -> str:
+        if self.image_file:
+            return f'/media_images/{self.image_file}'
+        # Could return a placeholder/default image here?
 
 
 class MediaGenres(Base):
