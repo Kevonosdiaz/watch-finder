@@ -38,3 +38,17 @@ def get_media_in_region(region: str,
             models.MediaTitles.title_name.ilike(f"%{search}%"))
     media = query.order_by(models.MediaTitles.title_name).all()
     return media
+
+
+# Add a region
+@router.post("", response_model=RegionResponse, status_code=status.HTTP_201_CREATED)
+def add_region(region: RegionBase, db: Annotated[Session, Depends(get_db)]):
+    name = region.country_name.strip()
+    existing = db.query(models.Regions).filter(models.Regions.country_name == name).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Region already exists")
+    new_region = models.Regions(country_name=name)
+    db.add(new_region)
+    db.commit()
+    db.refresh(new_region)
+    return new_region

@@ -1730,3 +1730,65 @@ border: none;
     border: 2px solid #0081d281;
     box-shadow: 0 0 6px rgba(125, 207, 255, 0.4);
 }
+
+/* Where to watch */
+.availability-add {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.add-region-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: none;
+    background: none;
+    color: #4f8f2f;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.availability-region-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.availability-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.service-checkbox {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.edit-availability-region {
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.availability-region:last-child {
+    margin-bottom: 0;
+}
+
+.remove-region-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #9f1e23;
+    font-size: 18px;
+    line-height: 1;
+}
