@@ -34,7 +34,7 @@ def add_streaming_service(service: StreamingServiceBase, db: Annotated[Session, 
     return new_service
 
 # Delete a streaming service
-@router.delete("{streaming_service_name}")
+@router.delete("/{streaming_service_name}")
 def remove_streaming_service(streaming_service_name: str, db: Annotated[Session, Depends(get_db)]):
     service = db.query(models.StreamingServices).filter(models.StreamingServices.streaming_service_name == streaming_service_name).first()
     if not service:
