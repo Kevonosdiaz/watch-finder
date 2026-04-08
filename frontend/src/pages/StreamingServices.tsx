@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { api } from "../api/Client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
 
 interface StreamingService {
-  id: number;
-  name: string;
+  streaming_service_name: string;
   website_url?: string;
+  logoUrl?: string | null;
 }
 
 interface Props {
@@ -14,11 +15,7 @@ interface Props {
 }
 
 export default function StreamingServices({ goHome }: Props) {
-  const [services, setServices] = useState<StreamingService[]>([
-    { id: 1, name: "Netflix", website_url: "https://www.netflix.com" },
-    { id: 2, name: "Hulu", website_url: "https://www.hulu.com" },
-    { id: 3, name: "Disney+", website_url: "https://www.disneyplus.com" },
-  ]);
+  const [services, setServices] = useState<StreamingService[]>([]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedName, setEditedName] = useState("");
@@ -28,8 +25,7 @@ export default function StreamingServices({ goHome }: Props) {
   const [newUrl, setNewUrl] = useState("");
 
   function startEdit(s: StreamingService) {
-    setEditingId(s.id);
-    setEditedName(s.name);
+    setEditedName(s.streaming_service_name);
     setEditedUrl(s.website_url ?? "");
   }
 
@@ -39,22 +35,37 @@ export default function StreamingServices({ goHome }: Props) {
     setEditedUrl("");
   }
 
-  function saveEdit() {
-    if (editingId == null) return;
-    setServices((prev) => prev.map(s => s.id === editingId ? { ...s, name: editedName, website_url: editedUrl } : s));
-    cancelEdit();
-  }
+// function saveEdit() {
+ //   if (editingId == null) return;
+ //   setServices((prev) => prev.map(s => s.id === editingId ? { ...s, name: editedName, website_url: editedUrl } : s));
+ //   cancelEdit();
+ // }
 
-  function removeService(id: number) {
-    setServices((prev) => prev.filter(s => s.id !== id));
-  }
+  //function removeService(id: number) {
+  //  setServices((prev) => prev.filter(s => s.id !== id));
+ // }
 
-  function addService() {
+  async function addService() {
     if (!newName.trim()) return;
-    const id = services.length ? Math.max(...services.map(s => s.id)) + 1 : 1;
-    setServices(prev => [...prev, { id, name: newName.trim(), website_url: newUrl.trim() }]);
-    setNewName("");
-    setNewUrl("");
+    
+    try {
+      const newService = await api<StreamingService>("/api/streaming_services", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          streaming_service_name: newName.trim(),
+          website_url: newUrl.trim(),
+        }),
+      });
+
+      setServices((prev) => [...prev, newService]);
+    
+      // Clear form
+      setNewName("");
+      setNewUrl("");
+    } catch (err) {
+      console.error("Failed to add streaming service", err);
+    }
   }
 
   return (
@@ -95,8 +106,8 @@ export default function StreamingServices({ goHome }: Props) {
 
         <div className="services-list">
           {services.map((s) => (
-            <div key={s.id} className="form-field-row" style={{ alignItems: 'center' }}>
-              {editingId === s.id ? (
+            <div key={s.streaming_service_name} className="form-field-row" style={{ alignItems: 'center' }}>
+           {/*   {editingId === s.id ? (
                 <div className="edit-row">
                   <input className="form-field-input" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
                   <input className="form-field-input" value={editedUrl} onChange={(e) => setEditedUrl(e.target.value)} />
@@ -104,21 +115,21 @@ export default function StreamingServices({ goHome }: Props) {
                   <button className="cancel-edit-btn" onClick={cancelEdit}>Cancel</button>
                 </div>
               ) : (
-                <>
+                <>*/}
                   <div style={{ flex: 1 }}>
-                    <div className="form-label" style={{ fontWeight: 600 }}>{s.name}</div>
+                    <div className="form-label" style={{ fontWeight: 600 }}>{s.streaming_service_name}</div>
                     <div className="form-sub" style={{ color: '#4b5563' }}>{s.website_url}</div>
                   </div>
                   <div>
-                    <button className="edit-btn" onClick={() => startEdit(s)}>
+                   {/* <button className="edit-btn" onClick={() => startEdit(s)}>
                       <MdOutlineEdit size={18} />
                     </button>
-                    <button className="delete-btn" onClick={() => removeService(s.id)}>
+                   <button className="delete-btn" onClick={() => removeService(s.id)}>
                       <FaTrashAlt />
-                    </button>
+                   </button>*/}
                   </div>
-                </>
-              )}
+               {/* </>
+              )}*/}
             </div>
           ))}
         </div>
