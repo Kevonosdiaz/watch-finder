@@ -55,9 +55,19 @@ export default function StreamingServices({ goHome }: Props) {
  //   cancelEdit();
  // }
 
-  //function removeService(id: number) {
-  //  setServices((prev) => prev.filter(s => s.id !== id));
- // }
+  async function removeService(name: string) {
+    try {
+      const encodedName = encodeURIComponent(name);
+
+      await api(`/api/streaming_services/${encodedName}`, {
+        method: "DELETE",
+      });
+
+      setServices((prev) => prev.filter(s => s.streaming_service_name !== name));
+    } catch (err) {
+      console.error("Failed to delete streaming service", err);
+    }
+  }
 
   async function addService() {
     if (!newName.trim()) return;
@@ -137,10 +147,10 @@ export default function StreamingServices({ goHome }: Props) {
                   <div>
                    {/* <button className="edit-btn" onClick={() => startEdit(s)}>
                       <MdOutlineEdit size={18} />
-                    </button>
-                   <button className="delete-btn" onClick={() => removeService(s.id)}>
+                    </button>*/}
+                   <button className="delete-btn" onClick={() => removeService(s.streaming_service_name)}>
                       <FaTrashAlt />
-                   </button>*/}
+                   </button>
                   </div>
                {/* </>
               )}*/}
