@@ -1,10 +1,13 @@
-from fastapi import APIRouter, HTTPException, Request, status, Depends, Query
+from fastapi import APIRouter, HTTPException, Request, status, Depends, Query, UploadFile
 import models
 from schemas import *
 from typing import Annotated
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from PIL import UnidentifiedImageError
+
 from database import Base, engine, get_db
+from image_utils import delete_img, process_img
 
 router = APIRouter()
 # '/api/media' is automatically part of api route here
@@ -140,7 +143,9 @@ def get_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
 
 
 @router.put("/{media_id}")
-def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depends(get_db)):
+def update_media_title(media_id: int,
+                       payload: MediaUpdate,
+                       db: Session = Depends(get_db)):
     media = db.query(models.MediaTitles).filter_by(media_id=media_id).first()
     if not media:
         raise HTTPException(status_code=404, detail="Media title not found")
@@ -160,3 +165,22 @@ def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depend
             show.number_of_seasons = data["number_of_seasons"]
     db.commit()
     return {"message": "Updated"}
+
+
+@router.patch("/{media_id}/img")
+async def upload_media_img(media_id: int,
+                           file: UploadFile,
+                           db: Session = Depends(get_db)):
+    content = await file.read()
+
+    try:
+        new_filename = process_img(content, str(media_id))
+    except UnidentifiedImageError as err:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Invalid image file") from err
+
+    media_title = db.query(
+        models.MediaTitles).filter_by(media_id=media_id).first()
+    media_title.image_file = new_filename
+    db.commit()
+    return {"message": "New image uploaded"}

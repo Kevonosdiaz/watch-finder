@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import FastAPI, HTTPException, Request, status, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -19,10 +20,17 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Watch Finder API", docs_url="/docs", redoc_url="/redoc")
 
+# Where we store images for media titles
+app.mount("/media_images",
+          StaticFiles(directory="media_images"),
+          name="media_images")
+
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(media.router, prefix="/api/media", tags=["media"])
 app.include_router(regions.router, prefix="/api/regions", tags=["regions"])
-app.include_router(streaming_services.router, prefix="/api/streaming_services", tags=["streaming_services"])
+app.include_router(streaming_services.router,
+                   prefix="/api/streaming_services",
+                   tags=["streaming_services"])
 app.include_router(watchlists.router,
                    prefix="/api/watchlists",
                    tags=["watchlists"])

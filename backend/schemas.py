@@ -5,8 +5,6 @@ from datetime import date
 # Specify attributes & their types, so FastAPI can validate
 # responses given from API routes ('response_model' is passed)
 
-# TODO: Adjust type hints and Field constraints to match database's constraints
-
 
 # Attributes for a user
 class UserBase(BaseModel):
@@ -59,6 +57,11 @@ class MediaUpdate(BaseModel):
     kind: Optional[Literal["Movie", "TV"]] = None
     duration: Optional[int] = None
     number_of_seasons: Optional[int] = None
+
+
+class MediaPatchImg(BaseModel):
+    media_id: int
+    filepath: str
 
 
 # Response for a media title
@@ -166,7 +169,6 @@ class MediaWithAvailabilityResponse(MediaBase):
     duration: Optional[int] = None
     availability: List[AvailabilityResponse] = []
     model_config = ConfigDict(from_attributes=True)
-
 
 # All attributes for creating a media title
 class MediaCreate(BaseModel):
