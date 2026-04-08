@@ -45,7 +45,7 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
                 "country_name":
                 country_name,
                 "providers": [{
-                    "name": name,
+                    "streaming_service_name": name,
                     "website_url": url,
                     "logoUrl": None
                 } for name, url in providers]
@@ -64,6 +64,59 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
             "availability": availability
         })
     return results
+
+
+# Add a media title
+@router.post("", response_model=MediaResponse, status_code=status.HTTP_201_CREATED)
+def add_media(payload: MediaCreate, db: Annotated[Session, Depends(get_db)]):
+    if payload.kind == "Movie" and not payload.duration:
+        raise HTTPException(400, "Duration is required for Movie")
+    if payload.kind == "TV" and not payload.number_of_seasons:
+        raise HTTPException(400, "Number of seasons is required for TV")
+    media = models.MediaTitles(
+        title_name=payload.title_name.strip(),
+        release_year=payload.release_year,
+        creator=payload.creator,
+        age_rating=payload.age_rating,
+        rating=payload.rating,
+        description=payload.description,
+    )
+    db.add(media)
+    db.flush()
+    db.add(
+        models.Movies(media_id=media.media_id, duration=payload.duration)
+        if payload.kind == "Movie"
+        else models.Shows(media_id=media.media_id, number_of_seasons=payload.number_of_seasons)
+    )
+    all_services = {
+        svc.strip()
+        for a in payload.availability
+        for svc in a.streaming_services
+        if svc.strip()
+    }
+    for svc in all_services:
+        if not db.query(models.StreamingServices).filter_by(streaming_service_name=svc).first():
+            raise HTTPException(404, f"Streaming service not found: {svc}")
+        db.add(models.OfferedBy(
+            media_id=media.media_id,
+            streaming_service_name=svc
+        ))
+    for a in payload.availability:
+        country = a.country_name.strip()
+        if not country:
+            continue
+        if not db.query(models.Regions).filter_by(country_name=country).first():
+            db.add(models.Regions(country_name=country))
+        db.add(models.AvailableIn(media_id=media.media_id, country_name=country))
+        for svc in a.streaming_services:
+            svc = svc.strip()
+            if svc:
+                db.add(models.OperatesIn(
+                    streaming_service_name=svc,
+                    country_name=country
+                ))
+    db.commit()
+    return media
 
 
 # Delete a media title
