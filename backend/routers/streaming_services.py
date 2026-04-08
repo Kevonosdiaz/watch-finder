@@ -9,6 +9,12 @@ from database import Base, engine, get_db
 router = APIRouter()
 # '/api/streaming_services' is automatically part of api route here
 
+# Get all streaming services
+@router.get("", response_model=List[StreamingServiceResponse])
+def get_streaming_services(db: Annotated[Session, Depends(get_db)]):
+    services = db.query(models.StreamingServices).all()
+    return services
+
 # Add streaming services
 @router.post("",
              response_model=StreamingServiceResponse,
