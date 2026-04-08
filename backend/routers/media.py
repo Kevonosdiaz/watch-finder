@@ -142,30 +142,77 @@ def get_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
     return media
 
 
-@router.put("/{media_id}")
-def update_media_title(media_id: int,
-                       payload: MediaUpdate,
-                       db: Session = Depends(get_db)):
+@router.put("/{media_id}", response_model=MediaResponse)
+def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depends(get_db)):
+    print("RAW payload.availability =", payload.availability)
     media = db.query(models.MediaTitles).filter_by(media_id=media_id).first()
     if not media:
-        raise HTTPException(status_code=404, detail="Media title not found")
-    data = payload.model_dump(exclude_unset=True)
-    # Update media title fields directly
+        raise HTTPException(404, "Media title not found")
+    if payload.kind == "Movie" and payload.duration is None:
+        raise HTTPException(400, "Duration is required for Movie")
+    if payload.kind == "TV" and payload.number_of_seasons is None:
+        raise HTTPException(400, "Number of seasons is required for TV")
+    data = payload.model_dump(exclude_unset=True, exclude={"availability"})
     for key, value in data.items():
-        if hasattr(models.MediaTitles, key):
+        if hasattr(media, key):
             setattr(media, key, value)
-    # Update movies/shows if needed
-    if "duration" in data:
+    if payload.kind == "Movie":
+        db.query(models.Shows).filter_by(media_id=media_id).delete()
         movie = db.query(models.Movies).filter_by(media_id=media_id).first()
         if movie:
-            movie.duration = data["duration"]
-    if "number_of_seasons" in data:
+            movie.duration = payload.duration
+        else:
+            db.add(models.Movies(media_id=media_id, duration=payload.duration))
+    if payload.kind == "TV":
+        db.query(models.Movies).filter_by(media_id=media_id).delete()
         show = db.query(models.Shows).filter_by(media_id=media_id).first()
         if show:
-            show.number_of_seasons = data["number_of_seasons"]
+            show.number_of_seasons = payload.number_of_seasons
+        else:
+            db.add(
+                models.Shows(
+                    media_id=media_id,
+                    number_of_seasons=payload.number_of_seasons
+                )
+            )
+    if payload.availability is not None:
+        db.query(models.OfferedBy).filter_by(media_id=media_id).delete()
+        db.query(models.AvailableIn).filter_by(media_id=media_id).delete()
+        db.query(models.OperatesIn).delete()
+        all_services = {
+            svc.strip()
+            for a in payload.availability
+            for svc in a.streaming_services
+            if svc.strip()
+        }
+        for svc in all_services:
+            if not db.query(models.StreamingServices)\
+                .filter_by(streaming_service_name=svc).first():
+                raise HTTPException(404, f"Streaming service not found: {svc}")
+            db.add(models.OfferedBy(
+                media_id=media_id,
+                streaming_service_name=svc
+            ))
+        for a in payload.availability:
+            country = a.country_name.strip()
+            if not country:
+                continue
+            if not db.query(models.Regions)\
+                .filter_by(country_name=country).first():
+                db.add(models.Regions(country_name=country))
+            db.add(models.AvailableIn(
+                media_id=media_id,
+                country_name=country
+            ))
+            for svc in a.streaming_services:
+                svc = svc.strip()
+                if svc:
+                    db.add(models.OperatesIn(
+                        streaming_service_name=svc,
+                        country_name=country
+                    ))
     db.commit()
-    return {"message": "Updated"}
-
+    return media
 
 @router.patch("/{media_id}/img")
 async def upload_media_img(media_id: int,
