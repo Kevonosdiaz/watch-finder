@@ -36,7 +36,6 @@ type StreamingPlatform = {
     logoUrl?: string;
 };
 
-
 type Availability = {
   country_name: string;
   providers: StreamingPlatform[];
@@ -112,6 +111,9 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
     const [, setPosterFile] = useState<File | null>(null);
     const [posterPreview, setPosterPreview] = useState<string>("");
     const [, setRemovePoster] = useState(false);
+    const [editedAvailability, setEditedAvailability] = useState<Availability[]>([]);
+    const [newRegion, setNewRegion] = useState("");
+    const [services, setServices] = useState<StreamingPlatform[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const handleDelete = async () => { 
         if (!selectedMedia) return;
@@ -128,6 +130,21 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
             console.error("Failed to delete media title", err);
         }
     }
+
+    // Load streaming streaming services
+    useEffect(() => {
+        api<any[]>("/api/streaming_services")
+            .then(data =>
+                setServices(
+                data.map(s => ({
+                    name: s.streaming_service_name,
+                    website_url: s.website_url,
+                    logoUrl: s.logo_url ?? null,
+                }))
+            )
+        )
+        .catch(() => console.error("Failed to load services"));
+    }, []);
 
     // Handle cancelling edits
     const handleCancelEdit = () => {
@@ -149,14 +166,31 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                title_name: editedMedia.title,
-                release_year: editedMedia.year,
-                creator: editedMedia.creator,
-                age_rating: editedMedia.rating,
-                rating: editedMedia.criticsScore,
-                description: editedMedia.synopsis,
-                duration: editedMedia.runtime ? Number(editedMedia.runtime) : undefined,
-                number_of_seasons: editedMedia.number_of_seasons,
+  title_name: editedMedia.title,
+  release_year: editedMedia.year,
+  creator: editedMedia.creator,
+  age_rating: editedMedia.rating,
+  rating: editedMedia.criticsScore,
+  description: editedMedia.synopsis,
+  kind: editedMedia.kind,
+
+  duration:
+    editedMedia.kind === "Movie"
+      ? editedMedia.runtime
+        ? Number(editedMedia.runtime)
+        : null
+      : null,
+
+  number_of_seasons:
+    editedMedia.kind === "TV"
+      ? editedMedia.number_of_seasons
+      : null,
+
+  availability: editedAvailability.map(region => ({
+    country_name: region.country_name,
+    streaming_services: region.providers.map(p => p.name),
+  })),
+
             }),
             });
             // Update the frontend
@@ -261,6 +295,14 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                                     onClick={() => {
                                         setIsEditing(true);
                                         setEditedMedia(selectedMedia);
+                                        
+setEditedAvailability(
+  (selectedMedia?.availability ?? []).map(region => ({
+    country_name: region.country_name,
+    providers: [...region.providers], // clone providers
+  }))
+);
+
                                         setPosterFile(null);
                                         setRemovePoster(false);
                                         setPosterPreview(selectedMedia?.posterUrl ?? "");
@@ -379,7 +421,7 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                                     <div className="edit-form-field">
                                         <div className="form-label">Movie or show?</div>
                                         <select
-                                            value={editedMedia.kind || "Movie"}
+                                            value={editedMedia.kind}
                                             onChange={(e) =>
                                                 setEditedMedia(prev => prev && { ...prev, kind: e.target.value as "Movie" | "TV" })
                                             }
@@ -438,6 +480,78 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                                         placeholder="Synopsis"
                                     />
                                 </div>
+                                <h3 className="availability-header">Where to Watch</h3>
+                                <div className="availability-add">
+                                <input
+                                    className="edit-form-field-input"
+                                    placeholder="Enter region (e.g. Canada)"
+                                    value={newRegion}
+                                    onChange={(e) => setNewRegion(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    className="add-region-btn"
+                                    onClick={() => {
+                                    const name = newRegion.trim();
+                                    if (!name) return;
+                                    setEditedAvailability(prev => [
+                                        ...prev,
+                                        { country_name: name, providers: [] },
+                                    ]);
+                                    setNewRegion("");
+                                    }}
+                                >
+                                    <IoAddCircleOutline size={24} />
+                                </button>
+                                </div>
+                                {editedAvailability.map((region, regionIndex) => (
+                                <div key={region.country_name} className="edit-availability-region">
+                                    <div className="availability-region-header">
+                                    <span>{region.country_name}</span>
+                                    <button
+                                        type="button"
+                                        className="remove-region-btn"
+                                        onClick={() =>
+                                        setEditedAvailability(prev =>
+                                            prev.filter((_, i) => i !== regionIndex)
+                                        )
+                                        }
+                                    >
+                                        <MdOutlineCancel />
+                                    </button>
+                                    </div>
+
+                                    <div className="availability-services">
+                                    {services.map((s) => {
+                                        const checked = region.providers.some(p => p.name === s.name);
+
+                                        return (
+                                        <label key={s.name} className="service-checkbox">
+                                            <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            onChange={(e) =>
+                                                setEditedAvailability(prev =>
+                                                prev.map((r, i) =>
+                                                    i !== regionIndex
+                                                    ? r
+                                                    : {
+                                                        ...r,
+                                                        providers: e.target.checked
+                                                            ? [...r.providers, s]
+                                                            : r.providers.filter(p => p.name !== s.name),
+                                                        }
+                                                )
+                                                )
+                                            }
+                                            />
+                                            {s.name}
+                                        </label>
+                                        );
+                                    })}
+                                    </div>
+                                </div>
+                                ))}
                                 </div>
                                 </>
                             ) : (
@@ -455,25 +569,29 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                                 </div>
                                 </>
                             )}
-                            <h3 className="availability-header">Where to Watch</h3>
-                            <div className="availability-list">
-                                {(selectedMedia.availability ?? []).map(region => (
-                                <div key={region.country_name} className="availability-row">
-                                    <div className="availability-region">{region.country_name}</div>
-                                    <div className="media-details-streaming-platforms">
-                                    {region.providers.length > 0 ? (
-                                        region.providers.map(p => (
-                                        <span key={p.name} className="streaming-platform-icon" title={p.name}>
-                                            {p.logoUrl ? <img src={p.logoUrl} alt={p.name} /> : p.name[0]}
-                                        </span>
-                                        ))
-                                    ) : (
-                                        <span className="no-providers">No streaming providers listed.</span>
-                                    )}
+                            {!isEditing && (
+                            <>
+                                <h3 className="availability-header">Where to Watch</h3>
+                                <div className="availability-list">
+                                    {(selectedMedia.availability ?? []).map(region => (
+                                    <div key={region.country_name} className="availability-row">
+                                        <div className="availability-region">{region.country_name}</div>
+                                        <div className="media-details-streaming-platforms">
+                                        {region.providers.length > 0 ? (
+                                            region.providers.map(p => (
+                                            <span key={p.name} className="streaming-platform-icon" title={p.name}>
+                                                {p.logoUrl ? <img src={p.logoUrl} alt={p.name} /> : p.name[0]}
+                                            </span>
+                                            ))
+                                        ) : (
+                                            <span className="no-providers">No streaming providers listed.</span>
+                                        )}
+                                        </div>
                                     </div>
+                                    ))}
                                 </div>
-                                ))}
-                            </div>
+                            </>
+                            )}
                         </div>
                     </div>
                     )}
