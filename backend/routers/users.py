@@ -34,17 +34,17 @@ def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)]):
 
 
 # Retrieve a user
-@router.get("/{email}/{password}", response_model=UserResponse)
-def get_user(email: str, password: str, db: Annotated[Session,
+@router.post("/login", response_model=UserResponse)
+def get_user(user: UserLoginBase, db: Annotated[Session,
                                                       Depends(get_db)]):
     result = db.execute(
-        select(models.Users).where(models.Users.email == email,
-                                   models.Users.password == password))
+        select(models.Users).where(models.Users.email == user.email,
+                                   models.Users.password == user.password))
     user = result.scalars().first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Invalid credentials")
     is_admin_result = db.execute(
-        select(exists().where(models.IsAdmin.email == email)))
+        select(exists().where(models.IsAdmin.email == user.email)))
     is_admin = is_admin_result.scalars().first()
     user.role = 'admin' if is_admin else 'user'
     return user
