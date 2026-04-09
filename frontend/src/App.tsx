@@ -15,13 +15,15 @@ type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password"
 type SelectedWatchlistItem = {
   watchlistId: number;
   titleId: number;
+  title: string;
+  posterUrl?: string;
 } | null;
 
 function App() {
   const [page, setPage] = useState<Page>("login");
   const [selectedTitle, setSeletectedTitle] = useState<SelectedWatchlistItem>(null);
-  const goToWatchdata = (watchlistId: number, titleId: number) => {
-    setSeletectedTitle({ watchlistId, titleId });
+  const goToWatchdata = (watchlistId: number, titleId: number, title: string, posterUrl?: string) => {
+    setSeletectedTitle({ watchlistId, titleId, title, posterUrl });
     setPage("watchdata");
   }
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -71,6 +73,8 @@ function App() {
         <Watchdata
           watchlistId={selectedTitle.watchlistId}
           titleId={selectedTitle.titleId}
+          title={selectedTitle.title}
+          posterUrl={selectedTitle.posterUrl}
           goBack={() => setPage("watchlist")}
         />
       )}

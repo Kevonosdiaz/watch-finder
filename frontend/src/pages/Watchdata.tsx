@@ -5,6 +5,8 @@ import { FaArrowLeft, FaRegStar, FaStar } from "react-icons/fa";
 interface WatchdataProps {
     watchlistId: number;
     titleId: number;
+    title: string;
+    posterUrl?: string;
     goBack: () => void;
 }
 
@@ -17,27 +19,19 @@ interface Watchdata {
     personal_rating?: number;
 }
 
-type MediaTitle = {
-  media_id: number;
-  title_name: string;
-  poster_url?: string | null;
-};
-
-
-export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataProps) {
+export default function Watchdata({ watchlistId, titleId, title, posterUrl, goBack } : WatchdataProps) {
     const [, setWatchdata] = useState<Watchdata | null>(null);
     const [completionStatus, setCompletionStatus] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [rating, setRating] = useState<number>(0);
     let ratingData = [1,2,3,4,5]
-    const [media, setMedia] = useState<MediaTitle | null>(null);
-
+    
     useEffect(() => {
         const fetchWatchdata = async () => {
             try {
                 const result = await api<Watchdata[]>(
-                    `/api/watchlist/${watchlistId}/media/${titleId}/watchdata`
+                    `/api/watchlists/${watchlistId}/media/${titleId}/watchdata`
                 );
 
                 // Display watchdata
@@ -50,12 +44,6 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                 setStartDate(data.start_date ?? "");
                 setEndDate(data.end_date ?? "");
                 setRating(data?.personal_rating ?? 0);
-                
-                const mediaTitle = await api<any>(
-                    `/api/media/${data.media_id}`
-                );
-
-                setMedia(mediaTitle);
             } catch (err) {
                 setErrorMessage("Failed to load watchdata");
             }
@@ -106,11 +94,16 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
                     <div className="watchdata-header-content">
                         <div className="header">Add your Watchdata</div>
                         <div className="subheader">
-                            {media?.title_name ?? "Loading title..."}
+                            {title}
                         </div>
                     </div>
                 </div>
-                <div className="title-poster"></div>
+                <div className="title-poster"> 
+                    <img
+                        src={posterUrl ?? "/placeholder.png"}
+                        alt={title}
+                    />
+                </div>
                 <div className="form-box">
                     <div className="form-label">Completion Status</div>
                     <select
