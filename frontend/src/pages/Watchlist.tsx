@@ -217,8 +217,8 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
         className="create-btn"
         type="button"
         onClick={() => {
-          if (!newWatchlistName.trim()) return;
-          createWatchlist(newWatchlistName);
+          if (!createWatchlistName.trim()) return;
+          createWatchlist(createWatchlistName);
           setCreateWatchlistName("");
         }}
       >
