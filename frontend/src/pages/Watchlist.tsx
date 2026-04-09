@@ -276,6 +276,10 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
               onClick={() => goToWatchdata(watchlist.id, item.id)}
               disabled={editingId === watchlist.id}
             >
+              <img
+                src={item.posterUrl || "/placeholder.png"}
+                alt={item.title}
+              />
             </button>
             {editingId === watchlist.id && (
               <button
