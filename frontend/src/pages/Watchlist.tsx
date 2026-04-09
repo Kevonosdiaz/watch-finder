@@ -7,7 +7,7 @@ import { IoAddCircleOutline } from "react-icons/io5";
 interface WatchlistProps {
   email: string;
   goToHome: () => void;
-  goToWatchdata: (watchlistId: number, titleId: number) => void;
+  goToWatchdata: (watchlistId: number, titleId: number, title: string, posterUrl?: string) => void;
 }
 
 type Media = {
@@ -273,7 +273,7 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
             <button
               type="button"
               className="poster-btn"
-              onClick={() => goToWatchdata(watchlist.id, item.id)}
+              onClick={() => goToWatchdata(watchlist.id, item.id, item.title, item.posterUrl)}
               disabled={editingId === watchlist.id}
             >
               <img
