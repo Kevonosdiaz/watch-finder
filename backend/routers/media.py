@@ -53,6 +53,7 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
                     "logoUrl": None
                 } for name, url in providers]
             })
+        # yapf: disable
         results.append({
             "media_id": media.media_id,
             "title_name": media.title_name,
@@ -64,8 +65,10 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
             "kind": kind,
             "number_of_seasons": seasons,
             "duration": duration,
-            "availability": availability
+            "availability": availability,
+            "image_file": media.image_file if media.image_file else "null"
         })
+        # yapf: enable
     return results
 
 
@@ -217,13 +220,13 @@ async def upload_media_img(media_id: int,
     content = await file.read()
 
     try:
-        new_filename = process_img(content, f'{media_id}.jpg')
+        new_filename = process_img(content, f'media_{media_id}.jpg')
     except UnidentifiedImageError as err:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Invalid image file") from err
 
     media_title = db.query(
         models.MediaTitles).filter_by(media_id=media_id).first()
-    media_title.image_file = new_filename
+    media_title.image_file = f'media_{media_id}.jpg'
     db.commit()
     return {"message": "New image uploaded"}

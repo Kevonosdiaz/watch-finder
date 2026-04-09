@@ -20,7 +20,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Watch Finder API", docs_url="/docs", redoc_url="/redoc")
 
-# Where we store images for media titles
+# Where we store images for media titles. Frontend can access via /media_images backend server path
 app.mount("/media_images",
           StaticFiles(directory="media_images"),
           name="media_images")

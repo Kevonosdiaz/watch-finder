@@ -1,4 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const IMAGE_BASE_URL = `${API_BASE_URL}/media_images`;
 
 export async function api<T>(
   path: string,

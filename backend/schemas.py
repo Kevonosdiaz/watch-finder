@@ -34,6 +34,7 @@ class MediaBase(BaseModel):
     age_rating: Optional[str] = Field(None, max_length=10)
     rating: Optional[float] = None
     description: Optional[str] = None
+    image_file: Optional[str] = None
 
 
 # Attributes for a show
@@ -56,8 +57,6 @@ class MediaResponse(MediaBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-# TODO: Update constraints for date to different type
-# Shared attributes used when needing to create/return watchlist
 class WatchlistBase(BaseModel):
     email: str
     watchlist_name: str = Field(max_length=255)
