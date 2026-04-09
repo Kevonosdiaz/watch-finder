@@ -37,7 +37,7 @@ export default function Watchdata({ watchlistId, titleId, goBack } : WatchdataPr
         const fetchWatchdata = async () => {
             try {
                 const result = await api<Watchdata[]>(
-                    `/api/watchlist/${watchlistId}/media/${titleId}/watchdata`
+                    `/api/watchlists/${watchlistId}/media/${titleId}/watchdata`
                 );
 
                 // Display watchdata
