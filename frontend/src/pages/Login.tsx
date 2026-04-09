@@ -3,7 +3,7 @@ import { api } from "../api/Client";
 import logo from "../assets/watch-finder-logo.png";
 
 type LoginProps = {
-    onLogin: () => void;
+    onLogin: (email: string) => void;
     goToSignup: () => void;
 };
 
@@ -17,11 +17,20 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
         e.preventDefault();
         setError(null)
         try {
-            const loginUser = await api<any>(`/api/users/${email}/${password}`);
+            const loginUser = await api<any>("/api/users/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
             console.log("User: ", loginUser)
             // Set the user/admin role
             localStorage.setItem("role", loginUser.role);
-            onLogin();
+            onLogin(email);
         } catch (err) {
             setError("Invalid email or password");
         }  

@@ -26,11 +26,17 @@ type SearchResult = {
     providers: StreamingPlatform[];
 };
 
+type Watchlist = {
+  watchlist_id: number;
+  watchlist_name: string;
+};
+
 type Region = {
     country_name: string;
 }
 
 interface HomeProps {
+    email: string;
     goToWatchlist: () => void;
     goToProfile: () => void;
     goToPassword: () => void;
@@ -39,7 +45,7 @@ interface HomeProps {
     goToStreamingServices?: () => void;
 }
 
-export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogout, goToMediaTitles, goToStreamingServices }: HomeProps) {
+export default function Home({ email, goToWatchlist, goToProfile, goToPassword, onLogout, goToMediaTitles, goToStreamingServices }: HomeProps) {
     const role = localStorage.getItem("role");
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
@@ -118,6 +124,34 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
 
     const joinDot = (parts: Array<string | null | undefined>) =>
         parts.filter(Boolean).join(" • ");
+
+    const [openDropdownFor, setOpenDropdownFor] = useState<number | null>(null);
+    const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
+    
+    useEffect(() => {
+        async function fetchWatchlists() {
+            try {
+                const data = await api<Watchlist[]>(`/api/users/${email}/watchlists`);
+                console.log("watchlists:", data);
+                setWatchlists(data)
+            } catch {
+                console.error("Failed to fetch watchlists");
+            }
+        }
+
+        fetchWatchlists();
+    }, [email]);
+
+    const addToWatchlist = async (watchlistId: number, mediaId: number) => {
+    try {
+        await api(`/api/watchlists/${watchlistId}/media/${mediaId}`, {
+        method: "POST",
+        });
+        setOpenDropdownFor(null);
+    } catch (err) {
+        console.error("Failed to add to watchlist", err);
+    }
+    };
 
     return (
         <div className="home-container">
@@ -314,17 +348,33 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                             </span>
                         ))}
                         </div>
+                        <div className="add-to-watchlist-wrapper">
                         <button
                             type="button"
                             className="add-to-watchlist-btn"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 console.log("Add:", item.id);
+                                setOpenDropdownFor(openDropdownFor === item.id ? null : item.id);
                             }}
                             aria-label="Add to watchlist"
                         >
                             <MdFormatListBulletedAdd />
                         </button>
+                        {openDropdownFor === item.id && (
+                            <div className="watchlist-dropdown">
+                            {watchlists.map((wl) => (
+                                <button
+                                    key={wl.watchlist_id}
+                                    className="watchlist-option"
+                                    onClick={() => addToWatchlist(wl.watchlist_id, item.id)}
+                                >
+                                {wl.watchlist_name}
+                                </button>
+                            ))}
+                            </div>
+                        )}
+                    </div>
                         <button
                             type="button"
                             className={`expand-btn ${isOpen ? "rotate" : ""}`}

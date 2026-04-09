@@ -14,6 +14,12 @@ class UserBase(BaseModel):
     email: str = Field(max_length=255)
 
 
+# Attributes for user login
+class UserLoginBase(BaseModel):
+    email: str
+    password: str
+
+    
 # What a user provides when signing up
 class UserCreate(UserBase):
     password: str
