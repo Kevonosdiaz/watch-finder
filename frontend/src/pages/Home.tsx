@@ -27,8 +27,8 @@ type SearchResult = {
 };
 
 type Watchlist = {
-  id: number;
-  name: string;
+  watchlist_id: number;
+  watchlist_name: string;
 };
 
 type Region = {
@@ -132,6 +132,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
         async function fetchWatchlists() {
             try {
                 const data = await api<Watchlist[]>(`/api/users/${email}/watchlists`);
+                console.log("watchlists:", data);
                 setWatchlists(data)
             } catch {
                 console.error("Failed to fetch watchlists");
@@ -347,6 +348,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                             </span>
                         ))}
                         </div>
+                        <div className="add-to-watchlist-wrapper">
                         <button
                             type="button"
                             className="add-to-watchlist-btn"
@@ -363,15 +365,16 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                             <div className="watchlist-dropdown">
                             {watchlists.map((wl) => (
                                 <button
-                                key={wl.id}
-                                className="watchlist-option"
-                                onClick={() => addToWatchlist(wl.id, item.id)}
+                                    key={wl.watchlist_id}
+                                    className="watchlist-option"
+                                    onClick={() => addToWatchlist(wl.watchlist_id, item.id)}
                                 >
-                                {wl.name}
+                                {wl.watchlist_name}
                                 </button>
                             ))}
                             </div>
                         )}
+                    </div>
                         <button
                             type="button"
                             className={`expand-btn ${isOpen ? "rotate" : ""}`}
