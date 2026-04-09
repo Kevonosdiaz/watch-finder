@@ -231,7 +231,6 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                     <div className="poster-grid">
                         {mediaTitles.map((media) => (
                             <div key={media.id} className="poster-wrapper">
-                            <img className="result-poster" src={media.posterUrl} alt={media.title} />
                             <button
                                 type="button"
                                 className="poster-btn"
@@ -240,6 +239,7 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                                     setShowDetails(true);
                                 }}
                             >
+                                <img src={media.posterUrl} alt={media.title} />
                                 <div className="poster-overlay">
                                 <div className="poster-overlay-title">{media.title}</div>
                                 <div className="poster-overlay-sub">({media.year})</div>
