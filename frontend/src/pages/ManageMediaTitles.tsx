@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { api } from "../api/Client";
+import { api, IMAGE_BASE_URL } from "../api/Client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit, MdOutlineFileUpload, MdOutlineCancel } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
@@ -21,6 +21,7 @@ interface MediaTitle {
     creator?: string;
     synopsis?: string;
     posterUrl?: string;
+    posterFile?: string;
     providers: StreamingPlatform[];
     regions: Region[];
     availability?: Availability[];
@@ -80,7 +81,7 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                         rating: m.age_rating,
                         creator: m.creator,
                         synopsis: m.description,
-                        posterUrl: m.poster_url,
+                        posterUrl: `${IMAGE_BASE_URL}/${m.image_file}`,
                         number_of_seasons: m.number_of_seasons ?? undefined,
                         runtime: m.duration ?? undefined,
                         providers: m.providers ?? [],
@@ -230,6 +231,7 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                     <div className="poster-grid">
                         {mediaTitles.map((media) => (
                             <div key={media.id} className="poster-wrapper">
+                            <img className="result-poster" src={media.posterUrl} alt={media.title} />
                             <button
                                 type="button"
                                 className="poster-btn"
@@ -352,12 +354,22 @@ export default function ManageMediaTitles({goToHome, goToAddMediaTitles}: Manage
                                         type="file"
                                         accept="image/*"
                                         hidden
-                                        onChange={(e) => {
+                                        onChange={async (e) => {
                                             const file = e.target.files?.[0];
                                             if (!file) return;
+
+                                            // Update local state for now
                                             setRemovePoster(false);
                                             setPosterFile(file);
                                             setPosterPreview(URL.createObjectURL(file));
+
+                                            // Prepare selected image file for API call to backend
+                                            const formData = new FormData();
+                                            formData.append("file", file)
+                                            await api(`/api/media/${selectedMedia.id}/img`,
+                                                { method: "PATCH", body: formData }
+                                            );
+                                            
                                         }}
                                     />
                                     </div>

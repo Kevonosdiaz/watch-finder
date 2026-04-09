@@ -55,7 +55,7 @@ export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
               rating: m.age_rating,
               criticsScore: m.rating,
               synopsis: m.description,
-              posterUrl: m.posterUrl ?? "",
+              posterUrl: `${IMAGE_BASE_URL}/${m.image_file}`
             })),
           }))
         );

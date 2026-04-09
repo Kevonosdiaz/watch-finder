@@ -53,6 +53,7 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
                     "logoUrl": None
                 } for name, url in providers]
             })
+        # yapf: disable
         results.append({
             "media_id": media.media_id,
             "title_name": media.title_name,
@@ -64,13 +65,17 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
             "kind": kind,
             "number_of_seasons": seasons,
             "duration": duration,
-            "availability": availability
+            "availability": availability,
+            "image_file": media.image_file if media.image_file else "null"
         })
+        # yapf: enable
     return results
 
 
 # Add a media title
-@router.post("", response_model=MediaResponse, status_code=status.HTTP_201_CREATED)
+@router.post("",
+             response_model=MediaResponse,
+             status_code=status.HTTP_201_CREATED)
 def add_media(payload: MediaCreate, db: Annotated[Session, Depends(get_db)]):
     if payload.kind == "Movie" and not payload.duration:
         raise HTTPException(400, "Duration is required for Movie")
@@ -87,37 +92,37 @@ def add_media(payload: MediaCreate, db: Annotated[Session, Depends(get_db)]):
     db.add(media)
     db.flush()
     db.add(
-        models.Movies(media_id=media.media_id, duration=payload.duration)
-        if payload.kind == "Movie"
-        else models.Shows(media_id=media.media_id, number_of_seasons=payload.number_of_seasons)
-    )
+        models.Movies(media_id=media.media_id, duration=payload.duration
+                      ) if payload.kind ==
+        "Movie" else models.Shows(media_id=media.media_id,
+                                  number_of_seasons=payload.number_of_seasons))
     all_services = {
         svc.strip()
         for a in payload.availability
-        for svc in a.streaming_services
-        if svc.strip()
+        for svc in a.streaming_services if svc.strip()
     }
     for svc in all_services:
-        if not db.query(models.StreamingServices).filter_by(streaming_service_name=svc).first():
+        if not db.query(models.StreamingServices).filter_by(
+                streaming_service_name=svc).first():
             raise HTTPException(404, f"Streaming service not found: {svc}")
-        db.add(models.OfferedBy(
-            media_id=media.media_id,
-            streaming_service_name=svc
-        ))
+        db.add(
+            models.OfferedBy(media_id=media.media_id,
+                             streaming_service_name=svc))
     for a in payload.availability:
         country = a.country_name.strip()
         if not country:
             continue
-        if not db.query(models.Regions).filter_by(country_name=country).first():
+        if not db.query(
+                models.Regions).filter_by(country_name=country).first():
             db.add(models.Regions(country_name=country))
-        db.add(models.AvailableIn(media_id=media.media_id, country_name=country))
+        db.add(
+            models.AvailableIn(media_id=media.media_id, country_name=country))
         for svc in a.streaming_services:
             svc = svc.strip()
             if svc:
-                db.add(models.OperatesIn(
-                    streaming_service_name=svc,
-                    country_name=country
-                ))
+                db.add(
+                    models.OperatesIn(streaming_service_name=svc,
+                                      country_name=country))
     db.commit()
     return media
 
@@ -143,7 +148,9 @@ def get_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
 
 
 @router.put("/{media_id}", response_model=MediaResponse)
-def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depends(get_db)):
+def update_media_title(media_id: int,
+                       payload: MediaUpdate,
+                       db: Session = Depends(get_db)):
     print("RAW payload.availability =", payload.availability)
     media = db.query(models.MediaTitles).filter_by(media_id=media_id).first()
     if not media:
@@ -170,11 +177,8 @@ def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depend
             show.number_of_seasons = payload.number_of_seasons
         else:
             db.add(
-                models.Shows(
-                    media_id=media_id,
-                    number_of_seasons=payload.number_of_seasons
-                )
-            )
+                models.Shows(media_id=media_id,
+                             number_of_seasons=payload.number_of_seasons))
     if payload.availability is not None:
         db.query(models.OfferedBy).filter_by(media_id=media_id).delete()
         db.query(models.AvailableIn).filter_by(media_id=media_id).delete()
@@ -182,17 +186,15 @@ def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depend
         all_services = {
             svc.strip()
             for a in payload.availability
-            for svc in a.streaming_services
-            if svc.strip()
+            for svc in a.streaming_services if svc.strip()
         }
         for svc in all_services:
             if not db.query(models.StreamingServices)\
                 .filter_by(streaming_service_name=svc).first():
                 raise HTTPException(404, f"Streaming service not found: {svc}")
-            db.add(models.OfferedBy(
-                media_id=media_id,
-                streaming_service_name=svc
-            ))
+            db.add(
+                models.OfferedBy(media_id=media_id,
+                                 streaming_service_name=svc))
         for a in payload.availability:
             country = a.country_name.strip()
             if not country:
@@ -200,19 +202,16 @@ def update_media_title(media_id: int, payload: MediaUpdate, db: Session = Depend
             if not db.query(models.Regions)\
                 .filter_by(country_name=country).first():
                 db.add(models.Regions(country_name=country))
-            db.add(models.AvailableIn(
-                media_id=media_id,
-                country_name=country
-            ))
+            db.add(models.AvailableIn(media_id=media_id, country_name=country))
             for svc in a.streaming_services:
                 svc = svc.strip()
                 if svc:
-                    db.add(models.OperatesIn(
-                        streaming_service_name=svc,
-                        country_name=country
-                    ))
+                    db.add(
+                        models.OperatesIn(streaming_service_name=svc,
+                                          country_name=country))
     db.commit()
     return media
+
 
 @router.patch("/{media_id}/img")
 async def upload_media_img(media_id: int,
@@ -221,13 +220,13 @@ async def upload_media_img(media_id: int,
     content = await file.read()
 
     try:
-        new_filename = process_img(content, str(media_id))
+        new_filename = process_img(content, f'media_{media_id}.jpg')
     except UnidentifiedImageError as err:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Invalid image file") from err
 
     media_title = db.query(
         models.MediaTitles).filter_by(media_id=media_id).first()
-    media_title.image_file = new_filename
+    media_title.image_file = f'media_{media_id}.jpg'
     db.commit()
     return {"message": "New image uploaded"}

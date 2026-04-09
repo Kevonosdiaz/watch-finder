@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../api/Client";
+import { api, IMAGE_BASE_URL } from "../api/Client";
 import { FaSearch, FaMapMarkerAlt, FaChevronDown, FaList, FaUserCircle, FaTv } from "react-icons/fa";
 import { MdOutlineManageAccounts, MdOutlinePassword, MdLogout, MdChevronRight, MdFormatListBulletedAdd, MdAdminPanelSettings } from "react-icons/md";
 import { SiOpenmediavault } from "react-icons/si";
@@ -96,13 +96,13 @@ export default function Home({ goToWatchlist, goToProfile, goToPassword, onLogou
                     title: m.title_name ?? "Unknown",
                     year: m.release_year ?? 0,
                     kind: (m.kind ?? "Movie") as "Movie" | "TV",
-                    posterUrl: m.posterUrl ?? "",
                     providers: m.providers ?? [],
                     criticsScore: m.rating ?? 0,
                     rating: m.age_rating ?? 0,
                     runtime: m.runtime,
                     creator: m.creator,
                     synopsis: m.description,
+                    posterUrl: `${IMAGE_BASE_URL}/${m.image_file}`
                 }))
             );
 
