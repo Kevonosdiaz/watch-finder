@@ -18,6 +18,7 @@ type MediaTitle = {
   number_of_seasons?: number | "";
   creator?: string;
   synopsis?: string;
+  posterUrl?: string;
 };
 
 type MediaAvailability = {
@@ -40,9 +41,10 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
         number_of_seasons: "",
         creator: "",
         synopsis: "",
+        posterUrl: ""
     });
 
-    const [, setPosterFile] = useState<File | null>(null);
+    const [posterFile, setPosterFile] = useState<File | null>(null);
     const [posterPreview, setPosterPreview] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [availability, setAvailability] = useState<MediaAvailability[]>([]);
@@ -76,11 +78,20 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
         availability,
       };
 
+      // Prepare FormData, which can include current JSON + image file
+      const formData = new FormData();
+      formData.append("metadata", JSON.stringify(payload));
+
+      if (posterFile) {
+        formData.append("file", posterFile);
+      }
+
+      console.log(Object.fromEntries(formData.entries()));
+
       try {
         await api("/api/media", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: formData,
         });
 
         goBack();
@@ -142,6 +153,7 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
               const file = e.target.files?.[0];
               if (!file) return;
               setPosterFile(file);
+              console.log(file);
               setPosterPreview(URL.createObjectURL(file));
             }}
           />
