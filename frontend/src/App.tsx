@@ -38,14 +38,17 @@ function App() {
         onSignup={() => setPage("home")} 
         goToLogin={() => setPage("login")}
       />}
-      {page === "home" && <Home 
-        goToWatchlist={() => setPage("watchlist")} 
-        goToProfile={() => setPage("profile")} 
-        goToPassword={() => setPage("password")} 
-        onLogout={() => setPage("login")}
-        goToMediaTitles={() => setPage("media-titles")}
-        goToStreamingServices={() => setPage("streaming-services")}
-      />}
+      {page === "home" && userEmail && (
+        <Home 
+          email={userEmail}
+          goToWatchlist={() => setPage("watchlist")} 
+          goToProfile={() => setPage("profile")} 
+          goToPassword={() => setPage("password")} 
+          onLogout={() => setPage("login")}
+          goToMediaTitles={() => setPage("media-titles")}
+          goToStreamingServices={() => setPage("streaming-services")}
+        />
+      )}
       {page === "watchlist" && userEmail && (
         <Watchlist
           email={userEmail}
