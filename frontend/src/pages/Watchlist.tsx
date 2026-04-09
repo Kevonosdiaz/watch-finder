@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { api } from "../api/Client";
+import { api, IMAGE_BASE_URL } from "../api/Client";
 import { FaArrowLeft, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit, MdOutlineCancel } from "react-icons/md";
 import { IoAddCircleOutline } from "react-icons/io5";
 
 interface WatchlistProps {
+  email: string;
   goToHome: () => void;
   goToWatchdata: (watchlistId: number, titleId: number) => void;
 }
@@ -28,10 +29,9 @@ interface Watchlist {
   items: Media[];
 }
 
-export default function Watchlist({ goToHome, goToWatchdata }: WatchlistProps) {
+export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistProps) {
   const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
-  // Hardcoded for testing
-  const email = "jane.doe@ucalgary.ca";
+
   useEffect(() => {
     async function fetchWatchlists() {
         try {

@@ -24,10 +24,14 @@ function App() {
     setSeletectedTitle({ watchlistId, titleId });
     setPage("watchdata");
   }
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   return (
     <>
-      {page === "login" && <Login 
-        onLogin={() => setPage("home")}
+      {page === "login" && <Login
+        onLogin={(email: string) => {
+          setUserEmail(email);
+          setPage("home");
+        }}
         goToSignup={() => setPage("signup")}
       />}
       {page === "signup" && <Signup 
@@ -42,12 +46,13 @@ function App() {
         goToMediaTitles={() => setPage("media-titles")}
         goToStreamingServices={() => setPage("streaming-services")}
       />}
-      {page === "watchlist" && 
-        <Watchlist 
+      {page === "watchlist" && userEmail && (
+        <Watchlist
+          email={userEmail}
           goToHome={() => setPage("home")}
           goToWatchdata={goToWatchdata}
         />
-      }
+      )}
       {page === "profile" && (
         <Profile goToHome={() => setPage("home")} />
       )}
