@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException, Request, status, Depends, Query, UploadFile
+from fastapi import APIRouter, HTTPException, Request, status, Depends, Query, UploadFile, File, Form
 import models
 from schemas import *
 from typing import Annotated
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from PIL import UnidentifiedImageError
+import json
 
 from database import Base, engine, get_db
 from image_utils import delete_img, process_img
@@ -66,7 +67,7 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
             "number_of_seasons": seasons,
             "duration": duration,
             "availability": availability,
-            "image_file": media.image_file if media.image_file else "null"
+            "image_file": media.image_file if media.image_file else None
         })
         # yapf: enable
     return results
@@ -76,19 +77,28 @@ def get_all_media_details(db: Annotated[Session, Depends(get_db)]):
 @router.post("",
              response_model=MediaResponse,
              status_code=status.HTTP_201_CREATED)
-def add_media(payload: MediaCreate, db: Annotated[Session, Depends(get_db)]):
+async def add_media(db: Annotated[Session, Depends(get_db)],
+                    metadata: str = Form(...),
+                    file: Optional[UploadFile] = File(None)):
+    # Unwrap stringified payload in metadata back to JSON
+    try:
+        data_dict = json.loads(metadata)
+        payload = MediaCreate(**data_dict)
+    except Exception as err:
+        raise HTTPException(400, str(err))
     if payload.kind == "Movie" and not payload.duration:
         raise HTTPException(400, "Duration is required for Movie")
     if payload.kind == "TV" and not payload.number_of_seasons:
         raise HTTPException(400, "Number of seasons is required for TV")
-    media = models.MediaTitles(
-        title_name=payload.title_name.strip(),
-        release_year=payload.release_year,
-        creator=payload.creator,
-        age_rating=payload.age_rating,
-        rating=payload.rating,
-        description=payload.description,
-    )
+
+    media = models.MediaTitles(title_name=payload.title_name.strip(),
+                               release_year=payload.release_year,
+                               creator=payload.creator,
+                               age_rating=payload.age_rating,
+                               rating=payload.rating,
+                               description=payload.description,
+                               image_file='null')
+
     db.add(media)
     db.flush()
     db.add(
@@ -123,6 +133,18 @@ def add_media(payload: MediaCreate, db: Annotated[Session, Depends(get_db)]):
                 db.add(
                     models.OperatesIn(streaming_service_name=svc,
                                       country_name=country))
+
+    # If file was given, try processing image
+    if file:
+        content = await file.read()
+
+        try:
+            new_filename = process_img(content, f'media_{media.media_id}.jpg')
+        except UnidentifiedImageError as err:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail="Invalid image file") from err
+        media.image_file = f'media_{media.media_id}.jpg'
+
     db.commit()
     return media
 
