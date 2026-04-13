@@ -803,7 +803,7 @@ border: none;
     display: flex;
     flex-direction: column;
     max-height: min(420px, 60vh);
-    overflow: visible;
+    overflow: auto;
 }
 
 .scrollable {
