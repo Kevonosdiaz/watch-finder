@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -20,13 +20,26 @@ type SelectedWatchlistItem = {
 } | null;
 
 function App() {
-  const [page, setPage] = useState<Page>("login");
+  const [userEmail, setUserEmail] = useState<string | null>(() => localStorage.getItem("userEmail"));
+  const [page, setPage] = useState<Page>(userEmail ? "home" : "login");
   const [selectedTitle, setSeletectedTitle] = useState<SelectedWatchlistItem>(null);
+  // Keep user logged in after a page refresh
+  useEffect(() => {
+    if (userEmail) localStorage.setItem("userEmail", userEmail);
+    else localStorage.removeItem("userEmail");
+  }, [userEmail]);
+  // Reset state and go back to login page
+  const logout = () => {
+    setUserEmail(null);
+    setSeletectedTitle(null);
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("role");
+    setPage("login");
+  }
   const goToWatchdata = (watchlistId: number, titleId: number, title: string, posterUrl?: string) => {
     setSeletectedTitle({ watchlistId, titleId, title, posterUrl });
     setPage("watchdata");
   }
-  const [userEmail, setUserEmail] = useState<string | null>(null);
   return (
     <>
       {page === "login" && <Login
@@ -46,7 +59,7 @@ function App() {
           goToWatchlist={() => setPage("watchlist")} 
           goToProfile={() => setPage("profile")} 
           goToPassword={() => setPage("password")} 
-          onLogout={() => setPage("login")}
+          onLogout={logout}
           goToMediaTitles={() => setPage("media-titles")}
           goToStreamingServices={() => setPage("streaming-services")}
         />
