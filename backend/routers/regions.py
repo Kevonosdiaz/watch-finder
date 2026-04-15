@@ -38,22 +38,21 @@ def get_media_in_region(region: str,
             models.MediaTitles.title_name.ilike(f"%{search}%"))
     media = query.order_by(models.MediaTitles.title_name).all()
     return [
-    MediaResponse.model_validate(m).model_copy(update={
-        "streaming_services": [
-            s.streaming_service_name
-            for s in db.query(models.StreamingServices)
-                .join(
-                    models.OfferedBy,
-                    models.OfferedBy.streaming_service_name
-                    == models.StreamingServices.streaming_service_name
+        MediaResponse.model_validate(m).model_copy(update={
+            "streaming_services": [
+                StreamingServiceResponse.model_validate(s)
+                for s in db.query(models.StreamingServices)
+                .join(models.OfferedBy)
+                .join(models.OperatesIn)
+                .filter(
+                    models.OfferedBy.media_id == m.media_id,
+                    models.OperatesIn.country_name == region,
                 )
-                .filter(models.OfferedBy.media_id == m.media_id)
                 .all()
-        ]
-    })
+            ]
+        })
         for m in media
     ]
-
 
 
 # Add a region
