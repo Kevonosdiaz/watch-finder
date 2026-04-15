@@ -899,32 +899,24 @@ border: none;
 /* Streaming platforms icons */
 .streaming-platforms {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 6px;
-    padding: 6px 8px;
+    padding: 8px;
     border-radius: 14px;
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
 }
 
 .streaming-platform-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 26px;
-    min-width: 26px;
     border-radius: 10px;
     padding: 0 8px;
-    background: #f3f4f7;
-    color: #2b2436;
-    font-size: 12px;
-}
-
-.streaming-platform-icon img {
-    height: 18px;
-    width: auto;
-    display: block;
+    background: rgba(0, 90, 150, 0.12);
+    border: 1px solid rgba(0, 90, 150, 0.22);
+    color: #003a63;
+    font-size: 10px;
+    font-weight: 600;
 }
 
 /* Add to watchlist button */
