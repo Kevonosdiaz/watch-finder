@@ -56,7 +56,14 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
     const toggleExpand = (id: number) =>
         setExpandedId((prev) => (prev === id ? null : id));
 
-    const [region, setRegion] = useState("Canada");
+    // Save and restore the selected region across page changes
+    const [region, setRegion] = useState(() =>
+        localStorage.getItem("region") || "Canada");
+
+    useEffect(() => {
+        localStorage.setItem("region", region);
+    }, [region]);
+
     const [regions, setRegions] = useState<Region[]>([]);
     
     useEffect(() => {
