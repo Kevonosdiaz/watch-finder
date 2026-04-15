@@ -101,9 +101,6 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
             const data = await api<SearchResult[]>(
                 `/api/regions/${region}/media${queryParam}`
             );
-            console.log("RAW RESPONSE: ", data);
-            console.log("FIRST ITEM: ", data?.[0]);
-            
             // Backend mapping to frontend state
             setResults(
                 data.map((m: any) => ({
