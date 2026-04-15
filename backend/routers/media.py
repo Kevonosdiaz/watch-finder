@@ -118,21 +118,31 @@ async def add_media(db: Annotated[Session, Depends(get_db)],
         db.add(
             models.OfferedBy(media_id=media.media_id,
                              streaming_service_name=svc))
+    # Ensure all regions in payload exist in REGIONS table before inserting AVAILABLE_IN
+    countries = {a.country_name.strip() for a in payload.availability if a.country_name and a.country_name.strip()}
+    if countries:
+        # Find which countries already exist
+        existing = {r[0] for r in db.query(models.Regions.country_name).filter(models.Regions.country_name.in_(list(countries))).all()}
+        missing = countries - existing
+        for c in missing:
+            db.add(models.Regions(country_name=c))
+        if missing:
+            db.flush()
+
     for a in payload.availability:
         country = a.country_name.strip()
         if not country:
             continue
-        if not db.query(
-                models.Regions).filter_by(country_name=country).first():
-            db.add(models.Regions(country_name=country))
-        db.add(
-            models.AvailableIn(media_id=media.media_id, country_name=country))
+        db.add(models.AvailableIn(media_id=media.media_id, country_name=country))
         for svc in a.streaming_services:
             svc = svc.strip()
             if svc:
-                db.add(
-                    models.OperatesIn(streaming_service_name=svc,
-                                      country_name=country))
+                # Only add OperatesIn if that service-country pair doesn't already exist
+                if not db.query(models.OperatesIn).filter_by(
+                        streaming_service_name=svc,
+                        country_name=country).first():
+                    db.add(models.OperatesIn(streaming_service_name=svc,
+                                              country_name=country))
 
     # If file was given, try processing image
     if file:
@@ -173,7 +183,7 @@ def get_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
 def update_media_title(media_id: int,
                        payload: MediaUpdate,
                        db: Session = Depends(get_db)):
-    print("RAW payload.availability =", payload.availability)
+    
     media = db.query(models.MediaTitles).filter_by(media_id=media_id).first()
     if not media:
         raise HTTPException(404, "Media title not found")
@@ -204,7 +214,6 @@ def update_media_title(media_id: int,
     if payload.availability is not None:
         db.query(models.OfferedBy).filter_by(media_id=media_id).delete()
         db.query(models.AvailableIn).filter_by(media_id=media_id).delete()
-        db.query(models.OperatesIn).delete()
         all_services = {
             svc.strip()
             for a in payload.availability
@@ -217,20 +226,30 @@ def update_media_title(media_id: int,
             db.add(
                 models.OfferedBy(media_id=media_id,
                                  streaming_service_name=svc))
+        # Ensure all regions in payload exist in REGIONS table before inserting AVAILABLE_IN
+        countries = {a.country_name.strip() for a in payload.availability if a.country_name and a.country_name.strip()}
+        if countries:
+            existing = {r[0] for r in db.query(models.Regions.country_name).filter(models.Regions.country_name.in_(list(countries))).all()}
+            missing = countries - existing
+            for c in missing:
+                db.add(models.Regions(country_name=c))
+            if missing:
+                db.flush()
+
         for a in payload.availability:
             country = a.country_name.strip()
             if not country:
                 continue
-            if not db.query(models.Regions)\
-                .filter_by(country_name=country).first():
-                db.add(models.Regions(country_name=country))
             db.add(models.AvailableIn(media_id=media_id, country_name=country))
             for svc in a.streaming_services:
                 svc = svc.strip()
                 if svc:
-                    db.add(
-                        models.OperatesIn(streaming_service_name=svc,
-                                          country_name=country))
+                    # Only add OperatesIn if that service-country pair doesn't already exist
+                    if not db.query(models.OperatesIn).filter_by(
+                            streaming_service_name=svc,
+                            country_name=country).first():
+                        db.add(models.OperatesIn(streaming_service_name=svc,
+                                                  country_name=country))
     db.commit()
     return media
 
