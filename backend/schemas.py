@@ -73,6 +73,7 @@ class MediaPatchImg(BaseModel):
 
 # Response for a media title
 class MediaResponse(MediaBase):
+    streaming_services: list[str] = []
     model_config = ConfigDict(from_attributes=True)
 
 

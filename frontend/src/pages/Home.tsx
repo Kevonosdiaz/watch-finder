@@ -101,6 +101,8 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
             const data = await api<SearchResult[]>(
                 `/api/regions/${region}/media${queryParam}`
             );
+            console.log("RAW RESPONSE: ", data);
+            console.log("FIRST ITEM: ", data?.[0]);
             
             // Backend mapping to frontend state
             setResults(
@@ -109,7 +111,9 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                     title: m.title_name ?? "Unknown",
                     year: m.release_year ?? 0,
                     kind: (m.kind ?? "Movie") as "Movie" | "TV",
-                    providers: m.providers ?? [],
+                    providers: (m.streaming_services ?? []).map((name: string) => ({
+                        name
+                    })),
                     criticsScore: m.rating ?? 0,
                     rating: m.age_rating ?? 0,
                     runtime: m.runtime,
@@ -351,7 +355,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                         <div className="streaming-platforms">
                         {item.providers.map((p) => (
                             <span key={p.name} className="streaming-platform-icon" title={p.name}>
-                            {p.name[0]}
+                            {p.name}
                             </span>
                         ))}
                         </div>
