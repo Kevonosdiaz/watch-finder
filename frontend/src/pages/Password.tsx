@@ -3,43 +3,51 @@ import { FaArrowLeft } from "react-icons/fa";
 
 interface PasswordProps {
   goBack: () => void;
+  email: string;
 }
 
-export default function Password({ goBack }: PasswordProps) {
+export default function Password({ goBack, email }: PasswordProps) {
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const currentRef = useRef<HTMLInputElement | null>(null);
   const newRef = useRef<HTMLInputElement | null>(null);
   const confirmRef = useRef<HTMLInputElement | null>(null);
 
   const changePassword = () => {
-    // clear previous messages
-    setError(null);
-    setSuccess(null);
-
-    // validate new passwords match
-    if (next !== confirm) {
-      setError("New passwords do not match");
-      confirmRef.current?.focus();
-      return;
-    }
-
-    // At this point passwords match. Normally we'd call the backend to verify the current password
-    // and update it. Since backend is not connected, we show success locally.
-    // Connect with backend API here (verify current password and update)
-
-    currentRef.current?.blur();
-    newRef.current?.blur();
-    confirmRef.current?.blur();
-
-    setSuccess("Password changed successfully.");
-    setCurrent("");
-    setNext("");
-    setConfirm("");
+    (async () => {
+      setError(null);
+      setSuccess(null);
+      if (next !== confirm) {
+        setError("New passwords do not match");
+        confirmRef.current?.focus();
+        return;
+      }
+      setLoading(true);
+      try {
+        const api = (await import("../api/Client")).api;
+        await api(`/api/users/${email}/password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ current_password: current, new_password: next }),
+        });
+        currentRef.current?.blur();
+        newRef.current?.blur();
+        confirmRef.current?.blur();
+        setSuccess("Password changed successfully.");
+        setCurrent("");
+        setNext("");
+        setConfirm("");
+      } catch (err) {
+        setError("Failed to change password")
+      } finally {
+        setLoading(false);
+      }
+    })();
   };
 
   return (
@@ -104,8 +112,8 @@ export default function Password({ goBack }: PasswordProps) {
   {error && <div className="form-error">{error}</div>}
   {success && <div className="form-success">{success}</div>}
         <div className="profile-actions">
-          <button className="save-btn primary" onClick={changePassword}>
-            Change password
+          <button className="save-btn primary" onClick={changePassword} disabled={loading}>
+            {loading ? "Changing..." : "Change password"}
           </button>
         </div>
       </div>

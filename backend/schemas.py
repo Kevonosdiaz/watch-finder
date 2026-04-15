@@ -31,6 +31,19 @@ class UserResponse(UserBase):
     role: str
 
 
+# What a user can update on their profile
+class UserUpdate(BaseModel):
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
+    country_name: Optional[str] = None
+
+
+# Request model for changing password
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+
 # Attributes for a media title
 class MediaBase(BaseModel):
     media_id: int

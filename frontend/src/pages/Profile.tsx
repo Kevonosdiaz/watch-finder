@@ -4,18 +4,20 @@ import { MdOutlineEdit } from "react-icons/md";
 
 interface ProfileProps {
   goToHome: () => void;
+  email: string; // original logged-in email (used to identify the user)
 }
 
-export default function Profile({ goToHome }: ProfileProps) {
-  const [firstName, setFirstName] = useState("John");
-  const [lastName, setLastName] = useState("Doe");
-  const [email, setEmail] = useState("john.doe@ucalgary.ca");
-
+export default function Profile({ goToHome, email }: ProfileProps) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userEmail, setUserEmail] = useState(email);
   const [editingField, setEditingField] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const firstRef = useRef<HTMLInputElement | null>(null);
   const lastRef = useRef<HTMLInputElement | null>(null);
-  const emailRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (editingField === "first") {
@@ -26,19 +28,57 @@ export default function Profile({ goToHome }: ProfileProps) {
       lastRef.current?.focus();
       const v = lastRef.current?.value ?? "";
       lastRef.current?.setSelectionRange(v.length, v.length);
-    } else if (editingField === "email") {
-      emailRef.current?.focus();
-      const v = emailRef.current?.value ?? "";
-      emailRef.current?.setSelectionRange(v.length, v.length);
     }
   }, [editingField]);
 
-  const saveChanges = () => {
+  // Load profile on mount
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const api = (await import("../api/Client")).api;
+        const data = await api<any>(`/api/users/${email}`);
+        if (!mounted) return;
+        setFirstName(data.firstname || "");
+        setLastName(data.lastname || "");
+        setUserEmail(data.email || email);
+      } catch (err) {
+        setErrorMsg("Failed to load profile");
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [email]);
+
+  const saveChanges = async () => {
+    setErrorMsg(null);
+    setSuccessMsg(null);
     firstRef.current?.blur();
     lastRef.current?.blur();
-    emailRef.current?.blur();
     setEditingField(null);
-    // Connect with backend API here
+    setLoading(true);
+    try {
+      const payload: any = {
+        firstname: firstName,
+        lastname: lastName,
+      };
+      const api = (await import("../api/Client")).api;
+      // Use the original email (prop) as the path so backend can find the user
+      const updated = await api<any>(`/api/users/${email}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      setFirstName(updated.firstname || firstName);
+      setLastName(updated.lastname || lastName);
+  setUserEmail(updated.email || userEmail);
+      setSuccessMsg("Profile updated");
+    } catch (err) {
+      setErrorMsg("Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,30 +147,16 @@ export default function Profile({ goToHome }: ProfileProps) {
         <div className="form-row">
           <div className="form-label">Email</div>
           <div className="form-field-row">
-            {editingField === "email" ? (
-              <input
-                ref={emailRef}
-                className="form-field-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            ) : (
-              <div className="form-field-display">{email}</div>
-            )}
-            <button
-              type="button"
-              className="edit-field-btn"
-              onClick={() => setEditingField(editingField === "email" ? null : "email")}
-              aria-label="Edit email"
-            >
-              <MdOutlineEdit />
-            </button>
+            <div className="form-field-display">{userEmail}</div>
           </div>
         </div>
 
+        {errorMsg && <div className="form-error">{errorMsg}</div>}
+        {successMsg && <div className="form-success">{successMsg}</div>}
+
         <div className="profile-actions">
-          <button className="save-btn primary" onClick={saveChanges}>
-            Save changes
+          <button className="save-btn primary" onClick={saveChanges} disabled={loading}>
+            {loading ? "Saving..." : "Save changes"}
           </button>
         </div>
       </div>

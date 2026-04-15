@@ -58,11 +58,11 @@ function App() {
           goToWatchdata={goToWatchdata}
         />
       )}
-      {page === "profile" && (
-        <Profile goToHome={() => setPage("home")} />
+      {page === "profile" && userEmail && (
+        <Profile email={userEmail} goToHome={() => setPage("home")} />
       )}
-      {page === "password" && (
-        <Password goBack={() => setPage("home")} />
+      {page === "password" && userEmail && (
+        <Password email={userEmail} goBack={() => setPage("home")} />
       )}
       {page === "media-titles" && (<ManageMediaTitles 
         goToHome={() => setPage("home")}

@@ -6,6 +6,7 @@ from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 from database import Base, engine, get_db
 from datetime import datetime
+from schemas import PasswordChangeRequest, UserUpdate
 
 router = APIRouter()
 # '/api/users/' is automatically part of api route here
@@ -150,3 +151,56 @@ def remove_watchlist(email: str, list_id: int, db: Annotated[Session,
     db.delete(watchlist)
     db.commit()
     return {"message": "Removed"}
+
+
+# Retrieve user profile by email (safe to call after login)
+@router.get("/{email}", response_model=UserResponse)
+def get_user_profile(email: str, db: Annotated[Session, Depends(get_db)]):
+    user = db.query(models.Users).filter(models.Users.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    is_admin_result = db.execute(
+        select(exists().where(models.IsAdmin.email == user.email)))
+    is_admin = is_admin_result.scalars().first()
+    user.role = 'admin' if is_admin else 'user'
+    return user
+
+
+# Update user profile (firstname, lastname, country_name)
+@router.put("/{email}", response_model=UserResponse)
+def update_user_profile(email: str, user_update: UserUpdate, db: Annotated[Session, Depends(get_db)]):
+    user = db.query(models.Users).filter(models.Users.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user_update.firstname is not None:
+        user.firstname = user_update.firstname
+    if user_update.lastname is not None:
+        user.lastname = user_update.lastname
+    if user_update.country_name is not None:
+        # Ensure region exists
+        region = db.query(models.Regions).filter(models.Regions.country_name == user_update.country_name).first()
+        if not region:
+            db.add(models.Regions(country_name=user_update.country_name))
+            db.flush()
+        user.country_name = user_update.country_name
+    db.commit()
+    db.refresh(user)
+    is_admin_result = db.execute(
+        select(exists().where(models.IsAdmin.email == user.email)))
+    is_admin = is_admin_result.scalars().first()
+    user.role = 'admin' if is_admin else 'user'
+    return user
+
+
+# Change password for a user
+@router.post("/{email}/password")
+def change_password(email: str, pw_req: PasswordChangeRequest, db: Annotated[Session, Depends(get_db)]):
+    user = db.query(models.Users).filter(models.Users.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    # NOTE: passwords are stored in plaintext in this demo; in production hash and verify properly.
+    if user.password != pw_req.current_password:
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    user.password = pw_req.new_password
+    db.commit()
+    return {"message": "Password changed"}
