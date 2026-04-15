@@ -71,11 +71,6 @@ class MediaPatchImg(BaseModel):
     filepath: str
 
 
-# Response for a media title
-class MediaResponse(MediaBase):
-    model_config = ConfigDict(from_attributes=True)
-
-
 class WatchlistBase(BaseModel):
     email: str
     watchlist_name: str = Field(max_length=255)
@@ -90,14 +85,6 @@ class WatchlistCreate(WatchlistBase):
 class WatchlistResponse(WatchlistBase):
     watchlist_id: int
     date_created: date = Field(alias="date_added")
-    model_config = ConfigDict(from_attributes=True)
-
-
-# Response for watchlist + media titles
-class WatchlistWithMediaResponse(WatchlistBase):
-    watchlist_id: int
-    date_created: date = Field(alias="date_added")
-    media: List[MediaResponse]
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -143,16 +130,30 @@ class StreamingServiceUpdate(BaseModel):
     logoUrl: Optional[str] = None
 
 
-# Media titles available in a specific region
-class MediaInRegion(BaseModel):
-    region: RegionResponse
-    media_titles: List[MediaResponse]
-
-
 # Response for streaming service
 class StreamingServiceResponse(StreamingServiceBase):
     logoUrl: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+# Response for a media title
+class MediaResponse(MediaBase):
+    streaming_services: List[StreamingServiceResponse] = []
+    model_config = ConfigDict(from_attributes=True)
+
+
+# Response for watchlist + media titles
+class WatchlistWithMediaResponse(WatchlistBase):
+    watchlist_id: int
+    date_created: date = Field(alias="date_added")
+    media: List[MediaResponse]
+    model_config = ConfigDict(from_attributes=True)
+
+
+# Media titles available in a specific region
+class MediaInRegion(BaseModel):
+    region: RegionResponse
+    media_titles: List[MediaResponse]
 
 
 # Availability

@@ -37,7 +37,22 @@ def get_media_in_region(region: str,
         query = query.filter(
             models.MediaTitles.title_name.ilike(f"%{search}%"))
     media = query.order_by(models.MediaTitles.title_name).all()
-    return media
+    return [
+        MediaResponse.model_validate(m).model_copy(update={
+            "streaming_services": [
+                StreamingServiceResponse.model_validate(s)
+                for s in db.query(models.StreamingServices)
+                .join(models.OfferedBy)
+                .join(models.OperatesIn)
+                .filter(
+                    models.OfferedBy.media_id == m.media_id,
+                    models.OperatesIn.country_name == region,
+                )
+                .all()
+            ]
+        })
+        for m in media
+    ]
 
 
 # Add a region
