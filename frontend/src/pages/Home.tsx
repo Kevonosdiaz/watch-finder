@@ -9,7 +9,7 @@ type ActiveMenu = "none" | "region" | "account" | "admin";
 
 type StreamingPlatform = {
     name: string;
-    logoUrl?: string;
+    url?: string;
 };
 
 type SearchResult = {
@@ -108,8 +108,9 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                     title: m.title_name ?? "Unknown",
                     year: m.release_year ?? 0,
                     kind: (m.kind ?? "Movie") as "Movie" | "TV",
-                    providers: (m.streaming_services ?? []).map((name: string) => ({
-                        name
+                    providers: (m.streaming_services ?? []).map((p: any) => ({    
+                        name: p.streaming_service_name,
+                        url: p.website_url,
                     })),
                     criticsScore: m.rating ?? 0,
                     rating: m.age_rating ?? 0,
@@ -350,11 +351,22 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                     </div>
                     <div className="result-right">
                         <div className="streaming-platforms">
-                        {item.providers.map((p) => (
-                            <span key={p.name} className="streaming-platform-icon" title={p.name}>
-                            {p.name}
-                            </span>
-                        ))}
+                            {item.providers.map((p) => (
+                                <button
+                                    key={p.name}
+                                    type="button"
+                                    className="streaming-platform-icon"
+                                    title={p.url ? `Open ${p.name}` : p.name}
+                                    // Opens the website URL in a new browser tab
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (p.url) window.open(p.url, "_blank", "noopener,noreferrer");
+                                    }}
+                                    disabled={!p.url}
+                                >
+                                    {p.name}
+                                </button>
+                            ))}
                         </div>
                         <div className="add-to-watchlist-wrapper">
                         <button
