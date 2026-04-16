@@ -48,6 +48,7 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                 selectedMedia.kind,
                 selectedMedia.kind === "TV" && selectedMedia.number_of_seasons != null ? `${selectedMedia.number_of_seasons} seasons` : null,
                 selectedMedia.kind === "Movie" && selectedMedia.runtime != null ? `(${selectedMedia.runtime}m)` : null,
+                selectedMedia.creator ? `Creator: ${selectedMedia.creator}` : null,
             ]
                 .filter(Boolean)
                 .join(" • ")
