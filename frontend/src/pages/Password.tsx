@@ -22,6 +22,10 @@ export default function Password({ goBack, email }: PasswordProps) {
     (async () => {
       setError(null);
       setSuccess(null);
+      if (!current || !next || !confirm) {
+        setError("Please enter all fields");
+        return;
+      }
       if (next !== confirm) {
         setError("New passwords do not match");
         confirmRef.current?.focus();

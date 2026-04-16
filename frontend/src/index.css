@@ -191,7 +191,9 @@ code {
     box-shadow: 0 0 6px rgba(125, 207, 255, 0.4);
 }
 
-.login-form-error {
+.login-form-error,
+.form-error {
+    text-align: center;
     color: #c62828;
     background: rgba(198, 40, 40, 0.08);
     border: 1px solid rgba(198, 40, 40, 0.2);
@@ -551,15 +553,15 @@ code {
 }
 
 .form-success {
+    text-align: center;
     color: #0b7a3f;
-    margin-top: 12px;
-    font-weight: 600;
-}
-
-.form-error {
-    color: #a31616;
-    margin-top: 12px;
-    font-weight: 600;
+    background: rgba(11, 122, 63, 0.06);
+    border: 1px solid rgba(11, 122, 63, 0.2);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin: 12px auto;
+    width: 300px;
 }
 
 .top-icons {
