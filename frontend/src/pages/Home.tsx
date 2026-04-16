@@ -194,7 +194,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                         {r.country_name}
                     </button>
                 ))}
-                </div>
+            </div>
             )}
         </div>
         <div className="top-icons">

@@ -19,7 +19,7 @@ class UserLoginBase(BaseModel):
     email: str
     password: str
 
-    
+
 # What a user provides when signing up
 class UserCreate(UserBase):
     password: str

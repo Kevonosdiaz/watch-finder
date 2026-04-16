@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../api/Client";
 import logo from "../assets/watch-finder-logo.png";
+import { FaMapMarkerAlt, FaChevronDown } from "react-icons/fa";
 
 type SignupProps = {
     onSignup: () => void;
     goToLogin: () => void;
 };
+
+type ActiveMenu = "none" | "region";
+
 
 export default function Signup({ onSignup, goToLogin }: SignupProps) {
     const [firstName, setFirstName] = useState("");
@@ -13,6 +17,68 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, ] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
+    const toggleMenu = (menu: ActiveMenu) => {
+        setActiveMenu((prev) => (prev === menu ? "none" : menu));
+    };
+
+    // Reusing code from Home.tsx -- could extract duplicated code out later
+    // Save and restore the selected region across page changes
+    const [region, setRegion] = useState(() =>
+        localStorage.getItem("region") || "Canada");
+
+    useEffect(() => {
+        localStorage.setItem("region", region);
+    }, [region]);
+
+    const [regions, setRegions] = useState<Region[]>([]);
+
+    useEffect(() => {
+        async function fetchRegions() {
+            try {
+                const data = await api<Region[]>("/api/regions");
+                console.log("regions:", data);
+                setRegions(data)
+            } catch {
+                console.error("Failed to fetch regions");
+            }
+        }
+
+        fetchRegions();
+    }, []);
+
+
+    // Normal users are created through this process,
+    // but manual action is required to make it an admin account
+    const handleSignup = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null)
+        try {
+            const loginUser = await api<any>("/api/users/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    firstname: firstName,
+                    lastname: lastName,
+                    country_name: region,
+                    email,
+                    password,
+                }),
+            });
+            console.log("User: ", loginUser)
+            // Set the user/admin role
+            localStorage.setItem("role", loginUser.role);
+
+            // Login immediately with a created account
+            onSignup(email);
+        } catch (err) {
+            // May be an existing email/account
+            setError("User account already exists");
+        }
+    }
 
      return (
         <div className="signup-container">
@@ -67,9 +133,43 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
                         />
                     </div>
                 </div>
+
+                <div className="region-wrapper">
+                    <div className="region-selector">
+                        <FaMapMarkerAlt color="#E0160C" />
+                         <span className="region-label">Region: {region}</span>
+                        <button
+                            type="button"
+                                className={`chevron ${activeMenu === "region" ? "rotate" : ""}`}
+                                onClick={() => toggleMenu("region")}
+                                aria-label="Open region menu"
+                                aria-expanded={activeMenu === "region"}
+                            >
+                                <FaChevronDown />
+                        </button>
+                    </div>
+                {activeMenu === "region" && (
+                    <div className="dropdown">
+                    {Array.isArray(regions) && regions.map((r) => (
+                        <button
+                            key={r.country_name}
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() => {
+                                setRegion(r.country_name);
+                                setActiveMenu("none");
+                            }}
+                        >
+                            {r.country_name}
+                        </button>
+                    ))}
+                    </div>
+                )}
+                </div>
+                {error && <p className="login-form-error">{error}</p>}
                 <button 
                     className="signup-btn"
-                    onClick={onSignup}
+                    onClick={handleSignup}
                 >
                     Sign up
                 </button>
