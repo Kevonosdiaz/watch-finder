@@ -438,7 +438,7 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                                                     <div className="availability-region">{region.country_name}</div>
                                                     <div className="media-details-streaming-platforms">
                                                         {region.providers.length > 0 ? region.providers.map((p) => (
-                                                            <span key={p.name} className="streaming-platform-icon" title={p.name}>{p.logoUrl ? <img src={p.logoUrl} alt={p.name} /> : p.name[0]}</span>
+                                                            <span key={p.name} className="streaming-platform-icon" title={p.name}>{p.logoUrl ? <img src={p.logoUrl} alt={p.name} /> : p.name}</span>
                                                         )) : <span className="no-providers">No streaming providers listed.</span>}
                                                     </div>
                                                 </div>
