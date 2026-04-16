@@ -31,13 +31,13 @@ def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)]):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+    new_user.role = 'user'
     return new_user
 
 
 # Retrieve a user
 @router.post("/login", response_model=UserResponse)
-def get_user(user: UserLoginBase, db: Annotated[Session,
-                                                      Depends(get_db)]):
+def get_user(user: UserLoginBase, db: Annotated[Session, Depends(get_db)]):
     result = db.execute(
         select(models.Users).where(models.Users.email == user.email,
                                    models.Users.password == user.password))
@@ -168,7 +168,8 @@ def get_user_profile(email: str, db: Annotated[Session, Depends(get_db)]):
 
 # Update user profile (firstname, lastname, country_name)
 @router.put("/{email}", response_model=UserResponse)
-def update_user_profile(email: str, user_update: UserUpdate, db: Annotated[Session, Depends(get_db)]):
+def update_user_profile(email: str, user_update: UserUpdate,
+                        db: Annotated[Session, Depends(get_db)]):
     user = db.query(models.Users).filter(models.Users.email == email).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -178,7 +179,8 @@ def update_user_profile(email: str, user_update: UserUpdate, db: Annotated[Sessi
         user.lastname = user_update.lastname
     if user_update.country_name is not None:
         # Ensure region exists
-        region = db.query(models.Regions).filter(models.Regions.country_name == user_update.country_name).first()
+        region = db.query(models.Regions).filter(
+            models.Regions.country_name == user_update.country_name).first()
         if not region:
             db.add(models.Regions(country_name=user_update.country_name))
             db.flush()
@@ -194,13 +196,15 @@ def update_user_profile(email: str, user_update: UserUpdate, db: Annotated[Sessi
 
 # Change password for a user
 @router.post("/{email}/password")
-def change_password(email: str, pw_req: PasswordChangeRequest, db: Annotated[Session, Depends(get_db)]):
+def change_password(email: str, pw_req: PasswordChangeRequest,
+                    db: Annotated[Session, Depends(get_db)]):
     user = db.query(models.Users).filter(models.Users.email == email).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     # NOTE: passwords are stored in plaintext in this demo; in production hash and verify properly.
     if user.password != pw_req.current_password:
-        raise HTTPException(status_code=400, detail="Current password is incorrect")
+        raise HTTPException(status_code=400,
+                            detail="Current password is incorrect")
     user.password = pw_req.new_password
     db.commit()
     return {"message": "Password changed"}

@@ -50,7 +50,10 @@ function App() {
         goToSignup={() => setPage("signup")}
       />}
       {page === "signup" && <Signup 
-        onSignup={() => setPage("home")} 
+        onSignup={(email:string) => {
+          setUserEmail(email);
+          setPage("home");
+        }}
         goToLogin={() => setPage("login")}
       />}
       {page === "home" && userEmail && (
