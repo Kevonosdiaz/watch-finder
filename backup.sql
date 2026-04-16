@@ -62,7 +62,7 @@ CREATE TABLE `AVAILABLE_IN` (
 
 LOCK TABLES `AVAILABLE_IN` WRITE;
 /*!40000 ALTER TABLE `AVAILABLE_IN` DISABLE KEYS */;
-INSERT INTO `AVAILABLE_IN` VALUES (1,'Canada'),(2,'Canada'),(4,'Canada'),(12,'Canada'),(13,'Canada'),(13,'China'),(2,'Japan'),(1,'USA'),(3,'USA'),(4,'USA'),(6,'USA'),(12,'USA'),(13,'USA');
+INSERT INTO `AVAILABLE_IN` VALUES (1,'Canada'),(2,'Canada'),(4,'Canada'),(12,'Canada'),(13,'Canada'),(16,'Canada'),(18,'Canada'),(13,'China'),(18,'France'),(2,'Japan'),(18,'UK'),(1,'USA'),(3,'USA'),(4,'USA'),(6,'USA'),(12,'USA'),(13,'USA'),(17,'USA'),(18,'USA'),(19,'USA');
 /*!40000 ALTER TABLE `AVAILABLE_IN` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,7 +163,7 @@ CREATE TABLE `MEDIA_TITLES` (
   `Image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`MediaID`),
   UNIQUE KEY `MediaID` (`MediaID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +172,7 @@ CREATE TABLE `MEDIA_TITLES` (
 
 LOCK TABLES `MEDIA_TITLES` WRITE;
 /*!40000 ALTER TABLE `MEDIA_TITLES` DISABLE KEYS */;
-INSERT INTO `MEDIA_TITLES` VALUES (1,'Avatar: The Last Airbender',2005,'Michael Dante DiMartino','TV-Y7-FV',9.3,'In a war-torn world of elemental powers, a young boy reawakens to undertake a dangerous mystic quest to fulfill his destiny as the Avatar, and bring peace to the world.','media_1.jpg'),(2,'Attack on Titan',2013,'Yasuko Kobayashi','TV-MA',9.1,'In a world where humanity shelters behind towering walls from man-eating Titans, a determined teen joins the elite Survey Corps to fight the giants and uncover the secrets of their origin.','media_2.jpg'),(3,'Sherlock',2010,'Mark Gatiss','TV-14',9.0,'In modern-day London, brilliant but eccentric detective Sherlock Holmes teams with war veteran Dr. John Watson to crack baffling crimes, outwit formidable foes, and aid Scotland Yard with razor-sharp deduction.','media_3.jpg'),(4,'The Shawshank Redemption',1994,'Frank Darabont','R',9.3,'A banker convicted of uxoricide forms a friendship over a quarter century with a hardened convict, while maintaining his innocence and trying to remain hopeful through simple compassion.','media_4.jpg'),(6,'Interstellar',2014,'Christopher Nolan','PG-13',8.7,'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.','media_6.jpg'),(12,'The Bear',2022,'Christopher Storer','TV-MA',8.6,'A chef returns home to run a family sandwich shop.','media_12.jpg'),(13,'Stranger Things',2016,'The Duffer Brothers','TV-14',8.7,'When a young boy disappears, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.','media_13.jpg');
+INSERT INTO `MEDIA_TITLES` VALUES (1,'Avatar: The Last Airbender',2005,'Michael Dante DiMartino','TV-Y7-FV',9.3,'In a war-torn world of elemental powers, a young boy reawakens to undertake a dangerous mystic quest to fulfill his destiny as the Avatar, and bring peace to the world.','media_1.jpg'),(2,'Attack on Titan',2013,'Yasuko Kobayashi','TV-MA',9.1,'In a world where humanity shelters behind towering walls from man-eating Titans, a determined teen joins the elite Survey Corps to fight the giants and uncover the secrets of their origin.','media_2.jpg'),(3,'Sherlock',2010,'Mark Gatiss','TV-14',9.0,'In modern-day London, brilliant but eccentric detective Sherlock Holmes teams with war veteran Dr. John Watson to crack baffling crimes, outwit formidable foes, and aid Scotland Yard with razor-sharp deduction.','media_3.jpg'),(4,'The Shawshank Redemption',1994,'Frank Darabont','R',9.3,'A banker convicted of uxoricide forms a friendship over a quarter century with a hardened convict, while maintaining his innocence and trying to remain hopeful through simple compassion.','media_4.jpg'),(6,'Interstellar',2014,'Christopher Nolan','PG-13',8.7,'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.','media_6.jpg'),(12,'The Bear',2022,'Christopher Storer','TV-MA',8.6,'A chef returns home to run a family sandwich shop.','media_12.jpg'),(13,'Stranger Things',2016,'The Duffer Brothers','TV-14',8.7,'When a young boy disappears, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.','media_13.jpg'),(16,'Breaking Bad',2008,'Vince Gilligan','TV-MA',9.5,'A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student to secure his family\'s future.','media_16.jpg'),(17,'Game of Thrones',2011,'David Benioff and D.B. Weiss','TV-MA',9.2,'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.','media_17.jpg'),(18,'Money Heist',2017,'Álex Pina','TV-MA',9.2,'An unusual group of robbers attempt to carry out the most perfect robbery in Spanish history - stealing 2.4 billion euros from the Royal Mint of Spain.','media_18.jpg'),(19,'Oppenheimer',2023,'Christopher Nolan','R',8.2,'A dramatization of the life story of J. Robert Oppenheimer, the physicist who had a large hand in the development of the atomic bombs that brought an end to World War II.','media_19.jpg');
 /*!40000 ALTER TABLE `MEDIA_TITLES` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +197,7 @@ CREATE TABLE `MOVIES` (
 
 LOCK TABLES `MOVIES` WRITE;
 /*!40000 ALTER TABLE `MOVIES` DISABLE KEYS */;
-INSERT INTO `MOVIES` VALUES (4,142),(6,169);
+INSERT INTO `MOVIES` VALUES (4,142),(6,169),(19,180);
 /*!40000 ALTER TABLE `MOVIES` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -224,7 +224,7 @@ CREATE TABLE `OFFERED_BY` (
 
 LOCK TABLES `OFFERED_BY` WRITE;
 /*!40000 ALTER TABLE `OFFERED_BY` DISABLE KEYS */;
-INSERT INTO `OFFERED_BY` VALUES (13,'Disney+'),(6,'Hulu'),(12,'Hulu'),(13,'Hulu'),(1,'Netflix'),(2,'Netflix'),(13,'Netflix'),(13,'Prime Video');
+INSERT INTO `OFFERED_BY` VALUES (13,'Disney+'),(17,'Disney+'),(6,'Hulu'),(12,'Hulu'),(13,'Hulu'),(1,'Netflix'),(2,'Netflix'),(13,'Netflix'),(16,'Netflix'),(18,'Netflix'),(19,'Netflix'),(13,'Prime Video');
 /*!40000 ALTER TABLE `OFFERED_BY` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -251,7 +251,7 @@ CREATE TABLE `OPERATES_IN` (
 
 LOCK TABLES `OPERATES_IN` WRITE;
 /*!40000 ALTER TABLE `OPERATES_IN` DISABLE KEYS */;
-INSERT INTO `OPERATES_IN` VALUES ('Netflix','Canada'),('Disney+','China'),('Hulu','China'),('Netflix','China'),('Prime Video','China'),('Netflix','France'),('Hulu','USA'),('Netflix','USA');
+INSERT INTO `OPERATES_IN` VALUES ('Netflix','Canada'),('Disney+','China'),('Hulu','China'),('Netflix','China'),('Prime Video','China'),('Netflix','France'),('Netflix','UK'),('Disney+','USA'),('Hulu','USA'),('Netflix','USA');
 /*!40000 ALTER TABLE `OPERATES_IN` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -299,7 +299,7 @@ CREATE TABLE `SHOWS` (
 
 LOCK TABLES `SHOWS` WRITE;
 /*!40000 ALTER TABLE `SHOWS` DISABLE KEYS */;
-INSERT INTO `SHOWS` VALUES (1,3),(2,5),(3,4),(12,3),(13,5);
+INSERT INTO `SHOWS` VALUES (1,3),(2,5),(3,4),(12,3),(13,5),(16,5),(17,3),(18,3);
 /*!40000 ALTER TABLE `SHOWS` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -379,7 +379,7 @@ CREATE TABLE `USERS` (
 
 LOCK TABLES `USERS` WRITE;
 /*!40000 ALTER TABLE `USERS` DISABLE KEYS */;
-INSERT INTO `USERS` VALUES ('alice@email.com','Canada','insecure_password','Alice','Smith'),('jane.doe@ucalgary.ca','Canada','password','Jane','Doe'),('john2@email.com','USA','unhashed_plaintext_password','John','Doe');
+INSERT INTO `USERS` VALUES ('ada.lovelace@ucalgary.ca','UK','password12','Ada','Lovelace'),('alice@email.com','Canada','insecure_password','Alice','Smith'),('jane.doe@ucalgary.ca','Canada','password','Jane','Doe'),('john2@email.com','USA','unhashed_plaintext_password','John','Doe');
 /*!40000 ALTER TABLE `USERS` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -479,4 +479,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-15 12:02:24
+-- Dump completed on 2026-04-16  8:11:46

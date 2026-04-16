@@ -67,7 +67,10 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                         rating: m.age_rating,
                         creator: m.creator,
                         synopsis: m.description,
-                        posterUrl: `${IMAGE_BASE_URL}/${m.image_file}`,
+                        posterUrl:
+                        m.image_file && m.image_file !== "null"
+                            ? `${IMAGE_BASE_URL}/${m.image_file}`
+                            : "/placeholder-poster.png",
                         number_of_seasons: m.number_of_seasons ?? undefined,
                         runtime: m.duration ?? undefined,
                         providers: m.providers ?? [],
@@ -288,13 +291,20 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                                             hidden
                                             onChange={async (e) => {
                                                 const file = e.target.files?.[0];
-                                                if (!file) return;
+                                                if (!file || !selectedMedia) return;
                                                 setRemovePoster(false);
                                                 setPosterFile(file);
                                                 setPosterPreview(URL.createObjectURL(file));
                                                 const formData = new FormData();
                                                 formData.append("file", file);
                                                 await api(`/api/media/${selectedMedia.id}/img`, { method: "PATCH", body: formData });
+                                                const refreshedUrl = `${IMAGE_BASE_URL}/media_${selectedMedia.id}.jpg?v=${Date.now()}`;
+                                                setSelectedMedia((prev) => (prev ? { ...prev, posterUrl: refreshedUrl } : prev));
+                                                setEditedMedia((prev) => (prev ? { ...prev, posterUrl: refreshedUrl } : prev));
+                                                setMediaTitles((prev) =>
+                                                    prev.map((m) => (m.id === selectedMedia.id ? { ...m, posterUrl: refreshedUrl } : m))
+                                                );
+                                                setPosterPreview(refreshedUrl);
                                             }}
                                         />
                                     </div>
