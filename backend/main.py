@@ -46,8 +46,6 @@ app.add_middleware(CORSMiddleware,
                    allow_methods=["*"],
                    allow_headers=["*"])
 
-# TODO: May want to setup exception handler (may just need to tell frontend about error)
-
 if __name__ == "__main__":
     import uvicorn
     # Web server serves FastAPI on localhost:8000
