@@ -438,9 +438,25 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                                                 <div key={region.country_name} className="availability-row">
                                                     <div className="availability-region">{region.country_name}</div>
                                                     <div className="media-details-streaming-platforms">
-                                                        {region.providers.length > 0 ? region.providers.map((p) => (
-                                                            <span key={p.name} className="streaming-platform-icon" title={p.name}>{p.logoUrl ? <img src={p.logoUrl} alt={p.name} /> : p.name}</span>
-                                                        )) : <span className="no-providers">No streaming providers listed.</span>}
+                                                        {region.providers.length > 0 ? (
+                                                            region.providers.map((p) => (
+                                                            <button
+                                                                key={p.name}
+                                                                type="button"
+                                                                className="streaming-platform-icon"
+                                                                title={p.website_url ? `Open ${p.name}` : p.name}
+                                                                onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                if (p.website_url) window.open(p.website_url, "_blank", "noopener,noreferrer");
+                                                                }}
+                                                                disabled={!p.website_url}
+                                                            >
+                                                                {p.name}
+                                                            </button>
+                                                            ))
+                                                        ) : (
+                                                            <span className="no-providers">No streaming providers listed.</span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}
