@@ -97,7 +97,7 @@ async def add_media(db: Annotated[Session, Depends(get_db)],
                                age_rating=payload.age_rating,
                                rating=payload.rating,
                                description=payload.description,
-                               image_file='null')
+                               image_file=None)
 
     db.add(media)
     db.flush()
@@ -270,4 +270,5 @@ async def upload_media_img(media_id: int,
         models.MediaTitles).filter_by(media_id=media_id).first()
     media_title.image_file = f'media_{media_id}.jpg'
     db.commit()
-    return {"message": "New image uploaded"}
+    db.refresh(media_title)
+    return {"image_file": media_title.image_file}
