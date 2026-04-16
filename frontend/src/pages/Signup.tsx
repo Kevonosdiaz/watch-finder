@@ -4,9 +4,13 @@ import logo from "../assets/watch-finder-logo.png";
 import { FaMapMarkerAlt, FaChevronDown } from "react-icons/fa";
 
 type SignupProps = {
-    onSignup: () => void;
+    onSignup: (email: string) => void;
     goToLogin: () => void;
 };
+
+type Region = {
+    country_name: string;
+}
 
 type ActiveMenu = "none" | "region";
 
@@ -59,7 +63,7 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
             setError("Please fill in all fields");
             return;
         }
-        
+
         try {
             const loginUser = await api<any>("/api/users/", {
                 method: "POST",
