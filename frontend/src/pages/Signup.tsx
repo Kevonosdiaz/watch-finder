@@ -54,6 +54,12 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null)
+
+        if (!firstName || !lastName || !email || !password) {
+            setError("Please fill in all fields");
+            return;
+        }
+        
         try {
             const loginUser = await api<any>("/api/users/", {
                 method: "POST",
