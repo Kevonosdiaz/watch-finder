@@ -20,6 +20,7 @@ type SearchResult = {
     rating?: string;
     kind: "Movie" | "TV";
     runtime?: string;
+    number_of_seasons?: number;
     creator?: string;
     synopsis?: string;
     posterUrl: string;
@@ -114,6 +115,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                     })),
                     criticsScore: m.rating ?? 0,
                     rating: m.age_rating ?? 0,
+                    number_of_seasons: m.number_of_seasons,
                     runtime: m.runtime,
                     creator: m.creator,
                     synopsis: m.description,
@@ -325,7 +327,8 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
 
                 const runtimeLine = joinDot([
                     item.kind,
-                    item.runtime ? `(${item.runtime})` : null,
+                    item.kind === "TV" && item.number_of_seasons != null ? `${item.number_of_seasons} seasons` : null,
+                    item.kind === "Movie" && item.runtime != null ? `(${item.runtime}m)` : null,
                     item.creator ? `Creator: ${item.creator}` : null,
                 ]);
 
