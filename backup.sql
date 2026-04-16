@@ -14,14 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
-SET @@SESSION.SQL_LOG_BIN= 0;
-
---
--- GTID state at the beginning of the backup 
---
-
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '5eb74278-2e4a-11f1-b008-e67fc972df07:1-246';
 
 --
 -- Table structure for table `ADMINS`
@@ -70,7 +62,7 @@ CREATE TABLE `AVAILABLE_IN` (
 
 LOCK TABLES `AVAILABLE_IN` WRITE;
 /*!40000 ALTER TABLE `AVAILABLE_IN` DISABLE KEYS */;
-INSERT INTO `AVAILABLE_IN` VALUES (1,'Canada'),(2,'Canada'),(4,'Canada'),(12,'Canada'),(13,'Canada'),(2,'Japan'),(1,'USA'),(3,'USA'),(4,'USA'),(6,'USA'),(12,'USA'),(13,'USA');
+INSERT INTO `AVAILABLE_IN` VALUES (1,'Canada'),(2,'Canada'),(4,'Canada'),(12,'Canada'),(13,'Canada'),(13,'China'),(2,'Japan'),(1,'USA'),(3,'USA'),(4,'USA'),(6,'USA'),(12,'USA'),(13,'USA');
 /*!40000 ALTER TABLE `AVAILABLE_IN` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -180,7 +172,7 @@ CREATE TABLE `MEDIA_TITLES` (
 
 LOCK TABLES `MEDIA_TITLES` WRITE;
 /*!40000 ALTER TABLE `MEDIA_TITLES` DISABLE KEYS */;
-INSERT INTO `MEDIA_TITLES` VALUES (1,'Avatar: The Last Airbender',2005,'Michael Dante DiMartino','TV-Y7-FV',9.3,'In a war-torn world of elemental powers, a young boy reawakens to undertake a dangerous mystic quest to fulfill his destiny as the Avatar, and bring peace to the world.',NULL),(2,'Attack on Titan',2013,'Yasuko Kobayashi','TV-MA',9.1,'In a world where humanity shelters behind towering walls from man-eating Titans, a determined teen joins the elite Survey Corps to fight the giants and uncover the secrets of their origin.',NULL),(3,'Sherlock',2010,'Mark Gatiss','TV-14',9.0,'In modern-day London, brilliant but eccentric detective Sherlock Holmes teams with war veteran Dr. John Watson to crack baffling crimes, outwit formidable foes, and aid Scotland Yard with razor-sharp deduction.',NULL),(4,'The Shawshank Redemption',1994,'Frank Darabont','R',9.3,'A banker convicted of uxoricide forms a friendship over a quarter century with a hardened convict, while maintaining his innocence and trying to remain hopeful through simple compassion.',NULL),(6,'Interstellar',2014,'Christopher Nolan','PG-13',8.7,'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.',NULL),(12,'The Bear',2022,'Christopher Storer','TV-MA',8.6,'A chef returns home to run a family sandwich shop.',NULL),(13,'Stranger Things',2016,'The Duffer Brothers','TV-14',8.7,'When a young boy disappears, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.','media_13.jpg');
+INSERT INTO `MEDIA_TITLES` VALUES (1,'Avatar: The Last Airbender',2005,'Michael Dante DiMartino','TV-Y7-FV',9.3,'In a war-torn world of elemental powers, a young boy reawakens to undertake a dangerous mystic quest to fulfill his destiny as the Avatar, and bring peace to the world.','media_1.jpg'),(2,'Attack on Titan',2013,'Yasuko Kobayashi','TV-MA',9.1,'In a world where humanity shelters behind towering walls from man-eating Titans, a determined teen joins the elite Survey Corps to fight the giants and uncover the secrets of their origin.','media_2.jpg'),(3,'Sherlock',2010,'Mark Gatiss','TV-14',9.0,'In modern-day London, brilliant but eccentric detective Sherlock Holmes teams with war veteran Dr. John Watson to crack baffling crimes, outwit formidable foes, and aid Scotland Yard with razor-sharp deduction.','media_3.jpg'),(4,'The Shawshank Redemption',1994,'Frank Darabont','R',9.3,'A banker convicted of uxoricide forms a friendship over a quarter century with a hardened convict, while maintaining his innocence and trying to remain hopeful through simple compassion.','media_4.jpg'),(6,'Interstellar',2014,'Christopher Nolan','PG-13',8.7,'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.','media_6.jpg'),(12,'The Bear',2022,'Christopher Storer','TV-MA',8.6,'A chef returns home to run a family sandwich shop.','media_12.jpg'),(13,'Stranger Things',2016,'The Duffer Brothers','TV-14',8.7,'When a young boy disappears, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.','media_13.jpg');
 /*!40000 ALTER TABLE `MEDIA_TITLES` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -232,7 +224,7 @@ CREATE TABLE `OFFERED_BY` (
 
 LOCK TABLES `OFFERED_BY` WRITE;
 /*!40000 ALTER TABLE `OFFERED_BY` DISABLE KEYS */;
-INSERT INTO `OFFERED_BY` VALUES (6,'Disney+'),(12,'Disney+'),(12,'Hulu'),(1,'Netflix'),(2,'Netflix'),(13,'Netflix'),(3,'Prime Video'),(4,'Prime Video'),(13,'Prime Video');
+INSERT INTO `OFFERED_BY` VALUES (13,'Disney+'),(6,'Hulu'),(12,'Hulu'),(13,'Hulu'),(1,'Netflix'),(2,'Netflix'),(13,'Netflix'),(13,'Prime Video');
 /*!40000 ALTER TABLE `OFFERED_BY` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -259,7 +251,7 @@ CREATE TABLE `OPERATES_IN` (
 
 LOCK TABLES `OPERATES_IN` WRITE;
 /*!40000 ALTER TABLE `OPERATES_IN` DISABLE KEYS */;
-INSERT INTO `OPERATES_IN` VALUES ('Netflix','Canada'),('Prime Video','Canada'),('Netflix','USA');
+INSERT INTO `OPERATES_IN` VALUES ('Netflix','Canada'),('Disney+','China'),('Hulu','China'),('Netflix','China'),('Prime Video','China'),('Netflix','France'),('Hulu','USA'),('Netflix','USA');
 /*!40000 ALTER TABLE `OPERATES_IN` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -282,7 +274,7 @@ CREATE TABLE `REGIONS` (
 
 LOCK TABLES `REGIONS` WRITE;
 /*!40000 ALTER TABLE `REGIONS` DISABLE KEYS */;
-INSERT INTO `REGIONS` VALUES ('Canada'),('France'),('Japan'),('UK'),('USA');
+INSERT INTO `REGIONS` VALUES ('Canada'),('China'),('France'),('Japan'),('UK'),('USA');
 /*!40000 ALTER TABLE `REGIONS` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,7 +410,7 @@ CREATE TABLE `WATCHDATA` (
 
 LOCK TABLES `WATCHDATA` WRITE;
 /*!40000 ALTER TABLE `WATCHDATA` DISABLE KEYS */;
-INSERT INTO `WATCHDATA` VALUES ('jane.doe@ucalgary.ca',3,'2026-04-03','2026-04-03','W','0'),('jane.doe@ucalgary.ca',6,'2026-04-01','2026-04-02','C','2'),('john2@email.com',4,'2026-03-19','2026-03-19','C','4');
+INSERT INTO `WATCHDATA` VALUES ('jane.doe@ucalgary.ca',3,'2026-04-03','2026-04-03','W','0'),('jane.doe@ucalgary.ca',6,'2026-04-01','2026-04-02','C','2'),('john2@email.com',4,'2026-03-19','2026-03-19','C','4'),('john2@email.com',13,'2025-10-07',NULL,'W','5');
 /*!40000 ALTER TABLE `WATCHDATA` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -445,7 +437,7 @@ CREATE TABLE `WATCHLIST_CONTAINS` (
 
 LOCK TABLES `WATCHLIST_CONTAINS` WRITE;
 /*!40000 ALTER TABLE `WATCHLIST_CONTAINS` DISABLE KEYS */;
-INSERT INTO `WATCHLIST_CONTAINS` VALUES (5,3),(2,4);
+INSERT INTO `WATCHLIST_CONTAINS` VALUES (5,3),(2,4),(2,13);
 /*!40000 ALTER TABLE `WATCHLIST_CONTAINS` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -465,7 +457,7 @@ CREATE TABLE `WATCHLISTS` (
   UNIQUE KEY `WatchlistID` (`WatchlistID`),
   KEY `Email` (`Email`),
   CONSTRAINT `watchlists_ibfk_1` FOREIGN KEY (`Email`) REFERENCES `USERS` (`Email`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -474,10 +466,9 @@ CREATE TABLE `WATCHLISTS` (
 
 LOCK TABLES `WATCHLISTS` WRITE;
 /*!40000 ALTER TABLE `WATCHLISTS` DISABLE KEYS */;
-INSERT INTO `WATCHLISTS` VALUES ('john2@email.com','Johns Watchlist',2,'2026-04-02'),('jane.doe@ucalgary.ca','Test Watchlist 4',5,'2026-04-03'),('jane.doe@ucalgary.ca','Testing',6,'2026-04-03'),('jane.doe@ucalgary.ca','Testing 2',7,'2026-04-03'),('jane.doe@ucalgary.ca','testing 3',8,'2026-04-03'),('jane.doe@ucalgary.ca','Testing 4',9,'2026-04-03'),('jane.doe@ucalgary.ca','Testing',10,'2026-04-06');
+INSERT INTO `WATCHLISTS` VALUES ('john2@email.com','Johns Watchlist',2,'2026-04-02'),('jane.doe@ucalgary.ca','Test Watchlist 4',5,'2026-04-03'),('jane.doe@ucalgary.ca','Testing',6,'2026-04-03'),('jane.doe@ucalgary.ca','Testing 2',7,'2026-04-03'),('jane.doe@ucalgary.ca','testing 3',8,'2026-04-03'),('jane.doe@ucalgary.ca','Testing 4',9,'2026-04-03'),('jane.doe@ucalgary.ca','Testing',10,'2026-04-06'),('alice@email.com','Alices Watchlist',11,'2026-04-08'),('alice@email.com','Alices Watchlist',13,'2026-04-08');
 /*!40000 ALTER TABLE `WATCHLISTS` ENABLE KEYS */;
 UNLOCK TABLES;
-SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -488,4 +479,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-08 19:30:58
+-- Dump completed on 2026-04-15 12:02:24
