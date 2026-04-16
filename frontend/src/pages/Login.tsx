@@ -30,6 +30,7 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
             console.log("User: ", loginUser)
             // Set the user/admin role
             localStorage.setItem("role", loginUser.role);
+            localStorage.setItem("region", loginUser.country_name)
             onLogin(email);
         } catch (err) {
             setError("Invalid email or password");
