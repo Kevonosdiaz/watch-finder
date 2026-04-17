@@ -28,9 +28,12 @@ def get_media_in_region(region: str,
         models.Regions).filter(models.Regions.country_name == region).first()
     if not region_exists:
         raise HTTPException(status_code=404, detail="Region not found")
-    query = (db.query(models.MediaTitles).join(
+    query = (db.query(models.MediaTitles, models.Movies.duration, models.Shows.number_of_seasons).join(
         models.AvailableIn,
-        models.AvailableIn.media_id == models.MediaTitles.media_id).filter(
+        models.AvailableIn.media_id == models.MediaTitles.media_id)
+        .outerjoin(models.Movies, models.Movies.media_id == models.MediaTitles.media_id)
+        .outerjoin(models.Shows, models.Shows.media_id == models.MediaTitles.media_id)
+        .filter(
             models.AvailableIn.country_name == region))
     # Apply search filter
     if search:
@@ -38,7 +41,10 @@ def get_media_in_region(region: str,
             models.MediaTitles.title_name.ilike(f"%{search}%"))
     media = query.order_by(models.MediaTitles.title_name).all()
     return [
-        MediaResponse.model_validate(m).model_copy(update={
+        MediaResponse.model_validate(m, from_attributes=True).model_copy(update={
+            "kind": "Movie" if duration is not None else ("TV" if number_of_seasons is not None else None),
+            "duration_minutes": duration,
+            "number_of_seasons": number_of_seasons,
             "streaming_services": [
                 StreamingServiceResponse.model_validate(s)
                 for s in db.query(models.StreamingServices)
@@ -51,7 +57,7 @@ def get_media_in_region(region: str,
                 .all()
             ]
         })
-        for m in media
+        for m, duration, number_of_seasons in media
     ]
 
 
