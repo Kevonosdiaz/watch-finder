@@ -18,14 +18,18 @@ export default function Password({ goBack, email }: PasswordProps) {
   const newRef = useRef<HTMLInputElement | null>(null);
   const confirmRef = useRef<HTMLInputElement | null>(null);
 
+  // Handles password change request for the logged in user
   const changePassword = () => {
     (async () => {
+      // Reset error and success messages
       setError(null);
       setSuccess(null);
+      // Validate required fields
       if (!current || !next || !confirm) {
         setError("Please enter all fields");
         return;
       }
+      // Check that the new passwords match
       if (next !== confirm) {
         setError("New passwords do not match");
         confirmRef.current?.focus();
@@ -33,6 +37,7 @@ export default function Password({ goBack, email }: PasswordProps) {
       }
       setLoading(true);
       try {
+        // Send password update to the backend
         const api = (await import("../api/Client")).api;
         await api(`/api/users/${email}/password`, {
           method: "POST",
@@ -42,11 +47,13 @@ export default function Password({ goBack, email }: PasswordProps) {
         currentRef.current?.blur();
         newRef.current?.blur();
         confirmRef.current?.blur();
+        // Show success message and clear inputs
         setSuccess("Password changed successfully.");
         setCurrent("");
         setNext("");
         setConfirm("");
       } catch (err) {
+        // Show error message if request fails
         setError("Failed to change password")
       } finally {
         setLoading(false);

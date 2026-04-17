@@ -65,6 +65,7 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
         return;
       }
 
+      // Payload sent to the backend for creating media titles
       const payload = {
         title_name: media.title,
         release_year: media.year || null,
@@ -97,7 +98,6 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
         goBack();
       } catch (err) {
         console.error("Failed to create media", err);
-        alert("Failed to create media");
       }
     };
     
