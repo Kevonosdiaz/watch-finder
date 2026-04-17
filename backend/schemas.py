@@ -139,7 +139,7 @@ class StreamingServiceResponse(StreamingServiceBase):
 # Response for a media title
 class MediaResponse(MediaBase):
     kind: Optional[str] = None
-    duration_minutes: Optional[int] = None
+    duration: Optional[int] = None
     number_of_seasons: Optional[int] = None
     streaming_services: List[StreamingServiceResponse] = []
     model_config = ConfigDict(from_attributes=True)
