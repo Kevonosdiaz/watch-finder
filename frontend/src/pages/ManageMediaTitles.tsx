@@ -69,9 +69,7 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                         creator: m.creator,
                         synopsis: m.description,
                         posterUrl:
-                        m.image_file && m.image_file !== "null"
-                            ? `${IMAGE_BASE_URL}/${m.image_file}`
-                            : "/placeholder-poster.png",
+                        m.image_file ? `${IMAGE_BASE_URL}/${m.image_file}` : undefined,
                         number_of_seasons: m.number_of_seasons ?? undefined,
                         runtime: m.duration ?? undefined,
                         providers: m.providers ?? [],
@@ -274,7 +272,7 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                         <div className="details-container">
                             <div className="poster-stack">
                                 <div className="poster-wrapper">
-                                    <img src={isEditing ? posterPreview || editedMedia?.posterUrl || "/placeholder-poster.png" : selectedMedia.posterUrl || "/placeholder-poster.png"} className="poster-img" />
+                                    <img src={isEditing ? posterPreview || editedMedia?.posterUrl : selectedMedia.posterUrl} className="poster-img" />
                                 </div>
                                 {isEditing && (
                                     <div className="poster-actions">

@@ -117,7 +117,7 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
       <div className="poster-stack">
         <div className="poster-wrapper">
           <img
-            src={posterPreview || "/placeholder-poster.png"}
+            src={posterPreview}
             className="poster-img"
           />
         </div>
