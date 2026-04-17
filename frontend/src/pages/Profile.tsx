@@ -4,7 +4,7 @@ import { MdOutlineEdit } from "react-icons/md";
 
 interface ProfileProps {
   goToHome: () => void;
-  email: string; // original logged-in email (used to identify the user)
+  email: string; // Original logged-in email (used to identify the user)
 }
 
 export default function Profile({ goToHome, email }: ProfileProps) {
@@ -19,6 +19,7 @@ export default function Profile({ goToHome, email }: ProfileProps) {
   const firstRef = useRef<HTMLInputElement | null>(null);
   const lastRef = useRef<HTMLInputElement | null>(null);
 
+  // Adds an editing field for first name and last name only
   useEffect(() => {
     if (editingField === "first") {
       firstRef.current?.focus();
@@ -51,6 +52,7 @@ export default function Profile({ goToHome, email }: ProfileProps) {
     };
   }, [email]);
 
+  // Handles saving changes after the user has amde their updates
   const saveChanges = async () => {
     setErrorMsg(null);
     setSuccessMsg(null);
@@ -70,6 +72,7 @@ export default function Profile({ goToHome, email }: ProfileProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      // Update the first and last name in the backend
       setFirstName(updated.firstname || firstName);
       setLastName(updated.lastname || lastName);
   setUserEmail(updated.email || userEmail);

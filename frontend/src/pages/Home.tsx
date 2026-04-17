@@ -47,6 +47,7 @@ interface HomeProps {
 }
 
 export default function Home({ email, goToWatchlist, goToProfile, goToPassword, onLogout, goToMediaTitles, goToStreamingServices }: HomeProps) {
+    // Gets the logged-in user's role to determine whether to show the admin or end-user interface
     const role = localStorage.getItem("role");
     const [activeMenu, setActiveMenu] = useState<ActiveMenu>("none");
     const toggleMenu = (menu: ActiveMenu) => {
@@ -67,6 +68,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
 
     const [regions, setRegions] = useState<Region[]>([]);
     
+    // Fetch all regions in the database
     useEffect(() => {
         async function fetchRegions() {
             try {
@@ -94,6 +96,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
             return;
         }
 
+        // Fetch search results
         async function fetchResults() {
             try {
             setIsSearching(true);
@@ -133,12 +136,14 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
         fetchResults();
     }, [search, region]);
 
+    // Joins non-empty values into a single string separated by dots
     const joinDot = (parts: Array<string | null | undefined>) =>
         parts.filter(Boolean).join(" • ");
 
     const [openDropdownFor, setOpenDropdownFor] = useState<number | null>(null);
     const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
     
+    // Fetch the logged in user's watchlists
     useEffect(() => {
         async function fetchWatchlists() {
             try {
@@ -153,6 +158,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
         fetchWatchlists();
     }, [email]);
 
+    // Add a media title to a specific watchlist when clicked
     const addToWatchlist = async (watchlistId: number, mediaId: number) => {
     try {
         await api(`/api/watchlists/${watchlistId}/media/${mediaId}`, {

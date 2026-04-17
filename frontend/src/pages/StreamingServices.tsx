@@ -19,7 +19,7 @@ export default function StreamingServices({ goHome }: Props) {
   const [newName, setNewName] = useState("");
   const [newUrl, setNewUrl] = useState("");
 
-
+  // Fetch all streaming services
   useEffect(() => {
     async function loadStreamingServices() {
       try {
@@ -33,6 +33,7 @@ export default function StreamingServices({ goHome }: Props) {
     loadStreamingServices();
   }, []);
 
+  // Handles removing a streaming service from the databse when deleting
   async function removeService(name: string) {
     try {
       const encodedName = encodeURIComponent(name);
@@ -47,6 +48,7 @@ export default function StreamingServices({ goHome }: Props) {
     }
   }
 
+  // Handles adding a streaming service to the database
   async function addService() {
     if (!newName.trim()) return;
     

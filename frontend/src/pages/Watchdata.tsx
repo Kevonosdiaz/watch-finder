@@ -27,6 +27,7 @@ export default function Watchdata({ watchlistId, titleId, title, posterUrl, goBa
     const [rating, setRating] = useState<number>(0);
     let ratingData = [1,2,3,4,5]
     
+    // Fetch the logged in user's watchdata
     useEffect(() => {
         const fetchWatchdata = async () => {
             try {
@@ -38,7 +39,8 @@ export default function Watchdata({ watchlistId, titleId, title, posterUrl, goBa
                 const data = result?.[0] ?? null;
 
                 if (!data) return;
-                    
+                
+                // Set watchdata fields from the stored values in the db
                 setWatchdata(data);
                 setCompletionStatus(data?.completion_status ?? "");
                 setStartDate(data.start_date ?? "");
@@ -54,12 +56,13 @@ export default function Watchdata({ watchlistId, titleId, title, posterUrl, goBa
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
+    // Handles saving watchdata for each media title
     const saveWatchdata = async () => {
         if (!watchlistId || !titleId) return;
-
+        // Reset error and success messages
         setErrorMessage(null);
         setSaveSuccess(false);
-
+        // Add watchdata for a specific media title to the db
         try {
             await api(`/api/watchlists/${watchlistId}/media/${titleId}/watchdata`, {
                 method: "POST",

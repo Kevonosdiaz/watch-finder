@@ -37,27 +37,28 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
     const [selectedMedia, setSelectedMedia] = useState<MediaTitle | null>(null);
     const [showDetails, setShowDetails] = useState(false);
 
-    const metadata = selectedMedia
-        ? [String(selectedMedia.year), selectedMedia.criticsScore != null ? `${selectedMedia.criticsScore}/10★` : null, selectedMedia.rating ?? null]
-                .filter(Boolean)
-                .join(" • ")
+    // Joins the media title year, critics score and age rating into a single string separated by dots
+    const metadata = selectedMedia? [String(selectedMedia.year), selectedMedia.criticsScore != null ? `${selectedMedia.criticsScore}/10★` : null, selectedMedia.rating ?? null]
+            .filter(Boolean)
+            .join(" • ")
+        : "";
+    // Joins the media titles kind (movie or show), duration or number of seasons and creator(s) into a single string separated by dots
+    const runtimeLine = selectedMedia? [
+            selectedMedia.kind,
+            selectedMedia.kind === "TV" && selectedMedia.number_of_seasons != null ? `${selectedMedia.number_of_seasons} seasons` : null,
+            selectedMedia.kind === "Movie" && selectedMedia.runtime != null ? `(${selectedMedia.runtime}m)` : null,
+            selectedMedia.creator ? `Creator: ${selectedMedia.creator}` : null,
+        ]
+            .filter(Boolean)
+            .join(" • ")
         : "";
 
-    const runtimeLine = selectedMedia
-        ? [
-                selectedMedia.kind,
-                selectedMedia.kind === "TV" && selectedMedia.number_of_seasons != null ? `${selectedMedia.number_of_seasons} seasons` : null,
-                selectedMedia.kind === "Movie" && selectedMedia.runtime != null ? `(${selectedMedia.runtime}m)` : null,
-                selectedMedia.creator ? `Creator: ${selectedMedia.creator}` : null,
-            ]
-                .filter(Boolean)
-                .join(" • ")
-        : "";
-
+    // Fetch all media titles including their category, regional availability and streaming services
     useEffect(() => {
         async function fetchMediaTitles() {
             try {
                 const data = await api<any[]>("/api/media");
+                // Backend mapping to frontend state
                 setMediaTitles(
                     data.map((m) => ({
                         id: m.media_id,
@@ -101,6 +102,7 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
     const [services, setServices] = useState<StreamingPlatform[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+    // Fetch all streaming services
     useEffect(() => {
         api<any[]>("/api/streaming_services")
             .then((data) =>
@@ -111,6 +113,7 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
             .catch(() => console.error("Failed to load services"));
     }, []);
 
+    // Handles deleting a media title
     const handleDelete = async () => {
         if (!selectedMedia) return;
         try {
@@ -123,6 +126,7 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
         }
     };
 
+    // Handles cancelling when editing a media title
     const handleCancelEdit = () => {
         setIsEditing(false);
         setEditedMedia(null);
@@ -132,9 +136,11 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
+    // Handles saving edits on a media title
     const handleSaveEdit = async () => {
         if (!editedMedia) return;
         try {
+            // Sends updated media data to the backend
             const serverResp: any = await api(`/api/media/${editedMedia.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -161,9 +167,11 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
 
             const savedMedia: MediaTitle = { ...editedMedia, availability: finalAvailability };
 
+            // Update selected media and media list
             setSelectedMedia(savedMedia);
             setMediaTitles((prev) => prev.map((m) => (m.id === editedMedia.id ? savedMedia : m)));
 
+            // Reset edit mode and clear temp states
             setIsEditing(false);
             setEditedMedia(null);
             setPosterFile(null);

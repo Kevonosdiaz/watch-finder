@@ -13,6 +13,7 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
     const [showPassword, ] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
+    // Allows the user to login with their credentials
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null)
@@ -30,6 +31,7 @@ export default function Login({ onLogin, goToSignup }: LoginProps) {
             console.log("User: ", loginUser)
             // Set the user/admin role
             localStorage.setItem("role", loginUser.role);
+            // Set the region of the user
             localStorage.setItem("region", loginUser.country_name)
             onLogin(email);
         } catch (err) {

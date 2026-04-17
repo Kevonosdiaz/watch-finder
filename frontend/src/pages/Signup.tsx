@@ -38,6 +38,7 @@ export default function Signup({ onSignup, goToLogin }: SignupProps) {
 
     const [regions, setRegions] = useState<Region[]>([]);
 
+    // Fetch all regions in the database
     useEffect(() => {
         async function fetchRegions() {
             try {

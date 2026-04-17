@@ -32,6 +32,7 @@ interface Watchlist {
 export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistProps) {
   const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
 
+  // Fetch all of the logged in user's watchlists
   useEffect(() => {
     async function fetchWatchlists() {
         try {
@@ -69,6 +70,7 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
   }, [email]);
 
   const [createWatchlistName, setCreateWatchlistName] = useState("");
+  // Handles creating a new watchlist in db
   const createWatchlist = async (watchlistName: string) => {
     if (!watchlistName.trim()) return; 
 
@@ -102,14 +104,14 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newWatchlistName, setNewWatchlistName] = useState("");
   const [editingItems, setEditingItems] = useState<Map<number, Media[]>>(new Map());
-  
+  // Hansles editing a watchlist
   const startEdit = (id: number, currentName: string, items: Media[]) => {
     setEditingId(id);
     setNewWatchlistName(currentName);
     // Keep track of edits
     setEditingItems(prev => new Map(prev).set(id, [...items]));
   }
-  
+  // Handles removing a watchlist item
   const removeWatchlistItem = (watchlistId: number, itemId: number) => {
     setEditingItems(prev => {
       const copy = new Map(prev);
@@ -121,7 +123,7 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
       return copy;
     });
   };
-    
+  // Handles deleting a watchlist
   const deleteWatchlist = async (watchlistId: number) => {
     try {
       await api(`/api/users/${email}/watchlists/${watchlistId}`, { method: "DELETE" });
@@ -130,12 +132,12 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
       console.error("Failed to delete watchlist", err)
     }
   }
-
+  // Handles saving edits made to an existing watchlist
   const saveEdit = async () => {
     if (editingId == null) return;
 
     const updatedItems = editingItems.get(editingId) ?? [];
-
+    // API call
     try {
       await api(`/api/users/${email}/watchlists/${editingId}`, {
         method: "PUT",
@@ -178,7 +180,7 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
       console.error("Failed to save watchlist edits", err);
     }
   };
-
+  // Handles cancelling edits without updating db
   const cancelEdit = () => {
     setEditingId(null);
     setNewWatchlistName("");

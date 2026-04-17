@@ -13,6 +13,7 @@ router = APIRouter()
 # Get all watchdata of given user (for display purposes)
 @router.get("/{email}", response_model=list[WatchdataResponse])
 def get_watchdata(email: str, db: Annotated[Session, Depends(get_db)]):
+    # Get all watchdata for the user
     watchdata = db.query(
         models.WatchData).filter(models.WatchData.email == email).all()
     result = []
