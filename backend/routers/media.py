@@ -179,22 +179,26 @@ def get_media_title(media_id: int, db: Annotated[Session, Depends(get_db)]):
     return media
 
 
+# Update an existing media title
 @router.put("/{media_id}", response_model=MediaResponse)
 def update_media_title(media_id: int,
                        payload: MediaUpdate,
                        db: Session = Depends(get_db)):
-    
+    # Find media title in db
     media = db.query(models.MediaTitles).filter_by(media_id=media_id).first()
     if not media:
         raise HTTPException(404, "Media title not found")
+    # Validate required fields on media type
     if payload.kind == "Movie" and payload.duration is None:
         raise HTTPException(400, "Duration is required for Movie")
     if payload.kind == "TV" and payload.number_of_seasons is None:
         raise HTTPException(400, "Number of seasons is required for TV")
+    # Update basic media fields exlcuding availability (handled separately)
     data = payload.model_dump(exclude_unset=True, exclude={"availability"})
     for key, value in data.items():
         if hasattr(media, key):
             setattr(media, key, value)
+    # Handle movie data
     if payload.kind == "Movie":
         db.query(models.Shows).filter_by(media_id=media_id).delete()
         movie = db.query(models.Movies).filter_by(media_id=media_id).first()
@@ -202,6 +206,7 @@ def update_media_title(media_id: int,
             movie.duration = payload.duration
         else:
             db.add(models.Movies(media_id=media_id, duration=payload.duration))
+    # Handle tv data
     if payload.kind == "TV":
         db.query(models.Movies).filter_by(media_id=media_id).delete()
         show = db.query(models.Shows).filter_by(media_id=media_id).first()
@@ -211,6 +216,7 @@ def update_media_title(media_id: int,
             db.add(
                 models.Shows(media_id=media_id,
                              number_of_seasons=payload.number_of_seasons))
+    # Update availiability (streaming services and regions)
     if payload.availability is not None:
         db.query(models.OfferedBy).filter_by(media_id=media_id).delete()
         db.query(models.AvailableIn).filter_by(media_id=media_id).delete()
@@ -254,18 +260,21 @@ def update_media_title(media_id: int,
     return media
 
 
+# Upload and/or update media poster image
 @router.patch("/{media_id}/img")
 async def upload_media_img(media_id: int,
                            file: UploadFile,
                            db: Session = Depends(get_db)):
+    # Read upaloaded file content
     content = await file.read()
 
     try:
+        # Process and save image file
         new_filename = process_img(content, f'media_{media_id}.jpg')
     except UnidentifiedImageError as err:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Invalid image file") from err
-
+    # Update media title with image file name
     media_title = db.query(
         models.MediaTitles).filter_by(media_id=media_id).first()
     media_title.image_file = f'media_{media_id}.jpg'

@@ -10,6 +10,7 @@ import ManageMediaTitles from "./pages/ManageMediaTitles";
 import StreamingServices from "./pages/StreamingServices";
 import AddMediaTitle from "./pages/AddMediaTitle";
 
+// All possible pages within the app
 type Page = "login" | "signup" | "home" | "watchlist" | "watchdata" | "password" | "profile" | "media-titles" | "add-media-title" | "streaming-services";
 
 type SelectedWatchlistItem = {
@@ -20,15 +21,18 @@ type SelectedWatchlistItem = {
 } | null;
 
 function App() {
+  // Stores logged in user email
   const [userEmail, setUserEmail] = useState<string | null>(() => localStorage.getItem("userEmail"));
+  // Tracks current page
   const [page, setPage] = useState<Page>(userEmail ? "home" : "login");
+  // Stores selected watchlist item for the watchdata page
   const [selectedTitle, setSeletectedTitle] = useState<SelectedWatchlistItem>(null);
   // Keep user logged in after a page refresh
   useEffect(() => {
     if (userEmail) localStorage.setItem("userEmail", userEmail);
     else localStorage.removeItem("userEmail");
   }, [userEmail]);
-  // Reset state and go back to login page
+  // Logs user out, resets state and goes back to login page
   const logout = () => {
     setUserEmail(null);
     setSeletectedTitle(null);
@@ -36,12 +40,14 @@ function App() {
     localStorage.removeItem("role");
     setPage("login");
   }
+  // Navigates to watchdata page with selected watchlist item
   const goToWatchdata = (watchlistId: number, titleId: number, title: string, posterUrl?: string) => {
     setSeletectedTitle({ watchlistId, titleId, title, posterUrl });
     setPage("watchdata");
   }
   return (
     <>
+      {/* Login page */}
       {page === "login" && <Login
         onLogin={(email: string) => {
           setUserEmail(email);
@@ -49,6 +55,7 @@ function App() {
         }}
         goToSignup={() => setPage("signup")}
       />}
+      {/* Signup page */}
       {page === "signup" && <Signup 
         onSignup={(email:string) => {
           setUserEmail(email);
@@ -56,6 +63,7 @@ function App() {
         }}
         goToLogin={() => setPage("login")}
       />}
+      {/* Home page */}
       {page === "home" && userEmail && (
         <Home 
           email={userEmail}
@@ -67,6 +75,7 @@ function App() {
           goToStreamingServices={() => setPage("streaming-services")}
         />
       )}
+      {/* Watchlist page */}
       {page === "watchlist" && userEmail && (
         <Watchlist
           email={userEmail}
@@ -74,16 +83,20 @@ function App() {
           goToWatchdata={goToWatchdata}
         />
       )}
+      {/* Profile page */}
       {page === "profile" && userEmail && (
         <Profile email={userEmail} goToHome={() => setPage("home")} />
       )}
+      {/* Change password page */}
       {page === "password" && userEmail && (
         <Password email={userEmail} goBack={() => setPage("home")} />
       )}
+      {/* Admin: All media page */}
       {page === "media-titles" && (<ManageMediaTitles 
         goToHome={() => setPage("home")}
         goToAddMediaTitles={() => setPage("add-media-title")} 
       />)}
+      {/* Admin: Add media page */}
       {page === "add-media-title" && (<AddMediaTitle goBack={() => setPage("media-titles")}/>)}
       {page === "watchdata" && selectedTitle && (
         <Watchdata
@@ -94,6 +107,7 @@ function App() {
           goBack={() => setPage("watchlist")}
         />
       )}
+      {/* Admin: All streaming services page */}
       {page === "streaming-services" && (
         <StreamingServices goHome={() => setPage("home")} />
       )}

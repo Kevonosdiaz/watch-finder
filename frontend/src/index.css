@@ -1102,8 +1102,8 @@ border: none;
     gap: 8px;
     margin-top: 14px;
     width: 100%;
-    max-width: 600px; /* keep fields constrained and centered inside the card */
-    align-items: flex-start; /* ensure labels and fields are left-aligned within the row */
+    max-width: 600px;
+    align-items: flex-start;
 }
 
 /* Field title: bold black with breathing room (matches 'Your Watchlists') */
