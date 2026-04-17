@@ -102,10 +102,14 @@ export default function Watchdata({ watchlistId, titleId, title, posterUrl, goBa
                     </div>
                 </div>
                 <div className="title-poster"> 
-                    <img
-                        src={posterUrl ?? "/placeholder.png"}
-                        alt={title}
-                    />
+                    {posterUrl ? (
+                        <img
+                            src={posterUrl}
+                            alt={title}
+                        />
+                    ) : (
+                        <div className="poster-empty">No Image Available</div>
+                    )}
                 </div>
                 <div className="form-box">
                     <div className="form-label">Completion Status</div>

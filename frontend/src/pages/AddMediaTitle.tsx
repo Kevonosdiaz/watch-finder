@@ -116,10 +116,14 @@ export default function AddMediaTitle({ goBack }: AddMediaTitleProps){
       </div>
       <div className="poster-stack">
         <div className="poster-wrapper">
-          <img
-            src={posterPreview}
-            className="poster-img"
-          />
+          {posterPreview ? (
+            <img
+              src={posterPreview}
+              className="poster-img"
+            />
+          ) : (
+            <div className="poster-empty">No Image Available</div>
+          )}
         </div>
 
         <div className="poster-actions">

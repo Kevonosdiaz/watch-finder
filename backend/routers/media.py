@@ -281,3 +281,23 @@ async def upload_media_img(media_id: int,
     db.commit()
     db.refresh(media_title)
     return {"image_file": media_title.image_file}
+
+
+# Delete media poster image (remove file and clear DB field)
+@router.delete("/{media_id}/img")
+def delete_media_img(media_id: int, db: Session = Depends(get_db)):
+    media_title = db.query(models.MediaTitles).filter_by(media_id=media_id).first()
+    if not media_title:
+        raise HTTPException(status_code=404, detail="Media not found")
+    # Remove file from disk if present
+    old = media_title.image_file
+    if old:
+        try:
+            delete_img(old)
+        except Exception:
+            # Don't fail the request if file delete has an issue; continue to clear DB
+            pass
+    media_title.image_file = None
+    db.commit()
+    db.refresh(media_title)
+    return {"image_file": None}

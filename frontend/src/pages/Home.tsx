@@ -23,7 +23,7 @@ type SearchResult = {
     number_of_seasons?: number;
     creator?: string;
     synopsis?: string;
-    posterUrl: string;
+    posterUrl?: string;
     providers: StreamingPlatform[];
 };
 
@@ -122,7 +122,7 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
                     duration: m.duration,
                     creator: m.creator,
                     synopsis: m.description,
-                    posterUrl: `${IMAGE_BASE_URL}/${m.image_file}`
+                    posterUrl: m.image_file ? `${IMAGE_BASE_URL}/${m.image_file}` : undefined
                 }))
             );
 
@@ -341,7 +341,11 @@ export default function Home({ email, goToWatchlist, goToProfile, goToPassword, 
             return (
                 <div key={item.id} className={`result-row ${isOpen ? "open" : ""}`}>
                     <div className="result-row-top">
-                    <img className="result-poster" src={item.posterUrl} alt={item.title} />
+                    {item.posterUrl ? (
+                        <img className="result-poster" src={item.posterUrl} alt={item.title} />
+                    ) : (
+                        <div className="poster-empty result-poster">No Img</div>
+                    )}
 
                     <div className="result-main">
                         <div className="result-title">{item.title}</div>

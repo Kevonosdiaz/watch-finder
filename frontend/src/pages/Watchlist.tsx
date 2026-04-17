@@ -278,10 +278,14 @@ export default function Watchlist({ goToHome, goToWatchdata, email }: WatchlistP
               onClick={() => goToWatchdata(watchlist.id, item.id, item.title, item.posterUrl)}
               disabled={editingId === watchlist.id}
             >
-              <img
-                src={item.posterUrl || "/placeholder.png"}
-                alt={item.title}
-              />
+              {item.posterUrl ? (
+                <img
+                  src={item.posterUrl}
+                  alt={item.title}
+                />
+              ) : (
+                <div className="poster-empty poster-img">No Image Available</div>
+              )}
             </button>
             {editingId === watchlist.id && (
               <button

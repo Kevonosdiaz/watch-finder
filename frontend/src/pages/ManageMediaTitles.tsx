@@ -214,7 +214,11 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                                         setShowDetails(true);
                                     }}
                                 >
-                                    <img src={media.posterUrl} alt={media.title} />
+                                    {media.posterUrl ? (
+                                        <img src={media.posterUrl} alt={media.title} />
+                                    ) : (
+                                        <div className="poster-empty">No Image Available</div>
+                                    )}
                                     <div className="poster-overlay">
                                         <div className="poster-overlay-title">{media.title}</div>
                                         <div className="poster-overlay-sub">({media.year})</div>
@@ -280,14 +284,31 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                         <div className="details-container">
                             <div className="poster-stack">
                                 <div className="poster-wrapper">
-                                    <img src={isEditing ? posterPreview || editedMedia?.posterUrl : selectedMedia.posterUrl} className="poster-img" />
+                                    { (isEditing ? (posterPreview || editedMedia?.posterUrl) : selectedMedia.posterUrl) ? (
+                                        <img src={isEditing ? (posterPreview || editedMedia?.posterUrl || "") : (selectedMedia.posterUrl || "")} className="poster-img" />
+                                    ) : (
+                                        <div className="poster-empty">No Image Available</div>
+                                    ) }
                                 </div>
                                 {isEditing && (
                                     <div className="poster-actions">
                                         <button type="button" className="poster-upload-btn" onClick={() => fileInputRef.current?.click()}>
                                             <MdOutlineFileUpload size={18} />
                                         </button>
-                                        <button type="button" className="poster-remove-btn">
+                                        <button type="button" className="poster-remove-btn" onClick={async () => {
+                                            if (!selectedMedia) return;
+                                            try {
+                                                await api(`/api/media/${selectedMedia.id}/img`, { method: "DELETE" });
+                                            } catch (err) {
+                                                console.error("Failed to delete poster", err);
+                                            }
+                                            // Clear preview and update state to reflect removed poster
+                                            const placeholder = "";
+                                            setPosterPreview(placeholder);
+                                            setSelectedMedia((prev) => (prev ? { ...prev, posterUrl: placeholder } : prev));
+                                            setEditedMedia((prev) => (prev ? { ...prev, posterUrl: placeholder } : prev));
+                                            setMediaTitles((prev) => prev.map((m) => (m.id === selectedMedia.id ? { ...m, posterUrl: placeholder } : m)));
+                                        }}>
                                             <FaTrashAlt />
                                         </button>
 
