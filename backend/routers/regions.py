@@ -43,7 +43,7 @@ def get_media_in_region(region: str,
     return [
         MediaResponse.model_validate(m, from_attributes=True).model_copy(update={
             "kind": "Movie" if duration is not None else ("TV" if number_of_seasons is not None else None),
-            "duration_minutes": duration,
+            "duration": duration,
             "number_of_seasons": number_of_seasons,
             "streaming_services": [
                 StreamingServiceResponse.model_validate(s)
