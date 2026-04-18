@@ -247,12 +247,12 @@ INSERT INTO WATCHLISTS (Email, WatchlistName, DateAdded)
 VALUES 
     ('john2@email.com','Johns Watchlist','2026-04-02'),
     ('jane.doe@ucalgary.ca','Test Watchlist','2026-04-03'),
-    ('alice@email.com','Alices Watchlist','2026-04-08'),
+    ('alice@email.com','Alices Watchlist','2026-04-08');
 
 INSERT INTO WATCHLIST_CONTAINS (WatchlistID, MediaID)
 VALUES 
-    (2, 4),
-    (2, 8);
+    (2, 3),
+    (2, 6);
 
 INSERT INTO WATCHDATA (Email, MediaID, StartDate, EndDate, CompletionStatus, PersonalRating)
 VALUES
