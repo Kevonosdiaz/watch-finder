@@ -7,9 +7,13 @@ from sqlalchemy.orm import Session
 from database import Base, engine, get_db
 from datetime import datetime
 from schemas import PasswordChangeRequest, UserUpdate
+import argon2
 
 router = APIRouter()
 # '/api/users/' is automatically part of api route here
+
+# Used to hash password every time we add/update pwd, and check against it
+ph = argon2.PasswordHasher()
 
 
 # Create a user
@@ -21,13 +25,13 @@ def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)]):
         models.Users).filter(models.Users.email == user.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="User already exists")
-    new_user = models.Users(
-        firstname=user.firstname,
-        lastname=user.lastname,
-        country_name=user.country_name,
-        email=user.email,
-        password=user.password  # TODO: Hash password in production
-    )
+    # Hash password before storing in db, to avoid storing as insecure plaintext
+    hashed_pwd = ph.hash(user.password)
+    new_user = models.Users(firstname=user.firstname,
+                            lastname=user.lastname,
+                            country_name=user.country_name,
+                            email=user.email,
+                            password=hashed_pwd)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -37,12 +41,19 @@ def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)]):
 
 # Retrieve a user
 @router.post("/login", response_model=UserResponse)
-def get_user(user: UserLoginBase, db: Annotated[Session, Depends(get_db)]):
+def get_user(user_input: UserLoginBase, db: Annotated[Session,
+                                                      Depends(get_db)]):
+    # First check email exists in db
     result = db.execute(
-        select(models.Users).where(models.Users.email == user.email,
-                                   models.Users.password == user.password))
+        select(models.Users).where(models.Users.email == user_input.email))
     user = result.scalars().first()
     if not user:
+        raise HTTPException(status_code=404, detail="Invalid credentials")
+
+    # Verify the inputted 'current password' matches with stored hash
+    try:
+        ph.verify(user.password, user_input.password)
+    except argon2.exceptions.VerifyMismatchError:
         raise HTTPException(status_code=404, detail="Invalid credentials")
     is_admin_result = db.execute(
         select(exists().where(models.IsAdmin.email == user.email)))
@@ -201,10 +212,13 @@ def change_password(email: str, pw_req: PasswordChangeRequest,
     user = db.query(models.Users).filter(models.Users.email == email).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    # NOTE: passwords are stored in plaintext in this demo; in production hash and verify properly.
-    if user.password != pw_req.current_password:
+    # Verify the inputted 'current password' matches with stored hash
+    try:
+        ph.verify(user.password, pw_req.current_password)
+    except argon2.exceptions.VerifyMismatchError:
         raise HTTPException(status_code=400,
                             detail="Current password is incorrect")
-    user.password = pw_req.new_password
+    # Update to hash of new password
+    user.password = ph.hash(pw_req.new_password)
     db.commit()
     return {"message": "Password changed"}
