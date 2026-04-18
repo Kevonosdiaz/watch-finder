@@ -246,9 +246,8 @@ VALUES ('alice@email.com', 'Netflix'), ('john2@email.com', 'Prime Video');
 INSERT INTO WATCHLISTS (Email, WatchlistName, DateAdded)
 VALUES 
     ('john2@email.com','Johns Watchlist','2026-04-02'),
-    ('jane.doe@ucalgary.ca','Test Watchlist 4','2026-04-03'),
+    ('jane.doe@ucalgary.ca','Test Watchlist','2026-04-03'),
     ('alice@email.com','Alices Watchlist','2026-04-08'),
-    ('alice@email.com','Alices Watchlist','2026-04-08');
 
 INSERT INTO WATCHLIST_CONTAINS (WatchlistID, MediaID)
 VALUES 
