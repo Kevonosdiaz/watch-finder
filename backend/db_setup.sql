@@ -169,7 +169,7 @@ VALUES ();
 -- NOTE: MediaID is also SERIAL, these will be MediaID 1..13 respectively
 -- TODO: Normalize MediaID & corresponding image (and rename images to match)
 -- TODO: For Mario movie, make sure to add image if needed
-INSERT INTO MEDIA_TITLES (TitleName, ReleaseYear, Creator, AgeRating, Rating, Description))
+INSERT INTO MEDIA_TITLES (TitleName, ReleaseYear, Creator, AgeRating, Rating, Description, Image)
 VALUES
     ('Avatar: The Last Airbender',2005,'Michael Dante DiMartino','TV-Y7-FV',9.3,'In a war-torn world of elemental powers, a young boy reawakens to undertake a dangerous mystic quest to fulfill his destiny as the Avatar, and bring peace to the world.','media_1.jpg'),
     ('Attack on Titan',2013,'Yasuko Kobayashi','TV-MA',9.1,'In a world where humanity shelters behind towering walls from man-eating Titans, a determined teen joins the elite Survey Corps to fight the giants and uncover the secrets of their origin.','media_2.jpg'),
@@ -200,7 +200,7 @@ VALUES
     (11,'France'),
     (2,'Japan'),(13,'Japan'),
     (12,'UK'),
-    (1,'USA'),(3,'USA'),(4,'USA'),(6,'USA'),(7,'USA'),(8,'USA'),(10,'USA'),(11,'USA'),(12,'USA',(13,'USA'));
+    (1,'USA'),(3,'USA'),(4,'USA'),(6,'USA'),(7,'USA'),(8,'USA'),(10,'USA'),(11,'USA'),(12,'USA'),(13,'USA');
 
 
 INSERT INTO OFFERED_BY (MediaID, StreamingServiceName)
@@ -243,20 +243,19 @@ VALUES
 INSERT INTO SUBSCRIBED_TO (Email, StreamingServiceName)
 VALUES ('alice@email.com', 'Netflix'), ('john2@email.com', 'Prime Video');
 
-INSERT INTO WATCHLISTS (Email, WatchlistName, DateAdded) 
+INSERT INTO WATCHLISTS (Email, WatchlistName, DateAdded)
 VALUES 
-    ('john2@email.com','Johns Watchlist',1,'2026-04-02'),
-    ('jane.doe@ucalgary.ca','Test Watchlist 4',2,'2026-04-03'),
-    ('alice@email.com','Alices Watchlist',3,'2026-04-08'),
-    ('alice@email.com','Alices Watchlist',4,'2026-04-08');
+    ('john2@email.com','Johns Watchlist','2026-04-02'),
+    ('jane.doe@ucalgary.ca','Test Watchlist 4','2026-04-03'),
+    ('alice@email.com','Alices Watchlist','2026-04-08'),
+    ('alice@email.com','Alices Watchlist','2026-04-08');
 
-INSERT INTO WATCHLIST_CONTAINS (WatchlistID, MediaID) 
+INSERT INTO WATCHLIST_CONTAINS (WatchlistID, MediaID)
 VALUES 
-    (5, 3),
     (2, 4),
     (2, 8);
 
-INSERT INTO WATCHDATA (Email, MediaID, StartDate, CompletionStatus, PersonalRating)
+INSERT INTO WATCHDATA (Email, MediaID, StartDate, EndDate, CompletionStatus, PersonalRating)
 VALUES
     ('jane.doe@ucalgary.ca',3,'2026-04-03','2026-04-03','W','0'),
     ('jane.doe@ucalgary.ca',6,'2026-04-01','2026-04-02','C','2'),
@@ -265,5 +264,4 @@ VALUES
 
 -- Make John an admin user (rest of users are normal end-users)
 INSERT INTO IS_ADMIN (Email, AdminID)
-VALUES ('john2email.com', 1)
-
+VALUES ('john2@email.com', 1)
