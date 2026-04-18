@@ -1,8 +1,8 @@
 --  script can be used using a command such as the following:
--- mysql -p WatchFinderDB < db_setup.sql
+-- mysql < db_setup.sql
 -- Alternatively, another user can be specified if needed for privileges, 
 -- with `-u root` to run as root, for example:
--- mysql -u root -p WatchFinderDB < db_setup.sql
+-- mysql -u root < db_setup.sql
 
 -- This script resets the database (if existing), creates the database, 
 -- creates all tables, as well as populating db with example data, 
