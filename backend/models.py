@@ -119,8 +119,11 @@ class IsAdmin(Base):
 
 class Watchlists(Base):
     __tablename__ = "WATCHLISTS"
-    email: Mapped[str] = mapped_column(
-        "Email", String(255), ForeignKey("USERS.Email", ondelete="CASCADE"))
+    email: Mapped[str] = mapped_column("Email",
+                                       String(255),
+                                       ForeignKey("USERS.Email",
+                                                  ondelete="CASCADE"),
+                                       primary_key=True)
     watchlist_id: Mapped[int] = mapped_column("WatchlistID",
                                               BIGINT(unsigned=True),
                                               autoincrement=True,

@@ -81,7 +81,7 @@ CREATE TABLE WATCHLISTS (
     WatchlistName   VARCHAR(255)    NOT NULL,
     WatchlistID     SERIAL          ,
     DateAdded       DATE            NOT NULL,
-    PRIMARY KEY (WatchlistID),
+    PRIMARY KEY (WatchlistID, Email),
     FOREIGN KEY (Email) REFERENCES USERS(Email) ON DELETE CASCADE
 );
 
