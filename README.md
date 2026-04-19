@@ -10,6 +10,26 @@ region.
 
 ## Getting Started: Running this project
 
+### Running the backend:
+
+1. Ensure `uv` and `MySQL` is installed
+
+2. In the `backend` directory, execute `uv sync` to install dependencies
+
+```bash
+uv sync
+```
+3. Import the database and example data
+
+```bash
+mysql -u root < db_setup.sql
+```
+4. Ensure MySQL is running and start the backend server
+
+```bash
+uv run main.py
+```
+
 ### Running the frontend:
 
 1. Make sure you have Node and npm installed. You can check by running:
@@ -34,23 +54,3 @@ npm run dev
 ```
 
 4. Open the URL shown in your terminal (usually http://localhost:5173).
-
-### Running the backend:
-
-- Planning to allow either pip or uv in the future
-
-1. Ensure `uv` is installed
-
-2. In the `backend` directory, execute `uv sync` to install dependencies
-
-```bash
-uv sync
-```
-
-3. Start the backend server with `uv run main.py`
-
-```bash
-uv run main.py
-```
-
-4. Open the URL shown in your terminal (e.g. http://localhost:8000)
