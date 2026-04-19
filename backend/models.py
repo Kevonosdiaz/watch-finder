@@ -6,7 +6,7 @@ from enum import Enum
 
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, DECIMAL, CheckConstraint, func, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.dialects.mysql import YEAR, BIGINT, SMALLINT, ENUM
+from sqlalchemy.dialects.mysql import YEAR, BIGINT, SMALLINT, ENUM, TINYINT
 
 from database import Base
 
@@ -51,7 +51,7 @@ class Shows(Base):
                                                      ondelete="CASCADE"),
                                           primary_key=True)
     number_of_seasons: Mapped[int] = mapped_column("NumberOfSeasons",
-                                                   SMALLINT(unsigned=True),
+                                                   TINYINT(unsigned=True),
                                                    nullable=False)
 
 

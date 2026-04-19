@@ -1,4 +1,4 @@
---  script can be used using a command such as the following:
+-- This script can be used using a command such as the following:
 -- mysql < db_setup.sql
 -- Alternatively, another user can be specified if needed for privileges, 
 -- with `-u root` to run as root, for example:
@@ -159,8 +159,6 @@ INSERT INTO ADMINS
 VALUES ();
 
 -- NOTE: MediaID is also SERIAL, these will be MediaID 1..13 respectively
--- TODO: Normalize MediaID & corresponding image (and rename images to match)
--- TODO: For Mario movie, make sure to add image if needed
 INSERT INTO MEDIA_TITLES (TitleName, ReleaseYear, Creator, AgeRating, Rating, Description, Image)
 VALUES
     ('Avatar: The Last Airbender',2005,'Michael Dante DiMartino','TV-Y7-FV',9.3,'In a war-torn world of elemental powers, a young boy reawakens to undertake a dangerous mystic quest to fulfill his destiny as the Avatar, and bring peace to the world.','media_1.jpg'),
