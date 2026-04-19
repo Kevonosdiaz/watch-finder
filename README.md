@@ -10,6 +10,13 @@ region.
 
 ## Getting Started: Running this project
 
+### Clone the repository:
+
+```bash
+git clone https://github.com/Kevonosdiaz/watch-finder.git
+cd watch-finder
+```
+
 ### Running the backend:
 
 1. Ensure `uv` and `MySQL` is installed
@@ -20,6 +27,7 @@ mysql --version
 2. In the `backend` directory, execute `uv sync` to install dependencies
 
 ```bash
+cd backend
 uv sync
 ```
 3. Import the database and example data
@@ -45,7 +53,6 @@ npm -v
 2. Clone the repository and install dependencies
 
 ```bash
-git clone https://github.com/Kevonosdiaz/watch-finder.git
 cd frontend
 npm install
 ```
