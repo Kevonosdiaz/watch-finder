@@ -224,6 +224,13 @@ VALUES
 INSERT INTO SUBSCRIBED_TO (Email, StreamingServiceName)
 VALUES ('alice@email.com', 'Netflix'), ('john2@email.com', 'Prime Video');
 
+INSERT INTO OPERATES_IN VALUES 
+('Netflix','Canada'),
+('Disney+','China'),('Hulu','China'),('Netflix','China'),('Prime Video','China'),
+('Netflix','France'),
+('Netflix','UK'),
+('Disney+','USA'),('Hulu','USA'),('Netflix','USA');
+
 INSERT INTO WATCHLISTS (Email, WatchlistName, DateAdded)
 VALUES 
     ('john2@email.com','Johns Watchlist','2026-04-02'),
