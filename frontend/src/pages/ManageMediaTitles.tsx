@@ -96,7 +96,8 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
     const [editedMedia, setEditedMedia] = useState<MediaTitle | null>(null);
     const [, setPosterFile] = useState<File | null>(null);
     const [posterPreview, setPosterPreview] = useState<string>("");
-    const [, setRemovePoster] = useState(false);
+    const [removePoster, setRemovePoster] = useState<boolean>(false);
+    const originalPosterRef = useRef<string | undefined>(undefined);
     const [editedAvailability, setEditedAvailability] = useState<Availability[]>([]);
     const [newRegion, setNewRegion] = useState("");
     const [services, setServices] = useState<StreamingPlatform[]>([]);
@@ -129,11 +130,19 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
     // Handles cancelling when editing a media title
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setEditedMedia(null);
         setPosterFile(null);
-        setPosterPreview("");
+        // restore poster state in the media list when canceling a pending remove
+        const original = originalPosterRef.current ?? "";
+        setPosterPreview(original);
+        if (selectedMedia) {
+            const restored = { ...selectedMedia, posterUrl: original };
+            setSelectedMedia(restored);
+            setEditedMedia(null);
+            setMediaTitles((prev) => prev.map((m) => (m.id === selectedMedia.id ? { ...m, posterUrl: original } : m)));
+        }
         setRemovePoster(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
+        originalPosterRef.current = undefined;
     };
 
     // Handles saving edits on a media title
@@ -171,12 +180,25 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
             setSelectedMedia(savedMedia);
             setMediaTitles((prev) => prev.map((m) => (m.id === editedMedia.id ? savedMedia : m)));
 
+            // If the poster was marked for removal, perform the actual delete now
+            if (removePoster) {
+                try {
+                    await api(`/api/media/${editedMedia.id}/img`, { method: "DELETE" });
+                    const cleared = { ...savedMedia, posterUrl: undefined };
+                    setSelectedMedia(cleared);
+                    setMediaTitles((prev) => prev.map((m) => (m.id === editedMedia.id ? cleared : m)));
+                } catch (err) {
+                    console.error("Failed to delete poster on save", err);
+                }
+            }
+
             // Reset edit mode and clear temp states
             setIsEditing(false);
             setEditedMedia(null);
             setPosterFile(null);
             setPosterPreview("");
             setRemovePoster(false);
+            originalPosterRef.current = undefined;
             if (fileInputRef.current) fileInputRef.current.value = "";
         } catch (err) {
             console.error("Failed to update media", err);
@@ -267,6 +289,8 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                                             setEditedAvailability((selectedMedia?.availability ?? []).map((region) => ({ country_name: region.country_name, providers: [...(region.providers ?? [])] })));
                                             setPosterFile(null);
                                             setRemovePoster(false);
+                                            // store the original poster so we can restore on cancel
+                                            originalPosterRef.current = selectedMedia?.posterUrl;
                                             setPosterPreview(selectedMedia?.posterUrl ?? "");
                                         }}
                                     >
@@ -295,14 +319,9 @@ export default function ManageMediaTitles({ goToHome, goToAddMediaTitles }: Mana
                                         <button type="button" className="poster-upload-btn" onClick={() => fileInputRef.current?.click()}>
                                             <MdOutlineFileUpload size={18} />
                                         </button>
-                                        <button type="button" className="poster-remove-btn" onClick={async () => {
+                                        <button type="button" className="poster-remove-btn" onClick={() => {
                                             if (!selectedMedia) return;
-                                            try {
-                                                await api(`/api/media/${selectedMedia.id}/img`, { method: "DELETE" });
-                                            } catch (err) {
-                                                console.error("Failed to delete poster", err);
-                                            }
-                                            // Clear preview and update state to reflect removed poster
+                                            setRemovePoster(true);
                                             const placeholder = "";
                                             setPosterPreview(placeholder);
                                             setSelectedMedia((prev) => (prev ? { ...prev, posterUrl: placeholder } : prev));
