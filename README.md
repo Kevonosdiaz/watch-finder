@@ -33,7 +33,8 @@ cd backend
 uv sync
 ```
 
-3. Import the database and example data
+3. Import the database and example data (`-u root` may be excluded/changed if
+   using a different MySQL user than root)
 
 ```bash
 mysql -u root < db_setup.sql
