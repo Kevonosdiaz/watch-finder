@@ -31,14 +31,6 @@ CREATE TABLE MEDIA_TITLES (
     PRIMARY KEY (MediaID)
 );
 
--- NOTE: Generally unused, as it was not a part of any core user/admin feature
-CREATE TABLE MEDIA_GENRES (
-    MediaID BIGINT UNSIGNED ,
-    Genre   VARCHAR(80)     NOT NULL,
-    PRIMARY KEY (MediaID, Genre),
-    FOREIGN KEY (MediaID) REFERENCES MEDIA_TITLES(MediaID) ON DELETE CASCADE
-);
-
 CREATE TABLE SHOWS (
     MediaID             BIGINT UNSIGNED     NOT NULL,
     NumberOfSeasons     TINYINT UNSIGNED   NOT NULL,
@@ -218,15 +210,6 @@ VALUES
 (11,'Netflix'),
 (12,'Netflix'),
 (13,'Netflix'),(13,'Disney+');
-
--- INSERT INTO MEDIA_GENRES (MediaID, Genre)
--- VALUES
---     (1, 'Adventure'), (1, 'Fantasy'),
---     (2, 'Action'), (2, 'Dark Fantasy'),
---     (3, 'Thriller'), (3, 'Crime'), (3, 'Mystery'),
---     (4, 'Drama'),
---     (5, 'Drama'), (5, 'Romance'),
---     (6, 'Epic'), (6, 'Sci-Fi'), (6, 'Adventure');
 
 -- NOTE: passwords are hashed & salted before stored in DB. Corresponding passwords for test users are:
 -- `password12` for Ada,

@@ -41,17 +41,6 @@ class MediaTitles(Base):
     def image_path(self) -> str:
         if self.image_file:
             return f'/media_images/{self.image_file}'
-        # Could return a placeholder/default image here?
-
-
-class MediaGenres(Base):
-    __tablename__ = "MEDIA_GENRES"
-    media_id: Mapped[int] = mapped_column("MediaID",
-                                          BIGINT(unsigned=True),
-                                          ForeignKey("MEDIA_TITLES.MediaID",
-                                                     ondelete="CASCADE"),
-                                          primary_key=True)
-    genre: Mapped[str] = mapped_column("Genre", String(80), primary_key=True)
 
 
 class Shows(Base):
