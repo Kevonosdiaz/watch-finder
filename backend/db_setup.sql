@@ -7,7 +7,7 @@
 -- This script resets the database (if existing), creates the database, 
 -- creates all tables, as well as populating db with example data, 
 -- so the app can be tested with all functionalities immediately.
-DROP DATABASE WatchFinderDB;
+DROP DATABASE IF EXISTS WatchFinderDB;
 CREATE DATABASE WatchFinderDB;
 USE WatchFinderDB;
 
