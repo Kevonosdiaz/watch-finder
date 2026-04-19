@@ -13,7 +13,10 @@ region.
 ### Running the backend:
 
 1. Ensure `uv` and `MySQL` is installed
-
+```bash
+uv --version
+mysql --version
+```
 2. In the `backend` directory, execute `uv sync` to install dependencies
 
 ```bash
